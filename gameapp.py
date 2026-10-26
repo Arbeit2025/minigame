@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import os
 import sqlite3
 import random
 from datetime import datetime
@@ -16,7 +17,7 @@ from flask import Flask, request, redirect, url_for, flash, render_template_stri
 APP_DB = Path("roulette.db")
 
 app = Flask(__name__)
-app.secret_key = "dev-secret-key"  # ローカル用途。必要なら変えてOK
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key")  # ローカル用途。環境変数 SECRET_KEY で変更可
 
 
 # ============================
@@ -535,4 +536,4 @@ def spin():
 
 if __name__ == "__main__":
     init_db()
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=os.environ.get("FLASK_DEBUG") == "1")
