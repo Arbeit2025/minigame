@@ -1,6 +1,8 @@
-# app.py
-# Flask + SQLite ルーレット/抽選テーブル（完全1ファイル）
-# 起動:  py app.py
+# gameapp.py
+# Flask + SQLite 自作ミニゲーム集ポータル（完全1ファイル）
+# トップページがゲーム一覧ポータル、各ゲームは /games/<slug> で遊べる。
+# 収録ゲームはすべて作者の自作。新しいゲームは GAMES リストへ1件足して追加する。
+# 起動:  python gameapp.py
 # URL:  http://127.0.0.1:5000
 
 from __future__ import annotations
@@ -29,7 +31,7 @@ TEMPLATE = r"""
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ルーレット（Flask）</title>
+  <title>ルーレット抽選｜自作ミニゲーム集</title>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.5; }
     .wrap { max-width: 980px; margin: 0 auto; }
@@ -57,7 +59,8 @@ TEMPLATE = r"""
 </head>
 <body>
 <div class="wrap">
-  <h1>🎲 ルーレット（Flask + SQLite / 1ファイル）</h1>
+  <p style="margin:0 0 8px;"><a href="{{ url_for('index') }}">← ゲーム一覧へ戻る</a></p>
+  <h1>🎲 ルーレット抽選</h1>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -80,7 +83,7 @@ TEMPLATE = r"""
 
       <div class="muted" style="margin-bottom:8px;">選択すると右側で候補編集・抽選できます。</div>
 
-      <form method="get" action="{{ url_for('index') }}" class="row" style="margin-bottom:10px;">
+      <form method="get" action="{{ url_for('roulette') }}" class="row" style="margin-bottom:10px;">
         <select name="table_id">
           <option value="">-- 選択 --</option>
           {% for t in tables %}
@@ -209,6 +212,91 @@ TEMPLATE = r"""
 </body>
 </html>
 """
+
+# ============================
+# ゲーム登録リスト（ポータルの元データ）
+# 新しいゲームを足すときは、ここに1件追加し、対応するルートと
+# テンプレートを用意するだけで、トップとジャンル別一覧に自動で並ぶ。
+# ============================
+GAMES = [
+    {
+        "slug": "roulette",
+        "title": "ルーレット抽選",
+        "category": "抽選・占い",
+        "icon": "🎲",
+        "description": "候補を登録してルーレット抽選。重み（当たりやすさ）も付けられ、結果は履歴に残ります。ランチ決めや順番決めにも。",
+        "endpoint": "roulette",
+    },
+]
+
+
+# ============================
+# HTML（ポータルトップ）
+# ============================
+PORTAL_TEMPLATE = r"""
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>自作ミニゲーム集｜ブラウザで遊べる無料ゲーム</title>
+  <meta name="description" content="全部、作者が自分で作ったミニゲームだけを集めたポータルサイト。登録不要・無料でブラウザからそのまま遊べます。" />
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.6; background: #fbfaf7; color: #222; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    h1 { font-size: 26px; margin: 0 0 6px; }
+    .lead { color: #555; margin: 0 0 20px; }
+    h2 { font-size: 18px; margin: 26px 0 10px; }
+    .cats { display: flex; gap: 8px; flex-wrap: wrap; padding: 0; list-style: none; margin: 0; }
+    .cats li { border: 1px solid #ddd; background: #fff; border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+    .icon { font-size: 40px; line-height: 1; }
+    .card h3 { margin: 0; font-size: 17px; }
+    .card p { margin: 0; color: #555; font-size: 14px; flex: 1; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid #ddd; font-size: 12px; color: #444; align-self: flex-start; }
+    .play { display: inline-block; text-align: center; padding: 9px 12px; border: 1px solid #444; border-radius: 8px; background: #f7f7f7; color: #222; text-decoration: none; font-weight: 600; }
+    .play:hover { background: #eee; }
+    .muted { color: #666; font-size: 13px; }
+    footer { margin-top: 36px; border-top: 1px solid #e5e5e5; padding-top: 12px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎮 自作ミニゲーム集</h1>
+  <p class="lead">ここにあるのは、全部わたし（作者）が自分で作ったゲームだけです。登録不要・無料で、ブラウザからそのまま遊べます。少しずつ増やしていく予定です。</p>
+
+  <h2>ジャンル</h2>
+  <ul class="cats">
+    {% for name, count in categories %}
+      <li>{{ name }}（{{ count }}）</li>
+    {% endfor %}
+  </ul>
+
+  <h2>ゲーム一覧</h2>
+  <div class="grid">
+    {% for game in games %}
+      <div class="card">
+        <div class="icon">{{ game.icon }}</div>
+        <h3>{{ game.title }}</h3>
+        <span class="pill">{{ game.category }}</span>
+        <p>{{ game.description }}</p>
+        <a class="play" href="{{ url_for(game.endpoint) }}">▶ 遊ぶ</a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <h2>これから</h2>
+  <p class="muted">新しいゲームを作ったら、ここに追加していきます。いま遊べるのは上の {{ games|length }} 本です。</p>
+
+  <footer class="muted">
+    ルーレット抽選で作ったテーブルや抽選結果はサーバーに保存されますが、サービスの再起動・再デプロイで消えることがあります。大事な抽選の結果はメモしておいてください。
+  </footer>
+</div>
+</body>
+</html>
+"""
+
 
 
 # ============================
@@ -400,6 +488,27 @@ def record_spin(table_id: int, entry: Optional[sqlite3.Row]) -> str:
 # ============================
 @app.route("/", methods=["GET"])
 def index():
+    # 旧ルーレットの URL（/?table_id=...）で来た場合はルーレットへ案内する
+    legacy_table_id = request.args.get("table_id", "").strip()
+    if legacy_table_id:
+        return redirect(url_for("roulette", table_id=legacy_table_id))
+    categories = {}
+    for game in GAMES:
+        categories[game["category"]] = categories.get(game["category"], 0) + 1
+    return render_template_string(
+        PORTAL_TEMPLATE,
+        games=GAMES,
+        categories=sorted(categories.items()),
+    )
+
+
+@app.route("/healthz", methods=["GET"])
+def healthz():
+    return "ok", 200
+
+
+@app.route("/games/roulette", methods=["GET"])
+def roulette():
     tables = list_tables()
     selected_id_raw = request.args.get("table_id", "").strip()
 
@@ -417,29 +526,32 @@ def index():
     )
 
 
+@app.route("/games/roulette/tables/create", methods=["POST"])
 @app.route("/tables/create", methods=["POST"])
 def tables_create():
     title = request.form.get("title", "").strip()
     try:
         table_id = create_table(title)
         flash("テーブルを作成しました。", "ok")
-        return redirect(url_for("index", table_id=table_id))
+        return redirect(url_for("roulette", table_id=table_id))
     except Exception as e:
         flash(f"作成できませんでした: {e}", "ng")
-        return redirect(url_for("index"))
+        return redirect(url_for("roulette"))
 
 
+@app.route("/games/roulette/tables/delete", methods=["POST"])
 @app.route("/tables/delete", methods=["POST"])
 def tables_delete():
     table_id_raw = request.form.get("table_id", "").strip()
     if not table_id_raw.isdigit():
         flash("削除対象が不正です。", "ng")
-        return redirect(url_for("index"))
+        return redirect(url_for("roulette"))
     delete_table(int(table_id_raw))
     flash("テーブルを削除しました。", "ok")
-    return redirect(url_for("index"))
+    return redirect(url_for("roulette"))
 
 
+@app.route("/games/roulette/entries/add", methods=["POST"])
 @app.route("/entries/add", methods=["POST"])
 def entries_add():
     table_id_raw = request.form.get("table_id", "").strip()
@@ -448,7 +560,7 @@ def entries_add():
 
     if not table_id_raw.isdigit():
         flash("テーブル指定が不正です。", "ng")
-        return redirect(url_for("index"))
+        return redirect(url_for("roulette"))
 
     table_id = int(table_id_raw)
     weight = int(weight_raw) if weight_raw.isdigit() else 1
@@ -459,9 +571,10 @@ def entries_add():
     except Exception as e:
         flash(f"追加できませんでした: {e}", "ng")
 
-    return redirect(url_for("index", table_id=table_id))
+    return redirect(url_for("roulette", table_id=table_id))
 
 
+@app.route("/games/roulette/entries/update", methods=["POST"])
 @app.route("/entries/update", methods=["POST"])
 def entries_update():
     table_id_raw = request.form.get("table_id", "").strip()
@@ -471,7 +584,7 @@ def entries_update():
 
     if not (table_id_raw.isdigit() and entry_id_raw.isdigit()):
         flash("更新対象が不正です。", "ng")
-        return redirect(url_for("index"))
+        return redirect(url_for("roulette"))
 
     table_id = int(table_id_raw)
     entry_id = int(entry_id_raw)
@@ -483,9 +596,10 @@ def entries_update():
     except Exception as e:
         flash(f"更新できませんでした: {e}", "ng")
 
-    return redirect(url_for("index", table_id=table_id))
+    return redirect(url_for("roulette", table_id=table_id))
 
 
+@app.route("/games/roulette/entries/delete", methods=["POST"])
 @app.route("/entries/delete", methods=["POST"])
 def entries_delete():
     table_id_raw = request.form.get("table_id", "").strip()
@@ -493,16 +607,17 @@ def entries_delete():
 
     if not (table_id_raw.isdigit() and entry_id_raw.isdigit()):
         flash("削除対象が不正です。", "ng")
-        return redirect(url_for("index"))
+        return redirect(url_for("roulette"))
 
     table_id = int(table_id_raw)
     entry_id = int(entry_id_raw)
 
     delete_entry(entry_id)
     flash("候補を削除しました。", "ok")
-    return redirect(url_for("index", table_id=table_id))
+    return redirect(url_for("roulette", table_id=table_id))
 
 
+@app.route("/games/roulette/spin", methods=["POST"])
 @app.route("/spin", methods=["POST"])
 def spin():
     table_id_raw = request.form.get("table_id", "").strip()
@@ -510,7 +625,7 @@ def spin():
 
     if not table_id_raw.isdigit():
         flash("テーブル指定が不正です。", "ng")
-        return redirect(url_for("index"))
+        return redirect(url_for("roulette"))
 
     table_id = int(table_id_raw)
     times = int(times_raw) if times_raw.isdigit() else 1
@@ -519,7 +634,7 @@ def spin():
     entries = list_entries(table_id)
     if not entries:
         flash("候補が空なので回せません。", "ng")
-        return redirect(url_for("index", table_id=table_id))
+        return redirect(url_for("roulette", table_id=table_id))
 
     results = []
     for _ in range(times):
@@ -531,9 +646,16 @@ def spin():
     else:
         flash(f"{times}回 回しました。最新: {results[-1]}", "ok")
 
-    return redirect(url_for("index", table_id=table_id))
+    return redirect(url_for("roulette", table_id=table_id))
+
+
+# gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
+init_db()
 
 
 if __name__ == "__main__":
-    init_db()
-    app.run(host="127.0.0.1", port=5000, debug=os.environ.get("FLASK_DEBUG") == "1")
+    app.run(
+        host=os.environ.get("HOST", "127.0.0.1"),
+        port=int(os.environ.get("PORT", "5000")),
+        debug=os.environ.get("FLASK_DEBUG") == "1",
+    )
