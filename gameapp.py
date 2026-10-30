@@ -883,11 +883,15 @@ _GAME_CSS = """
     .cards button.matched { background: #f3fff3; border-color: #bfe8bf; cursor: default; }
     .emojis { font-size: 26px; line-height: 1.35; text-align: center; overflow-wrap: break-word; }
     .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .panel { border: 2px solid #bbb; border-radius: 12px; padding: 10px 8px 14px; background: #faf6ec; min-width: 0; }
+    .panel.right { background: #eef5fa; border-color: #9db8cc; }
+    .panel h3 { text-align: center; margin: 0 0 6px; font-size: 16px; }
     .numgrid { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
     .numgrid button { width: 64px; height: 64px; font-size: 24px; }
     .numgrid button.done { background: #bfe8bf; border-color: #7ab87a; }
     .doors { display: flex; gap: 12px; justify-content: center; }
     .doors button { font-size: 40px; padding: 18px 22px; }
+    .doors button.labeled { font-size: 20px; }
 """
 
 _FLASH_BLOCK = """
@@ -1585,6 +1589,7 @@ COINFLIP_TEMPLATE = r"""
   <div class="card">
     {% if last %}
       <div class="big">🪙 {{ last.result }}</div>
+      <p class="mid">あなたの予想は {{ last.choice }} でした</p>
       <p class="result">{{ last.message }}</p>
     {% else %}
       <div class="big">🪙</div>
@@ -1630,7 +1635,7 @@ def coinflip_flip():
         streak = 0
         message = "はずれ… 連勝はリセットされました"
     session["cf_streak"] = streak
-    return render_coinflip(last={"result": result, "message": message})
+    return render_coinflip(last={"result": result, "message": message, "choice": choice})
 
 
 # ============================
@@ -1793,7 +1798,7 @@ MEMORY_TEMPLATE = r"""
     <div class="big" id="digits">{{ digits }}</div>
     <p class="mid muted" id="hint">覚えて…</p>
     <form method="post" action="{{ url_for('memory_answer') }}" class="row">
-      <input type="text" name="answer" inputmode="numeric" autocomplete="off" required placeholder="覚えた数字" />
+      <input type="text" id="answer-input" name="answer" inputmode="numeric" autocomplete="off" required placeholder="覚えた数字" disabled />
       <button type="submit">答える</button>
     </form>
     <form method="post" action="{{ url_for('memory_reset') }}" class="row" style="margin-top:10px;">
@@ -1813,10 +1818,13 @@ MEMORY_TEMPLATE = r"""
 (function(){
   var digits = document.getElementById("digits");
   var hint = document.getElementById("hint");
+  var input = document.getElementById("answer-input");
   var text = digits.textContent;
   setTimeout(function(){
     digits.textContent = "●".repeat(text.length);
     hint.textContent = "隠れました。覚えた数字を入力してね";
+    input.disabled = false;
+    input.focus();
   }, {{ show_ms }});
 })();
 </script>
@@ -1876,6 +1884,9 @@ TYPING_TEMPLATE = r"""
       <input type="text" id="typein" autocomplete="off" placeholder="ここに入力" style="width:260px; text-align:center;" />
     </div>
     <p class="result" id="message">ベスト（最速）: {{ best if best is not none else '—' }}{% if best is not none %} 秒{% endif %}</p>
+    <div class="row" id="again" style="display:none;">
+      <button type="button" onclick="location.reload()">もう一度遊ぶ</button>
+    </div>
     {% if history %}
       <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録</h3>
       <table>
@@ -1918,7 +1929,8 @@ TYPING_TEMPLATE = r"""
           .then(function(r){ return r.json(); })
           .then(function(d){
             if (d && d.ok) {
-              message.textContent = "記録: " + (ms / 1000).toFixed(1) + " 秒 ／ ベスト（最速）: " + (d.best / 1000).toFixed(1) + " 秒（読み込むともう一度遊べます）";
+              message.textContent = "記録: " + (ms / 1000).toFixed(1) + " 秒 ／ ベスト（最速）: " + (d.best / 1000).toFixed(1) + " 秒";
+              document.getElementById("again").style.display = "flex";
             }
           })
           .catch(function(){});
@@ -2275,7 +2287,7 @@ MONTY_TEMPLATE = r"""
       <p class="mid">当たりだと思うドアを1つ選んでください</p>
       <form method="post" action="{{ url_for('monty_pick') }}" class="doors">
         {% for i in range(3) %}
-          <button type="submit" name="door" value="{{ i }}">🚪</button>
+          <button type="submit" name="door" value="{{ i }}" class="labeled">{{ i + 1 }}番のドア 🚪</button>
         {% endfor %}
       </form>
     {% else %}
@@ -2529,8 +2541,14 @@ COUNT_TEMPLATE = r"""
       <p class="result">{{ message }}</p>
     {% endif %}
     <div class="split">
-      <div class="emojis">{{ left_emoji * left }}</div>
-      <div class="emojis">{{ right_emoji * right }}</div>
+      <div class="panel left">
+        <h3>左（{{ left_emoji }}）</h3>
+        <div class="emojis">{{ left_emoji * left }}</div>
+      </div>
+      <div class="panel right">
+        <h3>右（{{ right_emoji }}）</h3>
+        <div class="emojis">{{ right_emoji * right }}</div>
+      </div>
     </div>
     <form method="post" action="{{ url_for('count_answer') }}" class="row" style="margin-top:12px;">
       <button type="submit" name="side" value="left">左（{{ left_emoji }}）が多い</button>
@@ -2581,7 +2599,11 @@ SORT_TEMPLATE = r"""
         <button type="button" data-value="{{ n }}">{{ n }}</button>
       {% endfor %}
     </div>
-    <p class="result" id="message">次は 1 を押してね ／ ベスト（最速）: {{ best if best is not none else '—' }}{% if best is not none %} 秒{% endif %}</p>
+    <p class="result" id="bestline">ベスト（最速）: {{ best if best is not none else '—' }}{% if best is not none %} 秒{% endif %}</p>
+    <p class="result" id="message">次は 1 を押してね</p>
+    <div class="row" id="again" style="display:none;">
+      <button type="button" onclick="location.reload()">もう一度遊ぶ</button>
+    </div>
     {% if history %}
       <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録</h3>
       <table>
@@ -2615,7 +2637,9 @@ SORT_TEMPLATE = r"""
           .then(function(r){ return r.json(); })
           .then(function(d){
             if (d && d.ok) {
-              message.textContent = "🎉 完了！ " + (ms / 1000).toFixed(1) + " 秒 ／ ベスト（最速）: " + (d.best / 1000).toFixed(1) + " 秒（読み込むともう一度遊べます）";
+              message.textContent = "🎉 完了！ " + (ms / 1000).toFixed(1) + " 秒";
+              document.getElementById("bestline").textContent = "ベスト（最速）: " + (d.best / 1000).toFixed(1) + " 秒";
+              document.getElementById("again").style.display = "flex";
             }
           })
           .catch(function(){});
