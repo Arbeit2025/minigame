@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 import sqlite3
 import random
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
@@ -290,6 +291,86 @@ GAMES = [
         "icon": "🎯",
         "description": "自分と CPU がサイコロ2個ずつで勝負。合計勝負で、ゾロ目にはボーナス付き。ベスト合計を記録します。",
         "endpoint": "dice",
+    },
+    {
+        "slug": "coinflip",
+        "title": "コイントス",
+        "category": "抽選・占い",
+        "icon": "🪙",
+        "description": "コインの表か裏かを予想して投げるシンプルな運試し。連続で当てて連勝記録を伸ばそう。",
+        "endpoint": "coinflip",
+    },
+    {
+        "slug": "mathdrill",
+        "title": "計算ドリル",
+        "category": "脳トレ",
+        "icon": "➗",
+        "description": "四則演算を10問連続で解くドリル。全問正解までの速さを競います。割り算は割り切れる問題だけ。",
+        "endpoint": "mathdrill",
+    },
+    {
+        "slug": "memory",
+        "title": "記憶力テスト",
+        "category": "脳トレ",
+        "icon": "🧠",
+        "description": "表示された数字列を覚えて入力。正解するたびに桁数が増えていきます。何桁まで覚えられる？",
+        "endpoint": "memory",
+    },
+    {
+        "slug": "typing",
+        "title": "タイピング",
+        "category": "アクション",
+        "icon": "⌨️",
+        "description": "表示されたローマ字の単語5語を正確にタイプ。合計時間の速さを競います。",
+        "endpoint": "typing",
+    },
+    {
+        "slug": "stroop",
+        "title": "ストループ",
+        "category": "脳トレ",
+        "icon": "🎨",
+        "description": "色の名前を「文字の意味」ではなく「文字の色」で答える心理テスト系ゲーム。10問の正解数と速さを競います。",
+        "endpoint": "stroop",
+    },
+    {
+        "slug": "concentration",
+        "title": "神経衰弱",
+        "category": "脳トレ",
+        "icon": "🂡",
+        "description": "12枚の絵文字カードから6ペアを揃える定番ゲーム。少ない手数で揃えるほど良い記録です。",
+        "endpoint": "concentration",
+    },
+    {
+        "slug": "monty",
+        "title": "モンティホール",
+        "category": "脳トレ",
+        "icon": "🚪",
+        "description": "3つのドアの確率パズル。選んだ後にハズレが1つ開いたとき、変える？変えない？勝率の集計も表示します。",
+        "endpoint": "monty",
+    },
+    {
+        "slug": "quiz",
+        "title": "クイズ",
+        "category": "クイズ・知識",
+        "icon": "❓",
+        "description": "一般常識・雑学の4択クイズ10問。正解数を競います。問題は20問以上からランダム出題。",
+        "endpoint": "quiz",
+    },
+    {
+        "slug": "count",
+        "title": "どっちが多い？",
+        "category": "脳トレ",
+        "icon": "🔍",
+        "description": "左右に並んだ2種類の絵文字、多い方を当てるゲーム。連続正解を伸ばそう。",
+        "endpoint": "count",
+    },
+    {
+        "slug": "sort",
+        "title": "数字並べ替え",
+        "category": "アクション",
+        "icon": "🔟",
+        "description": "シャッフルされた1〜9の数字ボタンを小さい順にクリック。速さと正確さを競います。",
+        "endpoint": "sort",
     },
 ]
 
@@ -793,8 +874,20 @@ _GAME_CSS = """
     .flash.ng { background: #fff3f3; border-color: #e8bfbf; }
     .result { font-size: 20px; text-align: center; margin: 10px 0; }
     input[type="number"] { padding: 9px; border: 1px solid #ccc; border-radius: 8px; width: 120px; font-size: 16px; }
+    input[type="text"] { padding: 9px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
     table { width: 100%; border-collapse: collapse; }
     th, td { border-bottom: 1px solid #eee; padding: 6px 8px; text-align: left; }
+    .colorword { font-size: 52px; text-align: center; font-weight: 700; margin: 12px 0; }
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .cards button { font-size: 30px; padding: 16px 0; }
+    .cards button.matched { background: #f3fff3; border-color: #bfe8bf; cursor: default; }
+    .emojis { font-size: 26px; line-height: 1.35; text-align: center; overflow-wrap: break-word; }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .numgrid { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .numgrid button { width: 64px; height: 64px; font-size: 24px; }
+    .numgrid button.done { background: #bfe8bf; border-color: #7ab87a; }
+    .doors { display: flex; gap: 12px; justify-content: center; }
+    .doors button { font-size: 40px; padding: 18px 22px; }
 """
 
 _FLASH_BLOCK = """
@@ -1479,6 +1572,1085 @@ def dice_roll():
         "message": message,
     }
     return render_dice(last=last)
+
+# ============================
+# コイントス
+# ============================
+COIN_SIDES = ["表", "裏"]
+
+COINFLIP_TEMPLATE = r"""
+  <h1>🪙 コイントス</h1>
+  <p class="howto">コインの表か裏かを予想して投げる運試し。連続で当てるほど連勝スコアが伸びます。</p>
+  __FLASH__
+  <div class="card">
+    {% if last %}
+      <div class="big">🪙 {{ last.result }}</div>
+      <p class="result">{{ last.message }}</p>
+    {% else %}
+      <div class="big">🪙</div>
+      <p class="mid">表か裏かを選んで投げよう</p>
+    {% endif %}
+    <p class="result">現在の連勝: {{ streak }} ／ ベスト: {{ best if best is not none else '—' }}</p>
+    <form method="post" action="{{ url_for('coinflip_flip') }}" class="row">
+      <button type="submit" name="choice" value="表">表と予想して投げる</button>
+      <button type="submit" name="choice" value="裏">裏と予想して投げる</button>
+    </form>
+  </div>
+"""
+
+
+def render_coinflip(last=None):
+    body = render_template_string(
+        COINFLIP_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        streak=int(session.get("cf_streak", 0)),
+        best=best_score("coinflip", "max"),
+        last=last,
+    )
+    return game_page("コイントス", body)
+
+
+@app.route("/games/coinflip", methods=["GET"])
+def coinflip():
+    return render_coinflip()
+
+
+@app.route("/games/coinflip/flip", methods=["POST"])
+def coinflip_flip():
+    choice = request.form.get("choice", "")
+    if choice not in COIN_SIDES:
+        flash("表か裏かを選んでください。", "ng")
+        return render_coinflip()
+    result = random.choice(COIN_SIDES)
+    streak = int(session.get("cf_streak", 0))
+    if result == choice:
+        streak += 1
+        record_score("coinflip", streak)
+        message = f"🎉 正解！ {streak} 連勝中"
+    else:
+        streak = 0
+        message = "はずれ… 連勝はリセットされました"
+    session["cf_streak"] = streak
+    return render_coinflip(last={"result": result, "message": message})
+
+
+# ============================
+# 計算ドリル
+# ============================
+MATHDRILL_TOTAL = 10
+
+
+def make_math_question() -> tuple:
+    op = random.choice(["+", "-", "×", "÷"])
+    if op == "+":
+        a, b = random.randint(11, 999), random.randint(11, 999)
+        return f"{a} + {b}", a + b
+    if op == "-":
+        a = random.randint(11, 999)
+        b = random.randint(11, a)
+        return f"{a} - {b}", a - b
+    if op == "×":
+        a, b = random.randint(2, 12), random.randint(2, 12)
+        return f"{a} × {b}", a * b
+    divisor = random.randint(2, 12)
+    quotient = random.randint(2, 12)
+    return f"{divisor * quotient} ÷ {divisor}", quotient
+
+
+def mathdrill_new_question() -> None:
+    text, answer = make_math_question()
+    session["md_text"] = text
+    session["md_answer"] = answer
+
+
+def render_mathdrill(message=None):
+    if "md_text" not in session:
+        session["md_num"] = 1
+        session["md_correct"] = 0
+        session["md_start"] = time.time()
+        mathdrill_new_question()
+    body = render_template_string(
+        MATHDRILL_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        text=session["md_text"],
+        num=int(session.get("md_num", 1)),
+        total=MATHDRILL_TOTAL,
+        correct=int(session.get("md_correct", 0)),
+        best=best_score("mathdrill", "min"),
+        history=recent_scores("mathdrill", 10),
+        message=message,
+    )
+    return game_page("計算ドリル", body)
+
+
+MATHDRILL_TEMPLATE = r"""
+  <h1>➗ 計算ドリル</h1>
+  <p class="howto">四則演算の問題を {{ total }} 問連続で解きます。全問正解すると、かかった秒数が記録されます（ベスト＝最速）。割り算は割り切れる問題だけです。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="mid">{{ num }} 問目 ／ {{ total }} 問（正解 {{ correct }}）</p>
+    <div class="big">{{ text }} = ?</div>
+    <form method="post" action="{{ url_for('mathdrill_answer') }}" class="row">
+      <input type="number" name="answer" required placeholder="答え" />
+      <button type="submit">答える</button>
+    </form>
+    <form method="post" action="{{ url_for('mathdrill_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">最初からやり直す</button>
+    </form>
+    <p class="result">ベスト（最速・全問正解）: {{ best if best is not none else '—' }}{% if best is not none %} 秒{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（秒）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 秒</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+@app.route("/games/mathdrill", methods=["GET"])
+def mathdrill():
+    return render_mathdrill()
+
+
+@app.route("/games/mathdrill/answer", methods=["POST"])
+def mathdrill_answer():
+    if "md_text" not in session:
+        return render_mathdrill()
+    raw = request.form.get("answer", "").strip()
+    answer = int(session["md_answer"])
+    num = int(session.get("md_num", 1))
+    correct = int(session.get("md_correct", 0))
+    if raw.lstrip("-").isdigit() and int(raw) == answer:
+        correct += 1
+        feedback = "⭕ 正解！"
+    else:
+        feedback = f"❌ 不正解（正解は {answer}）"
+    session["md_correct"] = correct
+    if num >= MATHDRILL_TOTAL:
+        elapsed = max(1, round(time.time() - float(session.get("md_start", time.time()))))
+        if correct == MATHDRILL_TOTAL:
+            record_score("mathdrill", elapsed)
+            result = f"🎉 全{correct}問正解！ {elapsed} 秒で記録しました。新しいドリルが始まっています。"
+        else:
+            result = f"終了：{correct} / {MATHDRILL_TOTAL} 問正解（記録は全問正解時のみ）。新しいドリルが始まっています。"
+        for key in ("md_text", "md_answer", "md_num", "md_correct", "md_start"):
+            session.pop(key, None)
+        return render_mathdrill(message=f"{feedback} {result}")
+    session["md_num"] = num + 1
+    mathdrill_new_question()
+    return render_mathdrill(message=feedback)
+
+
+@app.route("/games/mathdrill/reset", methods=["POST"])
+def mathdrill_reset():
+    for key in ("md_text", "md_answer", "md_num", "md_correct", "md_start"):
+        session.pop(key, None)
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for("mathdrill"))
+
+
+# ============================
+# 記憶力テスト
+# ============================
+MEMORY_START_LEVEL = 3
+MEMORY_SHOW_MS = 3000
+
+
+def memory_new_digits(level: int) -> str:
+    return "".join(str(random.randint(0, 9)) for _ in range(level))
+
+
+def render_memory(message=None):
+    if "mem_digits" not in session:
+        session["mem_level"] = MEMORY_START_LEVEL
+        session["mem_digits"] = memory_new_digits(MEMORY_START_LEVEL)
+    digits = str(session["mem_digits"])
+    body = render_template_string(
+        MEMORY_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        digits=digits,
+        level=int(session.get("mem_level", MEMORY_START_LEVEL)),
+        show_ms=MEMORY_SHOW_MS,
+        best=best_score("memory", "max"),
+        history=recent_scores("memory", 10),
+        message=message,
+    )
+    return game_page("記憶力テスト", body)
+
+
+MEMORY_TEMPLATE = r"""
+  <h1>🧠 記憶力テスト</h1>
+  <p class="howto">数字列が {{ show_ms // 1000 }} 秒だけ表示されて隠れます。覚えた数字を入力してください。正解すると桁数が1つ増え、失敗すると到達した桁数が記録されます。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="mid">いまは {{ level }} 桁</p>
+    <div class="big" id="digits">{{ digits }}</div>
+    <p class="mid muted" id="hint">覚えて…</p>
+    <form method="post" action="{{ url_for('memory_answer') }}" class="row">
+      <input type="text" name="answer" inputmode="numeric" autocomplete="off" required placeholder="覚えた数字" />
+      <button type="submit">答える</button>
+    </form>
+    <form method="post" action="{{ url_for('memory_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">最初からやり直す</button>
+    </form>
+    <p class="result">ベスト（最大到達桁数）: {{ best if best is not none else '—' }}{% if best is not none %} 桁{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（到達桁数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 桁</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var digits = document.getElementById("digits");
+  var hint = document.getElementById("hint");
+  var text = digits.textContent;
+  setTimeout(function(){
+    digits.textContent = "●".repeat(text.length);
+    hint.textContent = "隠れました。覚えた数字を入力してね";
+  }, {{ show_ms }});
+})();
+</script>
+"""
+
+
+@app.route("/games/memory", methods=["GET"])
+def memory():
+    return render_memory()
+
+
+@app.route("/games/memory/answer", methods=["POST"])
+def memory_answer():
+    if "mem_digits" not in session:
+        return render_memory()
+    digits = str(session["mem_digits"])
+    level = int(session.get("mem_level", MEMORY_START_LEVEL))
+    guess = request.form.get("answer", "").strip()
+    if guess == digits:
+        session["mem_level"] = level + 1
+        session["mem_digits"] = memory_new_digits(level + 1)
+        return render_memory(message=f"⭕ 正解！ 次は {level + 1} 桁です。")
+    record_score("memory", level)
+    session.pop("mem_digits", None)
+    session.pop("mem_level", None)
+    return render_memory(
+        message=f"❌ 残念、正解は {digits} でした。{level} 桁到達を記録しました。新しいテストが始まっています。"
+    )
+
+
+@app.route("/games/memory/reset", methods=["POST"])
+def memory_reset():
+    session.pop("mem_digits", None)
+    session.pop("mem_level", None)
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for("memory"))
+
+
+# ============================
+# タイピング
+# ============================
+TYPING_WORDS = [
+    "sakura", "sushi", "tokyo", "ninja", "ramen",
+    "osaka", "kyoto", "fuji", "manga", "anime",
+    "sumo", "tatami", "katana", "onsen", "mochi", "wasabi",
+]
+TYPING_WORD_COUNT = 5
+
+TYPING_TEMPLATE = r"""
+  <h1>⌨️ タイピング</h1>
+  <p class="howto">表示されるローマ字の単語 {{ count }} 語を、正確にタイピングしてください。最初の入力から最後の単語を打ち終えるまでの時間を記録します（ベスト＝最速）。</p>
+  __FLASH__
+  <div class="card">
+    <p class="mid"><span id="progress">1 / {{ count }}</span> 語目</p>
+    <div class="big" id="word"></div>
+    <div class="row">
+      <input type="text" id="typein" autocomplete="off" placeholder="ここに入力" style="width:260px; text-align:center;" />
+    </div>
+    <p class="result" id="message">ベスト（最速）: {{ best if best is not none else '—' }}{% if best is not none %} 秒{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ '%.1f' % (s.score / 1000) }} 秒</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var words = {{ words|tojson }};
+  var wordEl = document.getElementById("word");
+  var input = document.getElementById("typein");
+  var progress = document.getElementById("progress");
+  var message = document.getElementById("message");
+  var idx = 0, startedAt = 0;
+  function show(){
+    wordEl.textContent = words[idx];
+    progress.textContent = (idx + 1) + " / " + words.length;
+    input.value = "";
+    input.focus();
+  }
+  input.addEventListener("input", function(){
+    if (!startedAt) { startedAt = performance.now(); }
+    var target = words[idx];
+    var value = input.value;
+    input.style.borderColor = target.indexOf(value) === 0 ? "#ccc" : "#d33";
+    if (value === target) {
+      idx += 1;
+      if (idx < words.length) {
+        show();
+      } else {
+        var ms = Math.round(performance.now() - startedAt);
+        input.disabled = true;
+        wordEl.textContent = "🎉 完了！";
+        var form = new FormData();
+        form.append("ms", String(ms));
+        fetch("{{ url_for('typing_score') }}", {method: "POST", body: form})
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if (d && d.ok) {
+              message.textContent = "記録: " + (ms / 1000).toFixed(1) + " 秒 ／ ベスト（最速）: " + (d.best / 1000).toFixed(1) + " 秒（読み込むともう一度遊べます）";
+            }
+          })
+          .catch(function(){});
+      }
+    }
+  });
+  show();
+})();
+</script>
+"""
+
+
+@app.route("/games/typing", methods=["GET"])
+def typing():
+    words = random.sample(TYPING_WORDS, TYPING_WORD_COUNT)
+    best_ms = best_score("typing", "min")
+    body = render_template_string(
+        TYPING_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        words=words,
+        count=TYPING_WORD_COUNT,
+        best=("%.1f" % (best_ms / 1000)) if best_ms is not None else None,
+        history=recent_scores("typing", 10),
+    )
+    return game_page("タイピング", body)
+
+
+@app.route("/games/typing/score", methods=["POST"])
+def typing_score():
+    raw = request.form.get("ms", "").strip()
+    if not raw.isdigit() or not (500 <= int(raw) <= 600000):
+        return {"ok": False, "error": "invalid ms"}, 400
+    record_score("typing", int(raw))
+    return {"ok": True, "best": best_score("typing", "min")}
+
+
+# ============================
+# ストループ
+# ============================
+STROOP_COLORS = [
+    ("あか", "#d33"),
+    ("あお", "#36c"),
+    ("みどり", "#2a2"),
+    ("きいろ", "#e6b800"),
+    ("むらさき", "#93c"),
+]
+STROOP_TOTAL = 10
+# スコアは「正解数 * 10^7 + (10^7 - 1 - 経過ミリ秒)」で1つの整数に符号化する。
+# MAX を取ると、正解数が多いものを優先し、同点なら速い方（経過が小さい方）が残る。
+STROOP_UNIT = 10 ** 7
+
+
+def stroop_encode(correct: int, elapsed_ms: int) -> int:
+    elapsed_ms = max(0, min(int(elapsed_ms), STROOP_UNIT - 2))
+    return correct * STROOP_UNIT + (STROOP_UNIT - 1 - elapsed_ms)
+
+
+def stroop_decode(score: int) -> tuple:
+    correct = int(score) // STROOP_UNIT
+    elapsed_ms = STROOP_UNIT - 1 - (int(score) % STROOP_UNIT)
+    return correct, elapsed_ms
+
+
+def stroop_new_questions() -> None:
+    questions = []
+    for _ in range(STROOP_TOTAL):
+        word = random.randrange(len(STROOP_COLORS))
+        ink = random.randrange(len(STROOP_COLORS))
+        while ink == word:
+            ink = random.randrange(len(STROOP_COLORS))
+        questions.append([word, ink])
+    session["st_questions"] = questions
+    session["st_idx"] = 0
+    session["st_correct"] = 0
+    session["st_start"] = time.time()
+
+
+def render_stroop(message=None):
+    if "st_questions" not in session:
+        stroop_new_questions()
+    questions = session["st_questions"]
+    idx = int(session.get("st_idx", 0))
+    word_idx, ink_idx = questions[idx]
+    best_raw = best_score("stroop", "max")
+    best = None
+    if best_raw is not None:
+        c, ms = stroop_decode(best_raw)
+        best = {"correct": c, "seconds": "%.1f" % (ms / 1000)}
+    history = []
+    for row in recent_scores("stroop", 10):
+        c, ms = stroop_decode(int(row["score"]))
+        history.append({"correct": c, "seconds": "%.1f" % (ms / 1000), "created_at": row["created_at"]})
+    body = render_template_string(
+        STROOP_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        word=STROOP_COLORS[word_idx][0],
+        ink_color=STROOP_COLORS[ink_idx][1],
+        colors=[name for name, _ in STROOP_COLORS],
+        num=idx + 1,
+        total=STROOP_TOTAL,
+        correct=int(session.get("st_correct", 0)),
+        best=best,
+        history=history,
+        message=message,
+    )
+    return game_page("ストループ", body)
+
+
+STROOP_TEMPLATE = r"""
+  <h1>🎨 ストループ</h1>
+  <p class="howto">色の名前が書かれていますが、答えるのは「文字の意味」ではなく「文字の色」です。例：赤い字で「あお」と書かれていたら答えは「あか」。{{ total }} 問の正解数と速さを競います。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="mid">{{ num }} 問目 ／ {{ total }} 問（正解 {{ correct }}）</p>
+    <div class="colorword" style="color: {{ ink_color }};">{{ word }}</div>
+    <form method="post" action="{{ url_for('stroop_answer') }}" class="row">
+      {% for name in colors %}
+        <button type="submit" name="choice" value="{{ name }}">{{ name }}</button>
+      {% endfor %}
+    </form>
+    <form method="post" action="{{ url_for('stroop_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">最初からやり直す</button>
+    </form>
+    <p class="result">ベスト: {% if best %}{{ best.correct }} 問正解 ／ {{ best.seconds }} 秒{% else %}—{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.correct }} 問正解 ／ {{ s.seconds }} 秒</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+@app.route("/games/stroop", methods=["GET"])
+def stroop():
+    return render_stroop()
+
+
+@app.route("/games/stroop/answer", methods=["POST"])
+def stroop_answer():
+    if "st_questions" not in session:
+        return render_stroop()
+    questions = session["st_questions"]
+    idx = int(session.get("st_idx", 0))
+    ink_name = STROOP_COLORS[questions[idx][1]][0]
+    choice = request.form.get("choice", "")
+    correct = int(session.get("st_correct", 0))
+    if choice == ink_name:
+        correct += 1
+        feedback = "⭕ 正解！"
+    else:
+        feedback = f"❌ 不正解（文字の色は「{ink_name}」）"
+    session["st_correct"] = correct
+    if idx + 1 >= STROOP_TOTAL:
+        elapsed_ms = int((time.time() - float(session.get("st_start", time.time()))) * 1000)
+        record_score("stroop", stroop_encode(correct, elapsed_ms))
+        result = f"終了：{correct} / {STROOP_TOTAL} 問正解、{'%.1f' % (elapsed_ms / 1000)} 秒でした。新しい問題が始まっています。"
+        for key in ("st_questions", "st_idx", "st_correct", "st_start"):
+            session.pop(key, None)
+        return render_stroop(message=f"{feedback} {result}")
+    session["st_idx"] = idx + 1
+    return render_stroop(message=feedback)
+
+
+@app.route("/games/stroop/reset", methods=["POST"])
+def stroop_reset():
+    for key in ("st_questions", "st_idx", "st_correct", "st_start"):
+        session.pop(key, None)
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for("stroop"))
+
+
+# ============================
+# 神経衰弱
+# ============================
+CONCENTRATION_EMOJIS = ["🍎", "🍌", "🍇", "🍓", "🍊", "🍑"]
+
+
+def concentration_new_game() -> None:
+    cards = CONCENTRATION_EMOJIS * 2
+    random.shuffle(cards)
+    session["cc_cards"] = cards
+    session["cc_matched"] = []
+    session["cc_pending"] = None
+    session["cc_mismatch"] = []
+    session["cc_moves"] = 0
+
+
+def render_concentration(message=None):
+    if "cc_cards" not in session:
+        concentration_new_game()
+    cards = list(session["cc_cards"])
+    matched = list(session.get("cc_matched", []))
+    pending = session.get("cc_pending")
+    mismatch = list(session.get("cc_mismatch", []))
+    open_idx = set(matched) | set(mismatch)
+    if pending is not None:
+        open_idx.add(int(pending))
+    body = render_template_string(
+        CONCENTRATION_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        cards=cards,
+        open_idx=open_idx,
+        matched=set(matched),
+        moves=int(session.get("cc_moves", 0)),
+        pairs=len(matched) // 2,
+        total_pairs=len(CONCENTRATION_EMOJIS),
+        best=best_score("concentration", "min"),
+        history=recent_scores("concentration", 10),
+        message=message,
+    )
+    return game_page("神経衰弱", body)
+
+
+CONCENTRATION_TEMPLATE = r"""
+  <h1>🂡 神経衰弱</h1>
+  <p class="howto">伏せられた12枚のカードから、同じ絵文字のペアを {{ total_pairs }} 組揃えるゲーム。2枚めくるごとに1手数です。間違えたペアは次の手を打つときに伏せられます。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">手数: {{ moves }} ／ 揃ったペア: {{ pairs }} ／ {{ total_pairs }} ／ ベスト（最小手数）: {{ best if best is not none else '—' }}</p>
+    <form method="post" action="{{ url_for('concentration_flip') }}">
+      <div class="cards">
+        {% for i in range(cards|length) %}
+          {% if i in matched %}
+            <button type="button" class="matched" disabled>{{ cards[i] }}</button>
+          {% elif i in open_idx %}
+            <button type="button" disabled>{{ cards[i] }}</button>
+          {% else %}
+            <button type="submit" name="index" value="{{ i }}">🂠</button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </form>
+    <form method="post" action="{{ url_for('concentration_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">配り直す</button>
+    </form>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（手数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 手</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+@app.route("/games/concentration", methods=["GET"])
+def concentration():
+    return render_concentration()
+
+
+@app.route("/games/concentration/flip", methods=["POST"])
+def concentration_flip():
+    if "cc_cards" not in session:
+        concentration_new_game()
+    cards = list(session["cc_cards"])
+    matched = list(session.get("cc_matched", []))
+    raw = request.form.get("index", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) < len(cards)):
+        return render_concentration()
+    idx = int(raw)
+    if idx in matched:
+        return render_concentration()
+    # 前回ミスマッチで開いたままの2枚は、この手で伏せてから処理する
+    session["cc_mismatch"] = []
+    pending = session.get("cc_pending")
+    if pending is None:
+        if idx in session.get("cc_mismatch", []):
+            return render_concentration()
+        session["cc_pending"] = idx
+        return render_concentration()
+    if int(pending) == idx:
+        return render_concentration()
+    moves = int(session.get("cc_moves", 0)) + 1
+    session["cc_moves"] = moves
+    first = int(pending)
+    session["cc_pending"] = None
+    if cards[first] == cards[idx]:
+        matched.extend([first, idx])
+        session["cc_matched"] = matched
+        if len(matched) == len(cards):
+            record_score("concentration", moves)
+            concentration_new_game()
+            return render_concentration(
+                message=f"🎉 全部揃いました！ {moves} 手で記録しました。新しいゲームが配られています。"
+            )
+        return render_concentration(message=f"⭕ ペア成立！ {cards[idx]} が揃いました。")
+    session["cc_mismatch"] = [first, idx]
+    return render_concentration(message="❌ 違う絵文字でした。覚えて、次の手をどうぞ。")
+
+
+@app.route("/games/concentration/reset", methods=["POST"])
+def concentration_reset():
+    concentration_new_game()
+    flash("配り直しました。", "ok")
+    return redirect(url_for("concentration"))
+
+
+# ============================
+# モンティホール
+# ============================
+MONTY_DOORS = 3
+
+
+def monty_stats() -> dict:
+    def get(key: str) -> int:
+        raw = get_kv(key)
+        return int(raw) if raw and raw.lstrip("-").isdigit() else 0
+
+    stats = {}
+    for label in ("switch", "stay"):
+        games = get(f"monty_{label}_games")
+        wins = get(f"monty_{label}_wins")
+        stats[label] = {
+            "games": games,
+            "wins": wins,
+            "rate": ("%.0f%%" % (wins * 100 / games)) if games else "—",
+        }
+    return stats
+
+
+def render_monty(last=None):
+    stage = "decide" if "mt_pick" in session else "pick"
+    opened = session.get("mt_opened")
+    pick = session.get("mt_pick")
+    body = render_template_string(
+        MONTY_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        stage=stage,
+        pick=pick,
+        opened=opened,
+        stats=monty_stats(),
+        last=last,
+    )
+    return game_page("モンティホール", body)
+
+
+MONTY_TEMPLATE = r"""
+  <h1>🚪 モンティホール</h1>
+  <p class="howto">3つのドアのうち1つだけが当たりです。1つ選ぶと、司会がハズレのドアを1つ開けて見せます。そのあと「変える」か「変えない」か選んでください。変えた時と変えなかった時の勝率が下に集計されます。</p>
+  __FLASH__
+  <div class="card">
+    {% if last %}
+      <p class="result">{{ last.message }}</p>
+    {% endif %}
+    {% if stage == 'pick' %}
+      <p class="mid">当たりだと思うドアを1つ選んでください</p>
+      <form method="post" action="{{ url_for('monty_pick') }}" class="doors">
+        {% for i in range(3) %}
+          <button type="submit" name="door" value="{{ i }}">🚪</button>
+        {% endfor %}
+      </form>
+    {% else %}
+      <p class="mid">あなたが選んだのは {{ pick + 1 }} 番のドア。司会が {{ opened + 1 }} 番のドアを開けたら 🐐（ハズレ）でした。</p>
+      <div class="doors">
+        {% for i in range(3) %}
+          <button type="button" disabled>{% if i == opened %}🐐{% elif i == pick %}👉🚪{% else %}🚪{% endif %}</button>
+        {% endfor %}
+      </div>
+      <form method="post" action="{{ url_for('monty_decide') }}" class="row" style="margin-top:12px;">
+        <button type="submit" name="choice" value="switch">もう一方に変える</button>
+        <button type="submit" name="choice" value="stay">このまま変えない</button>
+      </form>
+    {% endif %}
+    <h3 style="font-size:14px; margin:16px 0 8px;">これまでの集計（全プレイヤー共有）</h3>
+    <table>
+      <tr><th>戦略</th><th>回数</th><th>勝ち</th><th>勝率</th></tr>
+      <tr><td>変えた</td><td>{{ stats.switch.games }}</td><td>{{ stats.switch.wins }}</td><td>{{ stats.switch.rate }}</td></tr>
+      <tr><td>変えなかった</td><td>{{ stats.stay.games }}</td><td>{{ stats.stay.wins }}</td><td>{{ stats.stay.rate }}</td></tr>
+    </table>
+  </div>
+"""
+
+
+@app.route("/games/monty", methods=["GET"])
+def monty():
+    return render_monty()
+
+
+@app.route("/games/monty/pick", methods=["POST"])
+def monty_pick():
+    raw = request.form.get("door", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) < MONTY_DOORS):
+        flash("ドアを選んでください。", "ng")
+        return render_monty()
+    pick = int(raw)
+    prize = random.randrange(MONTY_DOORS)
+    goats = [d for d in range(MONTY_DOORS) if d != pick and d != prize]
+    session["mt_prize"] = prize
+    session["mt_pick"] = pick
+    session["mt_opened"] = random.choice(goats)
+    return render_monty()
+
+
+@app.route("/games/monty/decide", methods=["POST"])
+def monty_decide():
+    if "mt_pick" not in session or "mt_prize" not in session:
+        return render_monty()
+    choice = request.form.get("choice", "")
+    if choice not in ("switch", "stay"):
+        flash("「変える」か「変えない」かを選んでください。", "ng")
+        return render_monty()
+    pick = int(session["mt_pick"])
+    opened = int(session["mt_opened"])
+    prize = int(session["mt_prize"])
+    final = next(d for d in range(MONTY_DOORS) if d != pick and d != opened) if choice == "switch" else pick
+    win = final == prize
+    games_key = f"monty_{choice}_games"
+    wins_key = f"monty_{choice}_wins"
+    raw_games = get_kv(games_key)
+    set_kv(games_key, str((int(raw_games) if raw_games and raw_games.isdigit() else 0) + 1))
+    if win:
+        raw_wins = get_kv(wins_key)
+        set_kv(wins_key, str((int(raw_wins) if raw_wins and raw_wins.isdigit() else 0) + 1))
+    for key in ("mt_prize", "mt_pick", "mt_opened"):
+        session.pop(key, None)
+    if win:
+        message = f"🎉 当たり！ 正解は {prize + 1} 番のドアでした（あなたは {final + 1} 番）。"
+    else:
+        message = f"ハズレ… 正解は {prize + 1} 番のドアでした（あなたは {final + 1} 番）。"
+    return render_monty(last={"message": message})
+
+
+# ============================
+# クイズ
+# ============================
+QUIZ_BANK = [
+    {"q": "日本の首都はどこ？", "choices": ["東京", "大阪", "京都", "名古屋"], "answer": 0},
+    {"q": "水の化学式は？", "choices": ["CO2", "H2O", "O2", "NaCl"], "answer": 1},
+    {"q": "地球に最も近い恒星は？", "choices": ["月", "火星", "太陽", "金星"], "answer": 2},
+    {"q": "富士山の標高はおよそ何メートル？", "choices": ["2,776m", "3,776m", "4,776m", "5,776m"], "answer": 1},
+    {"q": "平年の1年は何日？", "choices": ["360日", "364日", "365日", "366日"], "answer": 2},
+    {"q": "日本で面積が一番大きい都道府県は？", "choices": ["青森県", "岩手県", "長野県", "北海道"], "answer": 3},
+    {"q": "サッカーで1チームは何人でプレーする？", "choices": ["9人", "10人", "11人", "12人"], "answer": 2},
+    {"q": "ピアノの鍵盤は全部でいくつ？", "choices": ["76", "84", "88", "96"], "answer": 2},
+    {"q": "虹の色は一般に何色とされる？", "choices": ["5色", "6色", "7色", "8色"], "answer": 2},
+    {"q": "日本の初代内閣総理大臣は？", "choices": ["伊藤博文", "大隈重信", "板垣退助", "西郷隆盛"], "answer": 0},
+    {"q": "『走れメロス』の作者は？", "choices": ["夏目漱石", "太宰治", "芥川龍之介", "川端康成"], "answer": 1},
+    {"q": "大人の歯は親知らずを含めて何本？", "choices": ["28本", "30本", "32本", "36本"], "answer": 2},
+    {"q": "元素記号 Au が表す元素は？", "choices": ["銀", "金", "銅", "鉄"], "answer": 1},
+    {"q": "日本で一番長い川は？", "choices": ["利根川", "石狩川", "信濃川", "吉野川"], "answer": 2},
+    {"q": "光の速さはおよそ秒速何km？", "choices": ["3万km", "30万km", "300万km", "3,000万km"], "answer": 1},
+    {"q": "オリンピック（夏季大会）は何年ごとに開かれる？", "choices": ["2年", "3年", "4年", "5年"], "answer": 2},
+    {"q": "『モナ・リザ』を描いた画家は？", "choices": ["ゴッホ", "ピカソ", "モネ", "レオナルド・ダ・ヴィンチ"], "answer": 3},
+    {"q": "1ダースは何個？", "choices": ["10個", "12個", "14個", "20個"], "answer": 1},
+    {"q": "日本の国鳥は？", "choices": ["ツル", "キジ", "トキ", "ウグイス"], "answer": 1},
+    {"q": "世界で一番長い川は？", "choices": ["アマゾン川", "ナイル川", "長江", "ミシシッピ川"], "answer": 1},
+    {"q": "ゴッホの代表作として有名な花の絵は？", "choices": ["バラ", "ひまわり", "チューリップ", "睡蓮"], "answer": 1},
+    {"q": "日本で一番人口の多い都道府県は？", "choices": ["大阪府", "神奈川県", "愛知県", "東京都"], "answer": 3},
+]
+QUIZ_TOTAL = 10
+
+
+def quiz_prepare_current() -> None:
+    items = session["qz_items"]
+    idx = int(session.get("qz_idx", 0))
+    question = QUIZ_BANK[int(items[idx])]
+    order = list(range(len(question["choices"])))
+    random.shuffle(order)
+    session["qz_choices"] = [question["choices"][i] for i in order]
+    session["qz_answer"] = order.index(int(question["answer"]))
+
+
+def quiz_new_game() -> None:
+    session["qz_items"] = random.sample(range(len(QUIZ_BANK)), QUIZ_TOTAL)
+    session["qz_idx"] = 0
+    session["qz_correct"] = 0
+    quiz_prepare_current()
+
+
+def render_quiz(message=None):
+    if "qz_items" not in session:
+        quiz_new_game()
+    idx = int(session.get("qz_idx", 0))
+    question = QUIZ_BANK[int(session["qz_items"][idx])]
+    body = render_template_string(
+        QUIZ_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        question=question["q"],
+        choices=list(session.get("qz_choices", [])),
+        num=idx + 1,
+        total=QUIZ_TOTAL,
+        correct=int(session.get("qz_correct", 0)),
+        best=best_score("quiz", "max"),
+        history=recent_scores("quiz", 10),
+        message=message,
+    )
+    return game_page("クイズ", body)
+
+
+QUIZ_TEMPLATE = r"""
+  <h1>❓ クイズ</h1>
+  <p class="howto">一般常識・雑学の4択クイズを {{ total }} 問出題します。正解数がスコアです。問題は {{ bank_size }} 問の中からランダムに選ばれます。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="mid">{{ num }} 問目 ／ {{ total }} 問（正解 {{ correct }}）</p>
+    <p class="result">{{ question }}</p>
+    <form method="post" action="{{ url_for('quiz_answer') }}" class="row" style="flex-direction:column; align-items:stretch;">
+      {% for c in choices %}
+        <button type="submit" name="choice" value="{{ loop.index0 }}">{{ c }}</button>
+      {% endfor %}
+    </form>
+    <form method="post" action="{{ url_for('quiz_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">最初からやり直す</button>
+    </form>
+    <p class="result">ベスト（最大正解数）: {{ best if best is not none else '—' }}{% if best is not none %} 問{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（正解数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 問</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+""".replace("{{ bank_size }}", str(len(QUIZ_BANK)))
+
+
+@app.route("/games/quiz", methods=["GET"])
+def quiz():
+    return render_quiz()
+
+
+@app.route("/games/quiz/answer", methods=["POST"])
+def quiz_answer():
+    if "qz_items" not in session:
+        return render_quiz()
+    raw = request.form.get("choice", "").strip()
+    answer = int(session.get("qz_answer", -1))
+    idx = int(session.get("qz_idx", 0))
+    question = QUIZ_BANK[int(session["qz_items"][idx])]
+    correct_text = str(session["qz_choices"][answer]) if 0 <= answer < len(session.get("qz_choices", [])) else ""
+    correct = int(session.get("qz_correct", 0))
+    if raw.isdigit() and int(raw) == answer:
+        correct += 1
+        feedback = "⭕ 正解！"
+    else:
+        feedback = f"❌ 不正解（正解は「{correct_text}」）"
+    session["qz_correct"] = correct
+    if idx + 1 >= QUIZ_TOTAL:
+        record_score("quiz", correct)
+        result = f"終了：{correct} / {QUIZ_TOTAL} 問正解でした。新しいクイズが始まっています。"
+        for key in ("qz_items", "qz_idx", "qz_correct", "qz_choices", "qz_answer"):
+            session.pop(key, None)
+        return render_quiz(message=f"{feedback} {result}")
+    session["qz_idx"] = idx + 1
+    quiz_prepare_current()
+    return render_quiz(message=feedback)
+
+
+@app.route("/games/quiz/reset", methods=["POST"])
+def quiz_reset():
+    for key in ("qz_items", "qz_idx", "qz_correct", "qz_choices", "qz_answer"):
+        session.pop(key, None)
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for("quiz"))
+
+
+# ============================
+# どっちが多い？
+# ============================
+COUNT_EMOJIS = ["🍎", "🍌", "🍇", "🍓", "🍊", "🍑", "⭐", "❤️", "🍀"]
+
+
+def count_new_round() -> None:
+    left_emoji, right_emoji = random.sample(COUNT_EMOJIS, 2)
+    left = random.randint(5, 25)
+    right = random.randint(5, 25)
+    while right == left:
+        right = random.randint(5, 25)
+    session["ct_left_emoji"] = left_emoji
+    session["ct_right_emoji"] = right_emoji
+    session["ct_left"] = left
+    session["ct_right"] = right
+
+
+def render_count(message=None):
+    if "ct_left" not in session:
+        count_new_round()
+    body = render_template_string(
+        COUNT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        left_emoji=session["ct_left_emoji"],
+        right_emoji=session["ct_right_emoji"],
+        left=int(session["ct_left"]),
+        right=int(session["ct_right"]),
+        streak=int(session.get("ct_streak", 0)),
+        best=best_score("count", "max"),
+        message=message,
+    )
+    return game_page("どっちが多い？", body)
+
+
+COUNT_TEMPLATE = r"""
+  <h1>🔍 どっちが多い？</h1>
+  <p class="howto">左右に並んだ2種類の絵文字、数が多い方を当ててください。連続正解がスコアです。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <div class="split">
+      <div class="emojis">{{ left_emoji * left }}</div>
+      <div class="emojis">{{ right_emoji * right }}</div>
+    </div>
+    <form method="post" action="{{ url_for('count_answer') }}" class="row" style="margin-top:12px;">
+      <button type="submit" name="side" value="left">左（{{ left_emoji }}）が多い</button>
+      <button type="submit" name="side" value="right">右（{{ right_emoji }}）が多い</button>
+    </form>
+    <p class="result">現在の連勝: {{ streak }} ／ ベスト: {{ best if best is not none else '—' }}</p>
+  </div>
+"""
+
+
+@app.route("/games/count", methods=["GET"])
+def count():
+    return render_count()
+
+
+@app.route("/games/count/answer", methods=["POST"])
+def count_answer():
+    if "ct_left" not in session:
+        count_new_round()
+    left = int(session["ct_left"])
+    right = int(session["ct_right"])
+    side = request.form.get("side", "")
+    answer = "left" if left > right else "right"
+    streak = int(session.get("ct_streak", 0))
+    detail = f"左は {left} 個、右は {right} 個でした。"
+    if side == answer:
+        streak += 1
+        record_score("count", streak)
+        message = f"⭕ 正解！ {detail} {streak} 連勝中"
+    else:
+        streak = 0
+        message = f"❌ はずれ… {detail} 連勝はリセットされました"
+    session["ct_streak"] = streak
+    count_new_round()
+    return render_count(message=message)
+
+
+# ============================
+# 数字並べ替え
+# ============================
+SORT_TEMPLATE = r"""
+  <h1>🔟 数字並べ替え</h1>
+  <p class="howto">シャッフルされた 1〜9 の数字ボタンを、小さい順にクリックしてください。間違えるとその場で教えてくれます。最初のクリックから全部押し終えるまでの時間を記録します（ベスト＝最速）。</p>
+  __FLASH__
+  <div class="card">
+    <div class="numgrid" id="grid">
+      {% for n in numbers %}
+        <button type="button" data-value="{{ n }}">{{ n }}</button>
+      {% endfor %}
+    </div>
+    <p class="result" id="message">次は 1 を押してね ／ ベスト（最速）: {{ best if best is not none else '—' }}{% if best is not none %} 秒{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ '%.1f' % (s.score / 1000) }} 秒</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var message = document.getElementById("message");
+  var expected = 1, startedAt = 0;
+  var buttons = document.querySelectorAll("#grid button");
+  buttons.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      if (!startedAt) { startedAt = performance.now(); }
+      var value = parseInt(btn.getAttribute("data-value"), 10);
+      if (value !== expected) {
+        message.textContent = "それは " + value + "。次は " + expected + " を押してね";
+        return;
+      }
+      btn.disabled = true;
+      btn.classList.add("done");
+      expected += 1;
+      if (expected > 9) {
+        var ms = Math.round(performance.now() - startedAt);
+        var form = new FormData();
+        form.append("ms", String(ms));
+        fetch("{{ url_for('sort_score') }}", {method: "POST", body: form})
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if (d && d.ok) {
+              message.textContent = "🎉 完了！ " + (ms / 1000).toFixed(1) + " 秒 ／ ベスト（最速）: " + (d.best / 1000).toFixed(1) + " 秒（読み込むともう一度遊べます）";
+            }
+          })
+          .catch(function(){});
+      } else {
+        message.textContent = "次は " + expected + " を押してね";
+      }
+    });
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/sort", methods=["GET"])
+def sort():
+    numbers = list(range(1, 10))
+    random.shuffle(numbers)
+    best_ms = best_score("sort", "min")
+    body = render_template_string(
+        SORT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        numbers=numbers,
+        best=("%.1f" % (best_ms / 1000)) if best_ms is not None else None,
+        history=recent_scores("sort", 10),
+    )
+    return game_page("数字並べ替え", body)
+
+
+@app.route("/games/sort/score", methods=["POST"])
+def sort_score():
+    raw = request.form.get("ms", "").strip()
+    if not raw.isdigit() or not (300 <= int(raw) <= 600000):
+        return {"ok": False, "error": "invalid ms"}, 400
+    record_score("sort", int(raw))
+    return {"ok": True, "best": best_score("sort", "min")}
+
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
 init_db()

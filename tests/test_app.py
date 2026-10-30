@@ -93,6 +93,17 @@ class NewGamesTest(MinigameTest):
                       "ストップウォッチ", "じゃんけん", "絵文字スロット", "サイコロ勝負"):
             self.assertIn(title, body)
 
+    def test_portal_lists_nineteen_games(self):
+        body = self.client.get("/").get_data(as_text=True)
+        for slug in ("coinflip", "mathdrill", "memory", "typing", "stroop",
+                     "concentration", "monty", "quiz", "count", "sort"):
+            self.assertIn(f"/games/{slug}", body)
+        for title in ("コイントス", "計算ドリル", "記憶力テスト", "タイピング",
+                      "ストループ", "神経衰弱", "モンティホール", "クイズ",
+                      "どっちが多い？", "数字並べ替え"):
+            self.assertIn(title, body)
+        self.assertIn("19 本", body)
+
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
         self.assertEqual(res.status_code, 200)
@@ -193,6 +204,157 @@ class NewGamesTest(MinigameTest):
         rows = self.query("SELECT score FROM scores WHERE game='dice'")
         self.assertEqual(len(rows), 1)
         self.assertTrue(2 <= rows[0][0] <= 18)
+
+
+class MoreGamesTest(MinigameTest):
+    def test_coinflip_flip(self):
+        res = self.client.get("/games/coinflip")
+        self.assertEqual(res.status_code, 200)
+        for _ in range(4):
+            res = self.client.post("/games/coinflip/flip", data={"choice": "表"})
+            self.assertEqual(res.status_code, 200)
+            body = res.get_data(as_text=True)
+            self.assertTrue("正解" in body or "はずれ" in body)
+            self.assertIn("連勝", body)
+
+    def test_mathdrill_all_correct_records_time(self):
+        res = self.client.get("/games/mathdrill")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("計算ドリル", res.get_data(as_text=True))
+        for _ in range(10):
+            with self.client.session_transaction() as sess:
+                answer = sess["md_answer"]
+            res = self.client.post("/games/mathdrill/answer", data={"answer": str(answer)})
+            self.assertEqual(res.status_code, 200)
+        self.assertIn("全10問正解", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game='mathdrill'")
+        self.assertEqual(len(rows), 1)
+        self.assertGreaterEqual(rows[0][0], 1)
+
+    def test_memory_flow(self):
+        res = self.client.get("/games/memory")
+        self.assertEqual(res.status_code, 200)
+        with self.client.session_transaction() as sess:
+            digits = sess["mem_digits"]
+            level = sess["mem_level"]
+        self.assertEqual(level, 3)
+        res = self.client.post("/games/memory/answer", data={"answer": digits})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("正解", res.get_data(as_text=True))
+        with self.client.session_transaction() as sess:
+            self.assertEqual(sess["mem_level"], 4)
+            digits2 = sess["mem_digits"]
+        res = self.client.post("/games/memory/answer", data={"answer": digits2 + "x"})
+        self.assertIn("記録しました", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game='memory'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 4)
+
+    def test_typing_score_saved(self):
+        res = self.client.get("/games/typing")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertTrue(any(w in body for w in self.mod.TYPING_WORDS))
+        res = self.client.post("/games/typing/score", data={"ms": "5000"})
+        self.assertEqual(res.get_json(), {"ok": True, "best": 5000})
+        res = self.client.post("/games/typing/score", data={"ms": "4200"})
+        self.assertEqual(res.get_json()["best"], 4200)
+        res = self.client.post("/games/typing/score", data={"ms": "10"})
+        self.assertEqual(res.status_code, 400)
+
+    def test_stroop_all_correct(self):
+        res = self.client.get("/games/stroop")
+        self.assertEqual(res.status_code, 200)
+        for _ in range(10):
+            with self.client.session_transaction() as sess:
+                questions = sess["st_questions"]
+                idx = sess["st_idx"]
+            ink_name = self.mod.STROOP_COLORS[questions[idx][1]][0]
+            res = self.client.post("/games/stroop/answer", data={"choice": ink_name})
+            self.assertEqual(res.status_code, 200)
+        self.assertIn("10 / 10 問正解", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game='stroop'")
+        self.assertEqual(len(rows), 1)
+        correct, _elapsed = self.mod.stroop_decode(rows[0][0])
+        self.assertEqual(correct, 10)
+
+    def test_concentration_perfect_game(self):
+        res = self.client.get("/games/concentration")
+        self.assertEqual(res.status_code, 200)
+        with self.client.session_transaction() as sess:
+            cards = list(sess["cc_cards"])
+        pairs = {}
+        for i, emoji in enumerate(cards):
+            pairs.setdefault(emoji, []).append(i)
+        self.assertEqual(len(pairs), 6)
+        for indices in pairs.values():
+            self.assertEqual(len(indices), 2)
+            for i in indices:
+                res = self.client.post("/games/concentration/flip", data={"index": str(i)})
+                self.assertEqual(res.status_code, 200)
+        self.assertIn("全部揃いました", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game='concentration'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 6)
+
+    def test_monty_flow_and_stats(self):
+        res = self.client.get("/games/monty")
+        self.assertEqual(res.status_code, 200)
+        res = self.client.post("/games/monty/pick", data={"door": "0"})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("変える", res.get_data(as_text=True))
+        with self.client.session_transaction() as sess:
+            self.assertIn("mt_prize", sess)
+            self.assertIn("mt_opened", sess)
+        res = self.client.post("/games/monty/decide", data={"choice": "switch"})
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertTrue("当たり" in body or "ハズレ" in body)
+        games = self.query("SELECT value FROM kv WHERE key='monty_switch_games'")
+        self.assertEqual(games[0][0], "1")
+        # stay path also counts
+        self.client.post("/games/monty/pick", data={"door": "1"})
+        self.client.post("/games/monty/decide", data={"choice": "stay"})
+        games = self.query("SELECT value FROM kv WHERE key='monty_stay_games'")
+        self.assertEqual(games[0][0], "1")
+
+    def test_quiz_all_correct(self):
+        res = self.client.get("/games/quiz")
+        self.assertEqual(res.status_code, 200)
+        self.assertGreaterEqual(len(self.mod.QUIZ_BANK), 20)
+        for _ in range(10):
+            with self.client.session_transaction() as sess:
+                answer = sess["qz_answer"]
+            res = self.client.post("/games/quiz/answer", data={"choice": str(answer)})
+            self.assertEqual(res.status_code, 200)
+        self.assertIn("10 / 10 問正解", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game='quiz'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 10)
+
+    def test_count_correct_answer_records_streak(self):
+        res = self.client.get("/games/count")
+        self.assertEqual(res.status_code, 200)
+        with self.client.session_transaction() as sess:
+            left, right = sess["ct_left"], sess["ct_right"]
+        side = "left" if left > right else "right"
+        res = self.client.post("/games/count/answer", data={"side": side})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("正解", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game='count'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 1)
+
+    def test_sort_score_saved(self):
+        res = self.client.get("/games/sort")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("数字並べ替え", res.get_data(as_text=True))
+        res = self.client.post("/games/sort/score", data={"ms": "3000"})
+        self.assertEqual(res.get_json(), {"ok": True, "best": 3000})
+        res = self.client.post("/games/sort/score", data={"ms": "2500"})
+        self.assertEqual(res.get_json()["best"], 2500)
+        res = self.client.post("/games/sort/score", data={"ms": "100"})
+        self.assertEqual(res.status_code, 400)
 
 
 if __name__ == "__main__":
