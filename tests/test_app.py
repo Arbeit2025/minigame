@@ -345,6 +345,54 @@ class MoreGamesTest(MinigameTest):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0][0], 1)
 
+    def test_coinflip_result_shows_prediction(self):
+        res = self.client.post("/games/coinflip/flip", data={"choice": "裏"})
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("あなたの予想は 裏 でした", body)
+
+    def test_memory_input_disabled_while_showing(self):
+        res = self.client.get("/games/memory")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn('id="answer-input"', body)
+        self.assertIn('placeholder="覚えた数字" disabled', body)
+        self.assertIn("input.disabled = false", body)
+
+    def test_typing_has_again_button(self):
+        res = self.client.get("/games/typing")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn('id="again"', body)
+        self.assertIn("もう一度遊ぶ", body)
+        self.assertNotIn("読み込むともう一度遊べます", body)
+
+    def test_monty_pick_buttons_are_numbered(self):
+        res = self.client.get("/games/monty")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        for n in (1, 2, 3):
+            self.assertIn(f"{n}番のドア", body)
+
+    def test_count_has_left_right_panels(self):
+        res = self.client.get("/games/count")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn('class="panel left"', body)
+        self.assertIn('class="panel right"', body)
+        self.assertIn("<h3>左（", body)
+        self.assertIn("<h3>右（", body)
+
+    def test_sort_bestline_is_separate_row(self):
+        res = self.client.get("/games/sort")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn('<p class="result" id="bestline">', body)
+        self.assertIn('<p class="result" id="message">次は 1 を押してね</p>', body)
+        self.assertIn('id="again"', body)
+        self.assertIn("もう一度遊ぶ", body)
+        self.assertNotIn("読み込むともう一度遊べます", body)
+
     def test_sort_score_saved(self):
         res = self.client.get("/games/sort")
         self.assertEqual(res.status_code, 200)
