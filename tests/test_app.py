@@ -102,7 +102,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("19 本", body)
+        self.assertIn("23 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -403,6 +403,130 @@ class MoreGamesTest(MinigameTest):
         self.assertEqual(res.get_json()["best"], 2500)
         res = self.client.post("/games/sort/score", data={"ms": "100"})
         self.assertEqual(res.status_code, 400)
+
+
+class NewFourGamesTest(MinigameTest):
+    def test_portal_lists_four_new_games(self):
+        body = self.client.get("/").get_data(as_text=True)
+        for slug in ("geoquiz", "escape-cocoa", "escape-science", "escape-cafe"):
+            self.assertIn(f"/games/{slug}", body)
+        for title in ("世界地理クイズ", "ココアの部屋からの脱出",
+                      "理科室からの脱出", "喫茶店の倉庫からの脱出"):
+            self.assertIn(title, body)
+        self.assertIn("23 本", body)
+        self.assertEqual(len(self.mod.GAMES), 23)
+
+    def test_geoquiz_bank_and_items(self):
+        self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
+        for entry in self.mod.GEO_BANK:
+            self.assertTrue(entry["country"] and entry["capital"] and entry["flag"])
+        res = self.client.get("/games/geoquiz")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("世界地理クイズ", res.get_data(as_text=True))
+        with self.client.session_transaction() as sess:
+            items = sess["gq_items"]
+        self.assertEqual(len(items), 10)
+        for item in items:
+            self.assertEqual(len(item["choices"]), 3)
+            self.assertIn(item["answer"], (0, 1, 2))
+            self.assertEqual(len(set(item["choices"])), 3)
+
+    def test_geoquiz_all_correct(self):
+        res = self.client.get("/games/geoquiz")
+        self.assertEqual(res.status_code, 200)
+        for _ in range(10):
+            with self.client.session_transaction() as sess:
+                idx = sess["gq_idx"]
+                answer = sess["gq_items"][idx]["answer"]
+            res = self.client.post("/games/geoquiz/answer", data={"choice": str(answer)})
+            self.assertEqual(res.status_code, 200)
+        self.assertIn("10 / 10 問正解", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game='geoquiz'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 10)
+
+    def test_geoquiz_wrong_answer(self):
+        self.client.get("/games/geoquiz")
+        with self.client.session_transaction() as sess:
+            answer = sess["gq_items"][0]["answer"]
+        wrong = (answer + 1) % 3
+        res = self.client.post("/games/geoquiz/answer", data={"choice": str(wrong)})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("不正解", res.get_data(as_text=True))
+
+    def escape_act(self, slug, action):
+        res = self.client.post(f"/games/{slug}/act", data={"action": action})
+        self.assertEqual(res.status_code, 200)
+        return res.get_data(as_text=True)
+
+    def test_escape_cocoa_clear_flow(self):
+        res = self.client.get("/games/escape-cocoa")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("ココアの部屋からの脱出", res.get_data(as_text=True))
+        # 鍵なしでドアを開けても失敗し、記録は付かない
+        body = self.escape_act("escape-cocoa", "door")
+        self.assertIn("鍵がかかっている", body)
+        self.assertEqual(self.query("SELECT id FROM scores WHERE game='escape-cocoa'"), [])
+        # 本棚は紙きれのヒントがないと進めない
+        body = self.escape_act("escape-cocoa", "shelf")
+        self.assertIn("分からない", body)
+        self.escape_act("escape-cocoa", "desk")
+        body = self.escape_act("escape-cocoa", "shelf")
+        self.assertIn("小さな鍵", body)
+        body = self.escape_act("escape-cocoa", "tin")
+        self.assertIn("ドアの鍵", body)
+        body = self.escape_act("escape-cocoa", "door")
+        self.assertIn("脱出成功", body)
+        rows = self.query("SELECT score FROM scores WHERE game='escape-cocoa'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 1)
+
+    def test_escape_science_clear_flow(self):
+        res = self.client.get("/games/escape-science")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("理科室からの脱出", res.get_data(as_text=True))
+        # ビーカーなしでは水を汲めない
+        body = self.escape_act("escape-science", "tap")
+        self.assertIn("容器がいる", body)
+        self.escape_act("escape-science", "board")
+        self.escape_act("escape-science", "locker")
+        self.escape_act("escape-science", "tap")
+        body = self.escape_act("escape-science", "tank")
+        self.assertIn("理科室の鍵", body)
+        body = self.escape_act("escape-science", "door")
+        self.assertIn("脱出成功", body)
+        rows = self.query("SELECT score FROM scores WHERE game='escape-science'")
+        self.assertEqual(len(rows), 1)
+
+    def test_escape_cafe_clear_flow(self):
+        res = self.client.get("/games/escape-cafe")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("喫茶店の倉庫からの脱出", res.get_data(as_text=True))
+        # 脚立なしでは高い棚に届かない／メモなしでは冷蔵庫の横に気づかない
+        body = self.escape_act("escape-cafe", "high")
+        self.assertIn("手が届かない", body)
+        body = self.escape_act("escape-cafe", "fridge")
+        self.assertIn("何もなさそうだ", body)
+        self.escape_act("escape-cafe", "shelf")
+        self.escape_act("escape-cafe", "high")
+        self.escape_act("escape-cafe", "tin")
+        body = self.escape_act("escape-cafe", "fridge")
+        self.assertIn("倉庫の鍵", body)
+        body = self.escape_act("escape-cafe", "door")
+        self.assertIn("脱出成功", body)
+        rows = self.query("SELECT score FROM scores WHERE game='escape-cafe'")
+        self.assertEqual(len(rows), 1)
+
+    def test_escape_reset_clears_state(self):
+        self.client.get("/games/escape-cocoa")
+        self.escape_act("escape-cocoa", "desk")
+        with self.client.session_transaction() as sess:
+            self.assertIn("paper", sess.get("esc_escape-cocoa_flags", []))
+        res = self.client.post("/games/escape-cocoa/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("esc_escape-cocoa_flags", sess)
+            self.assertNotIn("esc_escape-cocoa_items", sess)
 
 
 if __name__ == "__main__":
