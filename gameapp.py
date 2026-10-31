@@ -12,6 +12,7 @@ import sqlite3
 import random
 import time
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from typing import List, Optional
 
@@ -510,7 +511,7 @@ def init_db() -> None:
 
 
 def now_iso() -> str:
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now(ZoneInfo("Asia/Tokyo")).strftime("%Y-%m-%d %H:%M:%S")
 
 
 # ============================
