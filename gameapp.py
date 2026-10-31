@@ -373,6 +373,38 @@ GAMES = [
         "description": "シャッフルされた1〜9の数字ボタンを小さい順にクリック。速さと正確さを競います。",
         "endpoint": "sort",
     },
+    {
+        "slug": "geoquiz",
+        "title": "世界地理クイズ",
+        "category": "クイズ・知識",
+        "icon": "🌍",
+        "description": "世界の国名・首都・国旗の3択クイズ10問。約45か国のデータからランダム出題。正解数を競います。",
+        "endpoint": "geoquiz",
+    },
+    {
+        "slug": "escape-cocoa",
+        "title": "ココアの部屋からの脱出",
+        "category": "脱出・謎解き",
+        "icon": "🚪",
+        "description": "ココアの部屋に閉じ込められた！ 机や本棚を調べて、ドアの鍵を見つける小さな脱出ゲーム。",
+        "endpoint": "escape_cocoa",
+    },
+    {
+        "slug": "escape-science",
+        "title": "理科室からの脱出",
+        "category": "脱出・謎解き",
+        "icon": "🧪",
+        "description": "理科室に閉じ込められた！ 黒板のヒントと実験道具をうまく使って脱出する小さな脱出ゲーム。",
+        "endpoint": "escape_science",
+    },
+    {
+        "slug": "escape-cafe",
+        "title": "喫茶店の倉庫からの脱出",
+        "category": "脱出・謎解き",
+        "icon": "☕",
+        "description": "喫茶店の倉庫に閉じ込められた！ 棚や缶を調べて、倉庫の鍵を探す小さな脱出ゲーム。",
+        "endpoint": "escape_cafe",
+    },
 ]
 
 
@@ -2675,6 +2707,466 @@ def sort_score():
         return {"ok": False, "error": "invalid ms"}, 400
     record_score("sort", int(raw))
     return {"ok": True, "best": best_score("sort", "min")}
+
+
+# ============================
+# 世界地理クイズ
+# ============================
+GEO_BANK = [
+    {"country": "日本", "capital": "東京", "flag": "🇯🇵"},
+    {"country": "アメリカ", "capital": "ワシントン", "flag": "🇺🇸"},
+    {"country": "イギリス", "capital": "ロンドン", "flag": "🇬🇧"},
+    {"country": "フランス", "capital": "パリ", "flag": "🇫🇷"},
+    {"country": "ドイツ", "capital": "ベルリン", "flag": "🇩🇪"},
+    {"country": "イタリア", "capital": "ローマ", "flag": "🇮🇹"},
+    {"country": "スペイン", "capital": "マドリード", "flag": "🇪🇸"},
+    {"country": "ポルトガル", "capital": "リスボン", "flag": "🇵🇹"},
+    {"country": "オランダ", "capital": "アムステルダム", "flag": "🇳🇱"},
+    {"country": "ベルギー", "capital": "ブリュッセル", "flag": "🇧🇪"},
+    {"country": "スイス", "capital": "ベルン", "flag": "🇨🇭"},
+    {"country": "オーストリア", "capital": "ウィーン", "flag": "🇦🇹"},
+    {"country": "スウェーデン", "capital": "ストックホルム", "flag": "🇸🇪"},
+    {"country": "ノルウェー", "capital": "オスロ", "flag": "🇳🇴"},
+    {"country": "デンマーク", "capital": "コペンハーゲン", "flag": "🇩🇰"},
+    {"country": "フィンランド", "capital": "ヘルシンキ", "flag": "🇫🇮"},
+    {"country": "ポーランド", "capital": "ワルシャワ", "flag": "🇵🇱"},
+    {"country": "チェコ", "capital": "プラハ", "flag": "🇨🇿"},
+    {"country": "ギリシャ", "capital": "アテネ", "flag": "🇬🇷"},
+    {"country": "トルコ", "capital": "アンカラ", "flag": "🇹🇷"},
+    {"country": "ロシア", "capital": "モスクワ", "flag": "🇷🇺"},
+    {"country": "中国", "capital": "北京", "flag": "🇨🇳"},
+    {"country": "韓国", "capital": "ソウル", "flag": "🇰🇷"},
+    {"country": "インド", "capital": "ニューデリー", "flag": "🇮🇳"},
+    {"country": "タイ", "capital": "バンコク", "flag": "🇹🇭"},
+    {"country": "ベトナム", "capital": "ハノイ", "flag": "🇻🇳"},
+    {"country": "インドネシア", "capital": "ジャカルタ", "flag": "🇮🇩"},
+    {"country": "フィリピン", "capital": "マニラ", "flag": "🇵🇭"},
+    {"country": "マレーシア", "capital": "クアラルンプール", "flag": "🇲🇾"},
+    {"country": "シンガポール", "capital": "シンガポール", "flag": "🇸🇬"},
+    {"country": "オーストラリア", "capital": "キャンベラ", "flag": "🇦🇺"},
+    {"country": "ニュージーランド", "capital": "ウェリントン", "flag": "🇳🇿"},
+    {"country": "カナダ", "capital": "オタワ", "flag": "🇨🇦"},
+    {"country": "メキシコ", "capital": "メキシコシティ", "flag": "🇲🇽"},
+    {"country": "ブラジル", "capital": "ブラジリア", "flag": "🇧🇷"},
+    {"country": "アルゼンチン", "capital": "ブエノスアイレス", "flag": "🇦🇷"},
+    {"country": "チリ", "capital": "サンティアゴ", "flag": "🇨🇱"},
+    {"country": "ペルー", "capital": "リマ", "flag": "🇵🇪"},
+    {"country": "エジプト", "capital": "カイロ", "flag": "🇪🇬"},
+    {"country": "南アフリカ", "capital": "プレトリア", "flag": "🇿🇦"},
+    {"country": "ケニア", "capital": "ナイロビ", "flag": "🇰🇪"},
+    {"country": "モロッコ", "capital": "ラバト", "flag": "🇲🇦"},
+    {"country": "アイスランド", "capital": "レイキャビク", "flag": "🇮🇸"},
+    {"country": "アイルランド", "capital": "ダブリン", "flag": "🇮🇪"},
+    {"country": "ハンガリー", "capital": "ブダペスト", "flag": "🇭🇺"},
+    {"country": "ウクライナ", "capital": "キーウ", "flag": "🇺🇦"},
+    {"country": "モンゴル", "capital": "ウランバートル", "flag": "🇲🇳"},
+    {"country": "サウジアラビア", "capital": "リヤド", "flag": "🇸🇦"},
+]
+GEO_TOTAL = 10
+
+
+def geoquiz_build_items() -> list:
+    """出題10問を組み立てる（首都当て／国旗当て／首都から国当ての3形式、3択）。"""
+    picks = random.sample(GEO_BANK, GEO_TOTAL)
+    items = []
+    for entry in picks:
+        kind = random.choice(["capital", "flag", "country"])
+        others = random.sample([c for c in GEO_BANK if c is not entry], 2)
+        if kind == "capital":
+            question = f"{entry['country']}の首都はどこ？"
+            correct = entry["capital"]
+            distract = [o["capital"] for o in others]
+        elif kind == "flag":
+            question = f"{entry['flag']} はどこの国の国旗？"
+            correct = entry["country"]
+            distract = [o["country"] for o in others]
+        else:
+            question = f"{entry['capital']}はどこの国の首都？"
+            correct = entry["country"]
+            distract = [o["country"] for o in others]
+        choices = distract + [correct]
+        random.shuffle(choices)
+        items.append({"q": question, "choices": choices, "answer": choices.index(correct)})
+    return items
+
+
+def geoquiz_new_game() -> None:
+    session["gq_items"] = geoquiz_build_items()
+    session["gq_idx"] = 0
+    session["gq_correct"] = 0
+
+
+def render_geoquiz(message=None):
+    if "gq_items" not in session:
+        geoquiz_new_game()
+    idx = int(session.get("gq_idx", 0))
+    item = session["gq_items"][idx]
+    body = render_template_string(
+        GEOQUIZ_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        question=item["q"],
+        choices=list(item["choices"]),
+        num=idx + 1,
+        total=GEO_TOTAL,
+        correct=int(session.get("gq_correct", 0)),
+        best=best_score("geoquiz", "max"),
+        history=recent_scores("geoquiz", 10),
+        message=message,
+    )
+    return game_page("世界地理クイズ", body)
+
+
+GEOQUIZ_TEMPLATE = r"""
+  <h1>🌍 世界地理クイズ</h1>
+  <p class="howto">世界の国名・首都・国旗の3択クイズを {{ total }} 問出題します。正解数がスコアです。問題は {{ bank_size }} か国の中からランダムに選ばれます。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="mid">{{ num }} 問目 ／ {{ total }} 問（正解 {{ correct }}）</p>
+    <p class="result">{{ question }}</p>
+    <form method="post" action="{{ url_for('geoquiz_answer') }}" class="row" style="flex-direction:column; align-items:stretch;">
+      {% for c in choices %}
+        <button type="submit" name="choice" value="{{ loop.index0 }}">{{ c }}</button>
+      {% endfor %}
+    </form>
+    <form method="post" action="{{ url_for('geoquiz_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">最初からやり直す</button>
+    </form>
+    <p class="result">ベスト（最大正解数）: {{ best if best is not none else '—' }}{% if best is not none %} 問{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（正解数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 問</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+""".replace("{{ bank_size }}", str(len(GEO_BANK)))
+
+
+@app.route("/games/geoquiz", methods=["GET"])
+def geoquiz():
+    return render_geoquiz()
+
+
+@app.route("/games/geoquiz/answer", methods=["POST"])
+def geoquiz_answer():
+    if "gq_items" not in session:
+        return render_geoquiz()
+    raw = request.form.get("choice", "").strip()
+    idx = int(session.get("gq_idx", 0))
+    item = session["gq_items"][idx]
+    answer = int(item["answer"])
+    correct_text = str(item["choices"][answer]) if 0 <= answer < len(item["choices"]) else ""
+    correct = int(session.get("gq_correct", 0))
+    if raw.isdigit() and int(raw) == answer:
+        correct += 1
+        feedback = "⭕ 正解！"
+    else:
+        feedback = f"❌ 不正解（正解は「{correct_text}」）"
+    session["gq_correct"] = correct
+    if idx + 1 >= GEO_TOTAL:
+        record_score("geoquiz", correct)
+        result = f"終了：{correct} / {GEO_TOTAL} 問正解でした。新しいクイズが始まっています。"
+        for key in ("gq_items", "gq_idx", "gq_correct"):
+            session.pop(key, None)
+        return render_geoquiz(message=f"{feedback} {result}")
+    session["gq_idx"] = idx + 1
+    return render_geoquiz(message=feedback)
+
+
+@app.route("/games/geoquiz/reset", methods=["POST"])
+def geoquiz_reset():
+    for key in ("gq_items", "gq_idx", "gq_correct"):
+        session.pop(key, None)
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for("geoquiz"))
+
+
+# ============================
+# 脱出ゲーム（3部屋共通エンジン）
+# 部屋はデータ定義だけで増やせる。spot の主なキー:
+#   requires_item / requires_flag … 行動の前提（無い場合は text_fail）
+#   gives_item / sets_flag        … 成功時の入手物・進行フラグ（完了判定にも使う）
+#   text / text_again / text_fail … 初回成功時／完了後／前提不足時の文
+# ドアは door_item を持っているときだけ開き、脱出成功で scores に 1 を記録する。
+# ============================
+ESCAPE_ROOMS = {
+    "escape-cocoa": {
+        "title": "ココアの部屋からの脱出",
+        "icon": "🚪",
+        "intro": "気づくとココアの部屋に閉じ込められていた！ 部屋の中を調べて、ドアの鍵を見つけよう。",
+        "spots": [
+            {
+                "id": "desk", "label": "机の引き出しを調べる",
+                "text": "紙きれが入っていた。『本棚の、緑色の本のうしろ』と書いてある。",
+                "text_again": "机の引き出しはもう空っぽだ。",
+                "sets_flag": "paper",
+            },
+            {
+                "id": "shelf", "label": "本棚を調べる",
+                "requires_flag": "paper",
+                "text_fail": "本がぎっしり並んでいて、どこを見ればいいか分からない。",
+                "text": "緑色の本のうしろに『小さな鍵』が隠してあった！",
+                "text_again": "本棚にはもう何もない。",
+                "gives_item": "小さな鍵",
+            },
+            {
+                "id": "tin", "label": "紅茶缶を開ける",
+                "requires_item": "小さな鍵",
+                "text_fail": "紅茶缶には鍵がかかっていて開かない。",
+                "text": "小さな鍵で紅茶缶を開けると、中に『ドアの鍵』が入っていた！",
+                "text_again": "紅茶缶は空っぽだ。",
+                "gives_item": "ドアの鍵",
+            },
+        ],
+        "door_item": "ドアの鍵",
+        "door_fail": "ドアは鍵がかかっている。",
+        "clear_text": "ドアの鍵が開いた！ ココアの部屋から脱出成功！🎉",
+    },
+    "escape-science": {
+        "title": "理科室からの脱出",
+        "icon": "🧪",
+        "intro": "理科室に閉じ込められてしまった。黒板のヒントと実験道具をうまく使って脱出しよう。",
+        "spots": [
+            {
+                "id": "board", "label": "黒板を調べる",
+                "text": "黒板に『鍵は水槽の底に沈んでいる。水を入れれば浮いてくる』とチョークで書いてある。",
+                "text_again": "黒板には同じことが書いてある。",
+                "sets_flag": "board",
+            },
+            {
+                "id": "locker", "label": "ロッカーを調べる",
+                "text": "ロッカーから『ビーカー』を見つけた！",
+                "text_again": "ロッカーは空っぽだ。",
+                "gives_item": "ビーカー",
+            },
+            {
+                "id": "tap", "label": "水道で水を汲む",
+                "requires_item": "ビーカー",
+                "text_fail": "手では水を運べない。何か容器がいる。",
+                "text": "ビーカーに水を汲んだ。",
+                "text_again": "ビーカーにはもう水が入っている。",
+                "gives_item": "水の入ったビーカー",
+            },
+            {
+                "id": "tank", "label": "水槽を調べる",
+                "requires_item": "水の入ったビーカー",
+                "text_fail": "水槽は空っぽで、底に何かあるように見えるが手が届かない。",
+                "text": "水槽に水を注ぐと、底に沈んでいた『理科室の鍵』が浮いてきた！",
+                "text_again": "水槽にはもう何もない。",
+                "gives_item": "理科室の鍵",
+            },
+        ],
+        "door_item": "理科室の鍵",
+        "door_fail": "ドアは鍵がかかっている。",
+        "clear_text": "理科室の鍵が開いた！ 理科室から脱出成功！🎉",
+    },
+    "escape-cafe": {
+        "title": "喫茶店の倉庫からの脱出",
+        "icon": "☕",
+        "intro": "喫茶店の倉庫に閉じ込められてしまった。棚や缶を調べて、倉庫の鍵を探そう。",
+        "spots": [
+            {
+                "id": "shelf", "label": "棚を調べる",
+                "text": "棚の奥から『脚立』を見つけた！",
+                "text_again": "棚にはもう何もない。",
+                "gives_item": "脚立",
+            },
+            {
+                "id": "high", "label": "高い棚の缶を取る",
+                "requires_item": "脚立",
+                "text_fail": "高い棚の缶には手が届かない。",
+                "text": "脚立に登って『クッキー缶』を取った！",
+                "text_again": "高い棚にはもう何もない。",
+                "gives_item": "クッキー缶",
+            },
+            {
+                "id": "tin", "label": "クッキー缶を開ける",
+                "requires_item": "クッキー缶",
+                "text_fail": "クッキー缶を持っていない。",
+                "text": "缶の中にメモが入っていた。『倉庫の鍵は冷蔵庫の横』と書いてある。",
+                "text_again": "メモには『倉庫の鍵は冷蔵庫の横』と書いてある。",
+                "sets_flag": "fridge_hint",
+            },
+            {
+                "id": "fridge", "label": "冷蔵庫の横を調べる",
+                "requires_flag": "fridge_hint",
+                "text_fail": "冷蔵庫の横には何もなさそうだ。",
+                "text": "冷蔵庫の横の隙間に『倉庫の鍵』が落ちていた！",
+                "text_again": "冷蔵庫の横にはもう何もない。",
+                "gives_item": "倉庫の鍵",
+            },
+        ],
+        "door_item": "倉庫の鍵",
+        "door_fail": "ドアは鍵がかかっている。",
+        "clear_text": "倉庫の鍵が開いた！ 喫茶店の倉庫から脱出成功！🎉",
+    },
+}
+
+
+def escape_load(key: str):
+    return (
+        list(session.get(f"esc_{key}_items", [])),
+        list(session.get(f"esc_{key}_flags", [])),
+        bool(session.get(f"esc_{key}_done", False)),
+    )
+
+
+def escape_save(key: str, items, flags, done) -> None:
+    session[f"esc_{key}_items"] = items
+    session[f"esc_{key}_flags"] = flags
+    session[f"esc_{key}_done"] = done
+
+
+def escape_do_action(key: str, action_id: str) -> str:
+    """行動を1つ進め、結果メッセージを返す。"""
+    room = ESCAPE_ROOMS[key]
+    items, flags, done = escape_load(key)
+    if done:
+        return "もう脱出済みです。もう一度遊ぶときはリセットしてください。"
+    if action_id == "door":
+        if room["door_item"] in items:
+            escape_save(key, items, flags, True)
+            record_score(key, 1)
+            return room["clear_text"]
+        return room["door_fail"]
+    spot = next((s for s in room["spots"] if s["id"] == action_id), None)
+    if spot is None:
+        return "そこには何もない。"
+    completed = False
+    if spot.get("sets_flag"):
+        completed = spot["sets_flag"] in flags
+    elif spot.get("gives_item"):
+        completed = spot["gives_item"] in items
+    if completed:
+        return spot["text_again"]
+    if spot.get("requires_item") and spot["requires_item"] not in items:
+        return spot["text_fail"]
+    if spot.get("requires_flag") and spot["requires_flag"] not in flags:
+        return spot["text_fail"]
+    if spot.get("gives_item") and spot["gives_item"] not in items:
+        items.append(spot["gives_item"])
+    if spot.get("sets_flag") and spot["sets_flag"] not in flags:
+        flags.append(spot["sets_flag"])
+    escape_save(key, items, flags, done)
+    return spot["text"]
+
+
+ESCAPE_TEMPLATE = r"""
+  <h1>{{ icon }} {{ title }}</h1>
+  <p class="howto">{{ intro }} 気になるところを調べてアイテムを集め、鍵を見つけてドアを開けよう。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    {% if done %}
+      <p class="big">🎉 脱出成功！</p>
+    {% endif %}
+    <p class="mid">持ち物：{{ items|join('、') if items else 'なし' }}</p>
+    <form method="post" action="{{ act_url }}" class="row" style="flex-direction:column; align-items:stretch;">
+      {% for spot in spots %}
+        <button type="submit" name="action" value="{{ spot.id }}">{{ spot.label }}</button>
+      {% endfor %}
+      <button type="submit" name="action" value="door">🚪 ドアを開ける</button>
+    </form>
+    <form method="post" action="{{ reset_url }}" class="row" style="margin-top:10px;">
+      <button type="submit">最初からやり直す</button>
+    </form>
+    <p class="result">脱出成功の記録: {{ clears }} 回</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の脱出記録</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>🎉 脱出成功</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def render_escape(key: str, endpoint: str, message=None):
+    room = ESCAPE_ROOMS[key]
+    items, flags, done = escape_load(key)
+    history = recent_scores(key, 10)
+    body = render_template_string(
+        ESCAPE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        icon=room["icon"],
+        title=room["title"],
+        intro=room["intro"],
+        spots=room["spots"],
+        items=items,
+        done=done,
+        clears=len(recent_scores(key, 1000)),
+        history=history,
+        message=message,
+        act_url=url_for(f"{endpoint}_act"),
+        reset_url=url_for(f"{endpoint}_reset"),
+    )
+    return game_page(room["title"], body)
+
+
+def escape_reset_session(key: str) -> None:
+    for suffix in ("items", "flags", "done"):
+        session.pop(f"esc_{key}_{suffix}", None)
+
+
+@app.route("/games/escape-cocoa", methods=["GET"])
+def escape_cocoa():
+    return render_escape("escape-cocoa", "escape_cocoa")
+
+
+@app.route("/games/escape-cocoa/act", methods=["POST"])
+def escape_cocoa_act():
+    message = escape_do_action("escape-cocoa", request.form.get("action", "").strip())
+    return render_escape("escape-cocoa", "escape_cocoa", message=message)
+
+
+@app.route("/games/escape-cocoa/reset", methods=["POST"])
+def escape_cocoa_reset():
+    escape_reset_session("escape-cocoa")
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for("escape_cocoa"))
+
+
+@app.route("/games/escape-science", methods=["GET"])
+def escape_science():
+    return render_escape("escape-science", "escape_science")
+
+
+@app.route("/games/escape-science/act", methods=["POST"])
+def escape_science_act():
+    message = escape_do_action("escape-science", request.form.get("action", "").strip())
+    return render_escape("escape-science", "escape_science", message=message)
+
+
+@app.route("/games/escape-science/reset", methods=["POST"])
+def escape_science_reset():
+    escape_reset_session("escape-science")
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for("escape_science"))
+
+
+@app.route("/games/escape-cafe", methods=["GET"])
+def escape_cafe():
+    return render_escape("escape-cafe", "escape_cafe")
+
+
+@app.route("/games/escape-cafe/act", methods=["POST"])
+def escape_cafe_act():
+    message = escape_do_action("escape-cafe", request.form.get("action", "").strip())
+    return render_escape("escape-cafe", "escape_cafe", message=message)
+
+
+@app.route("/games/escape-cafe/reset", methods=["POST"])
+def escape_cafe_reset():
+    escape_reset_session("escape-cafe")
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for("escape_cafe"))
 
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
