@@ -405,6 +405,46 @@ GAMES = [
         "description": "喫茶店の倉庫に閉じ込められた！ 棚や缶を調べて、倉庫の鍵を探す小さな脱出ゲーム。",
         "endpoint": "escape_cafe",
     },
+    {
+        "slug": "hitblow",
+        "title": "あいことば推理",
+        "category": "脳トレ",
+        "icon": "🕵️",
+        "description": "重複のない4桁の数字を当てる推理ゲーム。ヒット（数字も場所も一致）とブロー（数字だけ一致）を手がかりに絞り込みます。",
+        "endpoint": "hitblow",
+    },
+    {
+        "slug": "shoefly",
+        "title": "くつ飛ばし",
+        "category": "アクション",
+        "icon": "👟",
+        "description": "往復するパワーゲージをタイミングよく止めて、くつを遠くへ飛ばすゲーム。飛距離（m）を競います。",
+        "endpoint": "shoefly",
+    },
+    {
+        "slug": "fishing",
+        "title": "つりぼり図鑑",
+        "category": "アクション",
+        "icon": "🎣",
+        "description": "ウキが沈む合図に素早く反応して魚を釣るゲーム。全12種の図鑑コンプリートを目指そう。反応が速いほどレアな魚に出会いやすい。",
+        "endpoint": "fishing",
+    },
+    {
+        "slug": "dodge",
+        "title": "かわしサバイバー",
+        "category": "アクション",
+        "icon": "🏃",
+        "description": "四方から迫る敵を避け続けるゲーム。時間が経つほど敵は増えて速くなります。生き残った秒数がスコアです。",
+        "endpoint": "dodge",
+    },
+    {
+        "slug": "snowball",
+        "title": "ゆき玉転がし",
+        "category": "アクション",
+        "icon": "⛄",
+        "description": "雪玉を左右に動かして岩を避けながら転がすゲーム。転がるほど玉は大きくなり、岩に当たると小さくなります。進んだ距離がスコアです。",
+        "endpoint": "snowball",
+    },
 ]
 
 
@@ -3168,6 +3208,755 @@ def escape_cafe_reset():
     flash("最初からやり直します。", "ok")
     return redirect(url_for("escape_cafe"))
 
+
+
+# ============================
+# あいことば推理（ヒット＆ブロー）
+# ============================
+def hitblow_new_secret() -> str:
+    """重複のない4桁の数字（先頭は0にしない）を返す。"""
+    first = random.choice("123456789")
+    rest = random.sample([d for d in "0123456789" if d != first], 3)
+    return first + "".join(rest)
+
+
+def hitblow_judge(secret: str, guess: str) -> tuple:
+    """(ヒット数, ブロー数) を返す。秘密・予想とも重複なしが前提。"""
+    hit = sum(1 for a, b in zip(secret, guess) if a == b)
+    blow = sum(1 for d in guess if d in secret) - hit
+    return hit, blow
+
+
+HITBLOW_TEMPLATE = r"""
+  <h1>🕵️ あいことば推理</h1>
+  <p class="howto">重複のない4桁の数字を当てる推理ゲーム。予想するたびに「ヒット」（数字も場所も一致）と「ブロー」（数字だけ一致）の数が分かります。少ない回数で当てるほど良い記録です。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">予想回数: {{ tries }} ／ ベスト（最少回数）: {{ best if best is not none else '—' }}</p>
+    <form method="post" action="{{ url_for('hitblow_guess') }}" class="row">
+      <input type="text" name="guess" inputmode="numeric" maxlength="4" required placeholder="4桁の数字" style="width:140px;" />
+      <button type="submit">推理する</button>
+    </form>
+    <form method="post" action="{{ url_for('hitblow_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">答えを変えて最初から</button>
+    </form>
+    {% if guesses %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">これまでの推理</h3>
+      <table>
+        <tr><th>予想</th><th>ヒット</th><th>ブロー</th></tr>
+        {% for g in guesses %}
+          <tr><td>{{ g[0] }}</td><td>{{ g[1] }}</td><td>{{ g[2] }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（当てるまでの回数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 回</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def render_hitblow(message=None):
+    if "hb_secret" not in session:
+        session["hb_secret"] = hitblow_new_secret()
+        session["hb_guesses"] = []
+    guesses = session.get("hb_guesses", [])
+    body = render_template_string(
+        HITBLOW_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        tries=len(guesses),
+        guesses=guesses,
+        best=best_score("hitblow", "min"),
+        history=recent_scores("hitblow", 10),
+        message=message,
+    )
+    return game_page("あいことば推理", body)
+
+
+@app.route("/games/hitblow", methods=["GET"])
+def hitblow():
+    return render_hitblow()
+
+
+@app.route("/games/hitblow/guess", methods=["POST"])
+def hitblow_guess():
+    if "hb_secret" not in session:
+        session["hb_secret"] = hitblow_new_secret()
+        session["hb_guesses"] = []
+    raw = request.form.get("guess", "").strip()
+    if len(raw) != 4 or not raw.isdigit() or len(set(raw)) != 4:
+        flash("重複のない4桁の数字を入力してください。", "ng")
+        return render_hitblow()
+    secret = str(session["hb_secret"])
+    hit, blow = hitblow_judge(secret, raw)
+    guesses = list(session.get("hb_guesses", []))
+    guesses.append([raw, hit, blow])
+    session["hb_guesses"] = guesses
+    tries = len(guesses)
+    if hit == 4:
+        record_score("hitblow", tries)
+        session.pop("hb_secret", None)
+        session.pop("hb_guesses", None)
+        return render_hitblow(message=f"🎉 正解！ 答えは {secret} でした（{tries} 回で的中）。新しいゲームが始まっています。")
+    return render_hitblow(message=f"{raw} … {hit} ヒット / {blow} ブロー")
+
+
+@app.route("/games/hitblow/reset", methods=["POST"])
+def hitblow_reset():
+    session.pop("hb_secret", None)
+    session.pop("hb_guesses", None)
+    flash("答えを変えました。", "ok")
+    return redirect(url_for("hitblow"))
+
+
+# ============================
+# くつ飛ばし
+# ============================
+SHOEFLY_TEMPLATE = r"""
+  <h1>👟 くつ飛ばし</h1>
+  <p class="howto">パワーゲージが左右に往復します。「飛ばす！」を押した瞬間のパワーで飛距離が決まります。パワーが大きいほど遠くへ飛びます。</p>
+  __FLASH__
+  <div class="card">
+    <div style="border:1px solid #ccc; border-radius:8px; height:26px; overflow:hidden; background:#fafafa;">
+      <div id="gauge" style="height:100%; width:0%; background:#7ab87a;"></div>
+    </div>
+    <p class="mid">パワー: <span id="powerLabel">0</span></p>
+    <div class="row">
+      <button id="throwBtn" type="button">飛ばす！</button>
+      <button id="againBtn" type="button" disabled>もう一度</button>
+    </div>
+    <p class="result" id="message">ベスト（最長飛距離）: {{ best_disp if best_disp is not none else '—' }}{% if best_disp is not none %} m{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（飛距離）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ (s.score / 10)|round(1) }} m</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var gauge = document.getElementById("gauge");
+  var powerLabel = document.getElementById("powerLabel");
+  var message = document.getElementById("message");
+  var throwBtn = document.getElementById("throwBtn");
+  var againBtn = document.getElementById("againBtn");
+  var running = true, startedAt = performance.now();
+  function currentPower(){
+    var phase = ((performance.now() - startedAt) % 1400) / 1400;
+    var p = phase < 0.5 ? phase * 200 : 200 - phase * 200;
+    return Math.round(p);
+  }
+  function tick(){
+    if (!running) { return; }
+    var p = currentPower();
+    gauge.style.width = p + "%";
+    gauge.style.background = p >= 80 ? "#e8a13a" : "#7ab87a";
+    powerLabel.textContent = String(p);
+    requestAnimationFrame(tick);
+  }
+  tick();
+  function throwShoe(){
+    if (!running) { return; }
+    running = false;
+    var p = currentPower();
+    gauge.style.width = p + "%";
+    powerLabel.textContent = String(p);
+    var dist = Math.round(((p * p) / 100 * 0.42 + p * 0.08) * 10) / 10;
+    throwBtn.disabled = true;
+    againBtn.disabled = false;
+    message.textContent = "飛距離: " + dist.toFixed(1) + " m！";
+    var form = new FormData();
+    form.append("dist10", String(Math.round(dist * 10)));
+    fetch("{{ url_for('shoefly_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          message.textContent = "飛距離: " + dist.toFixed(1) + " m！／ベスト（最長飛距離）: " + (d.best / 10).toFixed(1) + " m";
+        }
+      })
+      .catch(function(){});
+  }
+  throwBtn.addEventListener("click", throwShoe);
+  againBtn.addEventListener("click", function(){
+    running = true;
+    startedAt = performance.now();
+    throwBtn.disabled = false;
+    againBtn.disabled = true;
+    message.textContent = "ゲージが動いています。「飛ばす！」で止めてね";
+    tick();
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/shoefly", methods=["GET"])
+def shoefly():
+    best = best_score("shoefly", "max")
+    body = render_template_string(
+        SHOEFLY_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best_disp=(round(best / 10, 1) if best is not None else None),
+        history=recent_scores("shoefly", 10),
+    )
+    return game_page("くつ飛ばし", body)
+
+
+@app.route("/games/shoefly/score", methods=["POST"])
+def shoefly_score():
+    raw = request.form.get("dist10", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 600):
+        return {"ok": False, "error": "invalid dist10"}, 400
+    record_score("shoefly", int(raw))
+    return {"ok": True, "best": best_score("shoefly", "max")}
+
+
+
+# ============================
+# つりぼり図鑑
+# ============================
+FISH_KINDS = [
+    {"name": "フナ", "emoji": "🐟", "rarity": "ふつう", "points": 10, "weight": 30},
+    {"name": "オイカワ", "emoji": "🐟", "rarity": "ふつう", "points": 10, "weight": 30},
+    {"name": "ブルーギル", "emoji": "🐠", "rarity": "ふつう", "points": 10, "weight": 30},
+    {"name": "タナゴ", "emoji": "🐠", "rarity": "ふつう", "points": 15, "weight": 26},
+    {"name": "ブラックバス", "emoji": "🐟", "rarity": "めずらしい", "points": 30, "weight": 12},
+    {"name": "ナマズ", "emoji": "🐟", "rarity": "めずらしい", "points": 30, "weight": 12},
+    {"name": "ウナギ", "emoji": "🐟", "rarity": "めずらしい", "points": 40, "weight": 10},
+    {"name": "ニジマス", "emoji": "🐟", "rarity": "レア", "points": 80, "weight": 4},
+    {"name": "イトウ", "emoji": "🐟", "rarity": "レア", "points": 100, "weight": 3},
+    {"name": "キンコイ", "emoji": "🎏", "rarity": "レア", "points": 120, "weight": 3},
+    {"name": "リュウグウノツカイ", "emoji": "🐉", "rarity": "超レア", "points": 200, "weight": 1},
+    {"name": "シーラカンス", "emoji": "🦕", "rarity": "超レア", "points": 300, "weight": 1},
+]
+FISH_ESCAPE_MS = 1200
+
+
+def fishing_pick(ms: int) -> int:
+    """反応が速いほどレアな魚の重みを上げる抽選。魚のインデックスを返す。"""
+    if ms <= 300:
+        bonus = 3.0
+    elif ms <= 600:
+        bonus = 1.8
+    else:
+        bonus = 1.0
+    weights = []
+    for fish in FISH_KINDS:
+        w = float(fish["weight"])
+        if fish["rarity"] in ("レア", "超レア"):
+            w *= bonus
+        weights.append(w)
+    return random.choices(range(len(FISH_KINDS)), weights=weights)[0]
+
+
+FISHING_TEMPLATE = r"""
+  <h1>🎣 つりぼり図鑑</h1>
+  <p class="howto">「つりをする」を押して待ち、ウキが沈んだら（画面の色が変わったら）すぐに「釣り上げる」を押そう。反応が速いほどレアな魚が釣れやすく、遅いと逃げられます。全 {{ total }} 種の図鑑コンプリートを目指そう。</p>
+  __FLASH__
+  <div class="card">
+    <div id="stage" style="border-radius:12px; padding:40px 12px; text-align:center; font-size:22px; background:#eef5fa; user-select:none;">🎣 準備OK</div>
+    <div class="row" style="margin-top:12px;">
+      <button id="castBtn" type="button">つりをする</button>
+      <button id="reelBtn" type="button" disabled>釣り上げる</button>
+    </div>
+    <p class="result" id="message">ベスト（最高ポイントの魚）: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近釣った魚（ポイント）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 8px;">📖 図鑑（<span id="kindCount">{{ kinds }}</span> / {{ total }} 種）</h3>
+    <table>
+      {% for f in fish_list %}
+        <tr>
+          <td>{% if f.caught %}{{ f.emoji }} {{ f.name }}{% else %}❓ ？？？{% endif %}</td>
+          <td class="muted">{{ f.rarity }}</td>
+          <td class="muted">{% if f.caught %}{{ f.points }} 点{% endif %}</td>
+        </tr>
+      {% endfor %}
+    </table>
+    <form method="post" action="{{ url_for('fishing_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">図鑑をリセット</button>
+    </form>
+  </div>
+<script>
+(function(){
+  var stage = document.getElementById("stage");
+  var message = document.getElementById("message");
+  var castBtn = document.getElementById("castBtn");
+  var reelBtn = document.getElementById("reelBtn");
+  var kindCount = document.getElementById("kindCount");
+  var state = "idle"; // idle | waiting | signal
+  var waitTimer = null, escapeTimer = null, signalAt = 0;
+  function setStage(bg, text){ stage.style.background = bg; stage.textContent = text; }
+  function sendCast(ms){
+    var form = new FormData();
+    form.append("ms", String(ms));
+    fetch("{{ url_for('fishing_cast') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        state = "idle";
+        castBtn.disabled = false;
+        reelBtn.disabled = true;
+        if (d && d.ok && d.caught) {
+          setStage("#f3fff3", d.emoji + " " + d.name + " が釣れた！");
+          message.textContent = d.name + "（" + d.rarity + "／" + d.points + " 点）" + (d.is_new ? " 図鑑に新登録！" : "") + " ／ ベスト: " + d.best + " 点";
+          kindCount.textContent = String(d.kinds);
+        } else if (d && d.ok) {
+          setStage("#eef5fa", "💨 逃げられた…");
+          message.textContent = "逃げられてしまった。もう一度挑戦しよう";
+        } else {
+          setStage("#eef5fa", "🎣 準備OK");
+        }
+      })
+      .catch(function(){
+        state = "idle";
+        castBtn.disabled = false;
+        reelBtn.disabled = true;
+      });
+  }
+  castBtn.addEventListener("click", function(){
+    if (state !== "idle") { return; }
+    state = "waiting";
+    castBtn.disabled = true;
+    reelBtn.disabled = false;
+    setStage("#eef5fa", "🎣 ウキを見ていて…");
+    waitTimer = setTimeout(function(){
+      state = "signal";
+      signalAt = performance.now();
+      setStage("#ffe9a8", "‼️ ウキが沈んだ！今だ！");
+      escapeTimer = setTimeout(function(){
+        if (state === "signal") { sendCast(9999); }
+      }, {{ escape_ms }});
+    }, 1500 + Math.random() * 3000);
+  });
+  reelBtn.addEventListener("click", function(){
+    if (state === "waiting") {
+      clearTimeout(waitTimer);
+      state = "idle";
+      castBtn.disabled = false;
+      reelBtn.disabled = true;
+      setStage("#fff3f3", "まだだよ！ウキが沈んでから押してね");
+    } else if (state === "signal") {
+      clearTimeout(escapeTimer);
+      var ms = Math.round(performance.now() - signalAt);
+      sendCast(ms);
+    }
+  });
+})();
+</script>
+""".replace("{{ escape_ms }}", str(FISH_ESCAPE_MS))
+
+
+def render_fishing():
+    caught = session.get("fish_caught", [])
+    fish_list = [
+        {**fish, "caught": i in caught} for i, fish in enumerate(FISH_KINDS)
+    ]
+    body = render_template_string(
+        FISHING_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        total=len(FISH_KINDS),
+        kinds=len(caught),
+        fish_list=fish_list,
+        best=best_score("fishing", "max"),
+        history=recent_scores("fishing", 10),
+    )
+    return game_page("つりぼり図鑑", body)
+
+
+@app.route("/games/fishing", methods=["GET"])
+def fishing():
+    return render_fishing()
+
+
+@app.route("/games/fishing/cast", methods=["POST"])
+def fishing_cast():
+    raw = request.form.get("ms", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 10000):
+        return {"ok": False, "error": "invalid ms"}, 400
+    ms = int(raw)
+    if ms > FISH_ESCAPE_MS:
+        return {"ok": True, "caught": False}
+    idx = fishing_pick(ms)
+    fish = FISH_KINDS[idx]
+    caught = list(session.get("fish_caught", []))
+    is_new = idx not in caught
+    if is_new:
+        caught.append(idx)
+        session["fish_caught"] = caught
+    record_score("fishing", int(fish["points"]))
+    return {
+        "ok": True,
+        "caught": True,
+        "name": fish["name"],
+        "emoji": fish["emoji"],
+        "rarity": fish["rarity"],
+        "points": int(fish["points"]),
+        "is_new": is_new,
+        "kinds": len(caught),
+        "total": len(FISH_KINDS),
+        "best": best_score("fishing", "max"),
+    }
+
+
+@app.route("/games/fishing/reset", methods=["POST"])
+def fishing_reset():
+    session.pop("fish_caught", None)
+    flash("図鑑をリセットしました。", "ok")
+    return redirect(url_for("fishing"))
+
+
+
+# ============================
+# かわしサバイバー
+# ============================
+DODGE_TEMPLATE = r"""
+  <h1>🏃 かわしサバイバー</h1>
+  <p class="howto">青い丸（自分）をマウス／タッチ／矢印キーで動かし、四方から迫る赤い四角を避け続けよう。時間が経つほど敵は増えて速くなります。ぶつかるまでの秒数がスコアです。</p>
+  __FLASH__
+  <div class="card">
+    <canvas id="cv" width="480" height="360" style="width:100%; max-width:480px; display:block; margin:0 auto; background:#222; border-radius:12px; touch-action:none;"></canvas>
+    <p class="mid">経過: <span id="clock">0.0</span> 秒</p>
+    <div class="row">
+      <button id="startBtn" type="button">スタート</button>
+    </div>
+    <p class="result" id="message">ベスト（最長生存）: {{ best_disp if best_disp is not none else '—' }}{% if best_disp is not none %} 秒{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（生存秒数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ (s.score / 10)|round(1) }} 秒</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var cv = document.getElementById("cv");
+  var ctx = cv.getContext("2d");
+  var clock = document.getElementById("clock");
+  var message = document.getElementById("message");
+  var startBtn = document.getElementById("startBtn");
+  var W = cv.width, H = cv.height;
+  var playing = false, raf = null, startedAt = 0, lastSpawn = 0;
+  var player = {x: W / 2, y: H / 2, r: 12};
+  var target = null, keys = {}, enemies = [];
+  function spawnEnemy(t){
+    var side = Math.floor(Math.random() * 4);
+    var x = 0, y = 0;
+    if (side === 0) { x = Math.random() * W; y = -16; }
+    else if (side === 1) { x = Math.random() * W; y = H + 16; }
+    else if (side === 2) { x = -16; y = Math.random() * H; }
+    else { x = W + 16; y = Math.random() * H; }
+    var elapsed = t / 1000;
+    var speed = 1.1 + Math.random() * 0.9 + elapsed * 0.012;
+    var dx = player.x - x, dy = player.y - y;
+    var len = Math.sqrt(dx * dx + dy * dy) || 1;
+    var jitter = 0.35;
+    var ang = Math.atan2(dy, dx) + (Math.random() - 0.5) * jitter;
+    enemies.push({x: x, y: y, vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed, s: 13 + Math.random() * 7});
+  }
+  function draw(){
+    ctx.fillStyle = "#222";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#e85d5d";
+    for (var i = 0; i < enemies.length; i++) {
+      var e = enemies[i];
+      ctx.fillRect(e.x - e.s / 2, e.y - e.s / 2, e.s, e.s);
+    }
+    ctx.fillStyle = "#5da8e8";
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  function gameOver(elapsed){
+    playing = false;
+    cancelAnimationFrame(raf);
+    var sec = elapsed / 1000;
+    clock.textContent = sec.toFixed(1);
+    draw();
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#fff";
+    ctx.font = "24px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("ぶつかった！ " + sec.toFixed(1) + " 秒", W / 2, H / 2);
+    startBtn.disabled = false;
+    startBtn.textContent = "もう一度";
+    var form = new FormData();
+    form.append("sec10", String(Math.floor(elapsed / 100)));
+    fetch("{{ url_for('dodge_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          message.textContent = "記録: " + sec.toFixed(1) + " 秒／ベスト（最長生存）: " + (d.best / 10).toFixed(1) + " 秒";
+        }
+      })
+      .catch(function(){});
+  }
+  function loop(now){
+    if (!playing) { return; }
+    var elapsed = now - startedAt;
+    if (target) { player.x = target.x; player.y = target.y; }
+    var kv = 4;
+    if (keys["ArrowLeft"]) { player.x -= kv; }
+    if (keys["ArrowRight"]) { player.x += kv; }
+    if (keys["ArrowUp"]) { player.y -= kv; }
+    if (keys["ArrowDown"]) { player.y += kv; }
+    player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+    player.y = Math.max(player.r, Math.min(H - player.r, player.y));
+    var interval = Math.max(260, 750 - elapsed / 100);
+    if (now - lastSpawn > interval) {
+      spawnEnemy(elapsed);
+      lastSpawn = now;
+    }
+    for (var i = enemies.length - 1; i >= 0; i--) {
+      var e = enemies[i];
+      e.x += e.vx;
+      e.y += e.vy;
+      if (e.x < -40 || e.x > W + 40 || e.y < -40 || e.y > H + 40) {
+        enemies.splice(i, 1);
+        continue;
+      }
+      var dx = e.x - player.x, dy = e.y - player.y;
+      if (Math.sqrt(dx * dx + dy * dy) < player.r + e.s / 2) {
+        gameOver(elapsed);
+        return;
+      }
+    }
+    clock.textContent = (elapsed / 1000).toFixed(1);
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+  function toCanvas(ev){
+    var rect = cv.getBoundingClientRect();
+    var cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left;
+    var cy = (ev.touches ? ev.touches[0].clientY : ev.clientY) - rect.top;
+    return {x: cx * W / rect.width, y: cy * H / rect.height};
+  }
+  cv.addEventListener("mousemove", function(ev){ target = toCanvas(ev); });
+  cv.addEventListener("touchmove", function(ev){ ev.preventDefault(); target = toCanvas(ev); }, {passive: false});
+  document.addEventListener("keydown", function(ev){ keys[ev.key] = true; });
+  document.addEventListener("keyup", function(ev){ keys[ev.key] = false; });
+  draw();
+  startBtn.addEventListener("click", function(){
+    enemies = [];
+    player.x = W / 2; player.y = H / 2; target = null;
+    startedAt = performance.now();
+    lastSpawn = 0;
+    playing = true;
+    startBtn.disabled = true;
+    message.textContent = "避け続けよう！";
+    raf = requestAnimationFrame(loop);
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/dodge", methods=["GET"])
+def dodge():
+    best = best_score("dodge", "max")
+    body = render_template_string(
+        DODGE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best_disp=(round(best / 10, 1) if best is not None else None),
+        history=recent_scores("dodge", 10),
+    )
+    return game_page("かわしサバイバー", body)
+
+
+@app.route("/games/dodge/score", methods=["POST"])
+def dodge_score():
+    raw = request.form.get("sec10", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 36000):
+        return {"ok": False, "error": "invalid sec10"}, 400
+    record_score("dodge", int(raw))
+    return {"ok": True, "best": best_score("dodge", "max")}
+
+
+# ============================
+# ゆき玉転がし
+# ============================
+SNOWBALL_TEMPLATE = r"""
+  <h1>⛄ ゆき玉転がし</h1>
+  <p class="howto">雪玉は自動で転がり続けます。←→キー／タッチで左右に動かして岩を避けよう。転がるほど玉は大きくなりますが、岩に当たると小さくなり、小さくなりすぎると終わりです。進んだ距離がスコアです。</p>
+  __FLASH__
+  <div class="card">
+    <canvas id="cv" width="480" height="360" style="width:100%; max-width:480px; display:block; margin:0 auto; background:#eef5fa; border-radius:12px; touch-action:none;"></canvas>
+    <p class="mid">距離: <span id="dist">0</span> m ／ 玉の大きさ: <span id="size">14</span></p>
+    <div class="row">
+      <button id="startBtn" type="button">スタート</button>
+    </div>
+    <p class="result" id="message">ベスト（最長距離）: {{ best if best is not none else '—' }}{% if best is not none %} m{% endif %}</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（距離）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} m</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var cv = document.getElementById("cv");
+  var ctx = cv.getContext("2d");
+  var distLabel = document.getElementById("dist");
+  var sizeLabel = document.getElementById("size");
+  var message = document.getElementById("message");
+  var startBtn = document.getElementById("startBtn");
+  var W = cv.width, H = cv.height;
+  var playing = false, raf = null;
+  var ball = {x: W / 2, y: H - 80, r: 14};
+  var targetX = null, keys = {}, rocks = [], flakes = [];
+  var distancePx = 0, frame = 0, invuln = 0;
+  for (var i = 0; i < 40; i++) {
+    flakes.push({x: Math.random() * W, y: Math.random() * H, r: 1 + Math.random() * 2});
+  }
+  function draw(){
+    ctx.fillStyle = "#eef5fa";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#fff";
+    for (var i = 0; i < flakes.length; i++) {
+      var f = flakes[i];
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = "#8a8a8a";
+    for (var j = 0; j < rocks.length; j++) {
+      var rk = rocks[j];
+      ctx.beginPath();
+      ctx.arc(rk.x, rk.y, rk.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (!(invuln > 0 && frame % 6 < 3)) {
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = "#9db8cc";
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+  function gameOver(meters){
+    playing = false;
+    cancelAnimationFrame(raf);
+    ctx.fillStyle = "rgba(0,0,0,0.45)";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = "#fff";
+    ctx.font = "24px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("玉が小さくなりすぎた！ " + meters + " m", W / 2, H / 2);
+    startBtn.disabled = false;
+    startBtn.textContent = "もう一度";
+    var form = new FormData();
+    form.append("meters", String(meters));
+    fetch("{{ url_for('snowball_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          message.textContent = "記録: " + meters + " m／ベスト（最長距離）: " + d.best + " m";
+        }
+      })
+      .catch(function(){});
+  }
+  function loop(){
+    if (!playing) { return; }
+    frame++;
+    var speed = 2.2 + distancePx / 4000;
+    distancePx += speed;
+    ball.r = Math.min(42, ball.r + speed * 0.006);
+    if (invuln > 0) { invuln--; }
+    if (targetX !== null) {
+      var dx = targetX - ball.x;
+      ball.x += Math.max(-7, Math.min(7, dx));
+    }
+    if (keys["ArrowLeft"]) { ball.x -= 5; }
+    if (keys["ArrowRight"]) { ball.x += 5; }
+    ball.x = Math.max(ball.r, Math.min(W - ball.r, ball.x));
+    for (var i = 0; i < flakes.length; i++) {
+      flakes[i].y += speed;
+      if (flakes[i].y > H) { flakes[i].y = -2; flakes[i].x = Math.random() * W; }
+    }
+    if (frame % 48 === 0 && Math.random() < 0.85) {
+      rocks.push({x: 20 + Math.random() * (W - 40), y: -20, r: 9 + Math.random() * 8});
+    }
+    for (var j = rocks.length - 1; j >= 0; j--) {
+      var rk = rocks[j];
+      rk.y += speed;
+      if (rk.y > H + 24) { rocks.splice(j, 1); continue; }
+      var ddx = rk.x - ball.x, ddy = rk.y - ball.y;
+      if (invuln === 0 && Math.sqrt(ddx * ddx + ddy * ddy) < ball.r + rk.r * 0.7) {
+        rocks.splice(j, 1);
+        ball.r -= 7;
+        invuln = 50;
+        if (ball.r < 9) {
+          draw();
+          gameOver(Math.floor(distancePx / 40));
+          return;
+        }
+      }
+    }
+    distLabel.textContent = String(Math.floor(distancePx / 40));
+    sizeLabel.textContent = String(Math.round(ball.r));
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+  function toCanvasX(ev){
+    var rect = cv.getBoundingClientRect();
+    var cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left;
+    return cx * W / rect.width;
+  }
+  cv.addEventListener("mousemove", function(ev){ targetX = toCanvasX(ev); });
+  cv.addEventListener("touchmove", function(ev){ ev.preventDefault(); targetX = toCanvasX(ev); }, {passive: false});
+  document.addEventListener("keydown", function(ev){ keys[ev.key] = true; });
+  document.addEventListener("keyup", function(ev){ keys[ev.key] = false; });
+  draw();
+  startBtn.addEventListener("click", function(){
+    rocks = [];
+    ball.x = W / 2; ball.r = 14; targetX = null;
+    distancePx = 0; frame = 0; invuln = 0;
+    playing = true;
+    startBtn.disabled = true;
+    message.textContent = "岩を避けて転がそう！";
+    raf = requestAnimationFrame(loop);
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/snowball", methods=["GET"])
+def snowball():
+    body = render_template_string(
+        SNOWBALL_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("snowball", "max"),
+        history=recent_scores("snowball", 10),
+    )
+    return game_page("ゆき玉転がし", body)
+
+
+@app.route("/games/snowball/score", methods=["POST"])
+def snowball_score():
+    raw = request.form.get("meters", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100000):
+        return {"ok": False, "error": "invalid meters"}, 400
+    record_score("snowball", int(raw))
+    return {"ok": True, "best": best_score("snowball", "max")}
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
 init_db()
