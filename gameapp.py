@@ -477,6 +477,14 @@ GAMES = [
         "description": "勉強の進め方を聞く8つの質問で、あなたの学習タイプを診断します。タイプに合った小さな勉強のコツつき。",
         "endpoint": "shindan_study",
     },
+    {
+        "slug": "dotboard",
+        "title": "ドット絵ボード",
+        "category": "創作",
+        "icon": "👾",
+        "description": "単体ツール「dotboard」のポータル版。16×16のキャンバスにドット絵を描けます。お題ボタンで題材を引いて、「描けた！」で完成を記録。PNG保存もできます。",
+        "endpoint": "dotboard",
+    },
 ]
 
 
@@ -4703,6 +4711,151 @@ def shindan_study_answer():
 @app.route("/games/shindan-study/reset", methods=["POST"])
 def shindan_study_reset():
     return shindan_handle_reset(STUDY_CFG)
+
+
+# ============================
+# ドット絵ボード
+# 単体ツール「dotboard」のポータル版。描画はブラウザ側で行い、
+# サーバーは「描けた！」の完成記録（セッション内の完成数）だけを持つ。
+# ============================
+DOTBOARD_COLORS = [
+    "#000000", "#ffffff", "#e03131", "#f08c00",
+    "#ffd43b", "#2f9e44", "#1971c2", "#74c0fc",
+    "#9775fa", "#f783ac", "#a0522d", "#868e96",
+]
+
+DOTBOARD_THEMES = [
+    "りんご", "ねこ", "さかな", "くるま",
+    "はな", "ほし", "つき", "ケーキ",
+    "ロボット", "きのこ", "とり", "いえ",
+    "でんしゃ", "かさ", "ゆきだるま", "かめ",
+]
+
+DOTBOARD_TEMPLATE = r"""
+  <h1>👾 ドット絵ボード</h1>
+  <p class="howto">16×16 のキャンバスにドット絵を描くボードです。色を選んで、クリックやドラッグで描いてください。「お題を引く」で題材を決めて描くのもおすすめ。描けたら「描けた！」で完成を記録できます（お題がなくても自由作品でOK）。</p>
+  __FLASH__
+  <div class="card">
+    <p class="mid">🎲 お題: <span id="themeLabel">まだ引いていません</span></p>
+    <div class="row" style="margin-bottom:12px;">
+      <button id="themeBtn" type="button">お題を引く</button>
+    </div>
+    <div id="palette" style="text-align:center; margin-bottom:10px;">
+      {% for c in colors %}<button type="button" class="dotswatch" data-color="{{ c }}" title="{{ c }}" style="background:{{ c }}; width:30px; height:30px; padding:0; border-radius:6px; margin:2px;"></button>{% endfor %}
+      <button type="button" id="eraser" style="margin:2px;">🧽 消しゴム</button>
+    </div>
+    <div style="text-align:center;">
+      <canvas id="board" width="16" height="16" style="width:min(384px, 90vw); height:min(384px, 90vw); border:1px solid #999; image-rendering:pixelated; touch-action:none; background:#fff;"></canvas>
+    </div>
+    <div class="row" style="margin-top:12px;">
+      <button id="clearBtn" type="button">ぜんぶ消す</button>
+      <button id="saveBtn" type="button">PNGで保存</button>
+      <button id="doneBtn" type="button">🎉 描けた！</button>
+    </div>
+    <p class="result" id="doneMessage">完成した作品数: <span id="doneCount">{{ session_count }}</span> ／ ベスト（完成作品数）: <span id="bestCount">{{ best if best is not none else '—' }}</span></p>
+    <p class="muted" style="text-align:center;">完成数はこのブラウザのセッションで数えます。ベストはサーバーに残りますが、再デプロイ等で消えることがあります。</p>
+  </div>
+<script>
+(function(){
+  var themes = {{ themes|tojson }};
+  var canvas = document.getElementById("board");
+  var ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, 16, 16);
+  var color = "{{ colors[0] }}";
+  var drawing = false;
+  var swatches = Array.prototype.slice.call(document.querySelectorAll(".dotswatch"));
+  function markSelected(target){
+    swatches.forEach(function(s){ s.style.outline = (s === target) ? "3px solid #333" : ""; });
+    document.getElementById("eraser").style.outline = (target === "eraser") ? "3px solid #333" : "";
+  }
+  markSelected(swatches[0]);
+  document.getElementById("palette").addEventListener("click", function(e){
+    var btn = e.target.closest(".dotswatch");
+    if (btn) {
+      color = btn.dataset.color;
+      markSelected(btn);
+    }
+  });
+  document.getElementById("eraser").addEventListener("click", function(){
+    color = "#ffffff";
+    markSelected("eraser");
+  });
+  function pos(clientX, clientY){
+    var r = canvas.getBoundingClientRect();
+    var x = Math.floor((clientX - r.left) / r.width * 16);
+    var y = Math.floor((clientY - r.top) / r.height * 16);
+    return [x, y];
+  }
+  function paint(clientX, clientY){
+    var p = pos(clientX, clientY);
+    if (p[0] < 0 || p[0] > 15 || p[1] < 0 || p[1] > 15) { return; }
+    ctx.fillStyle = color;
+    ctx.fillRect(p[0], p[1], 1, 1);
+  }
+  canvas.addEventListener("mousedown", function(e){ drawing = true; paint(e.clientX, e.clientY); });
+  canvas.addEventListener("mousemove", function(e){ if (drawing) { paint(e.clientX, e.clientY); } });
+  window.addEventListener("mouseup", function(){ drawing = false; });
+  canvas.addEventListener("touchstart", function(e){ e.preventDefault(); paint(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false});
+  canvas.addEventListener("touchmove", function(e){ e.preventDefault(); paint(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false});
+  document.getElementById("themeBtn").addEventListener("click", function(){
+    var t = themes[Math.floor(Math.random() * themes.length)];
+    document.getElementById("themeLabel").textContent = t;
+  });
+  document.getElementById("clearBtn").addEventListener("click", function(){
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, 16, 16);
+  });
+  document.getElementById("saveBtn").addEventListener("click", function(){
+    var out = document.createElement("canvas");
+    out.width = 384; out.height = 384;
+    var octx = out.getContext("2d");
+    octx.imageSmoothingEnabled = false;
+    octx.drawImage(canvas, 0, 0, 384, 384);
+    var a = document.createElement("a");
+    a.href = out.toDataURL("image/png");
+    a.download = "dotboard.png";
+    a.click();
+  });
+  document.getElementById("doneBtn").addEventListener("click", function(){
+    fetch("{{ url_for('dotboard_complete') }}", {method: "POST"})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          document.getElementById("doneCount").textContent = String(d.count);
+          document.getElementById("bestCount").textContent = String(d.best);
+          document.getElementById("doneMessage").firstChild.textContent = "🎉 完成！ 完成した作品数: ";
+        }
+      })
+      .catch(function(){});
+  });
+})();
+</script>
+"""
+
+
+def render_dotboard() -> str:
+    body = render_template_string(
+        DOTBOARD_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        colors=DOTBOARD_COLORS,
+        themes=DOTBOARD_THEMES,
+        best=best_score("dotboard", "max"),
+        session_count=int(session.get("dotboard_done", 0)),
+    )
+    return game_page("ドット絵ボード", body)
+
+
+@app.route("/games/dotboard", methods=["GET"])
+def dotboard():
+    return render_dotboard()
+
+
+@app.route("/games/dotboard/complete", methods=["POST"])
+def dotboard_complete():
+    count = int(session.get("dotboard_done", 0)) + 1
+    session["dotboard_done"] = count
+    record_score("dotboard", count)
+    return {"ok": True, "best": best_score("dotboard", "max"), "count": count}
 
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）

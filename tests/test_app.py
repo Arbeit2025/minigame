@@ -1,5 +1,7 @@
 import importlib.util
+import json
 import os
+import re
 import sqlite3
 import tempfile
 import unittest
@@ -102,7 +104,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("32 本", body)
+        self.assertIn("33 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -413,8 +415,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("32 本", body)
-        self.assertEqual(len(self.mod.GAMES), 32)
+        self.assertIn("33 本", body)
+        self.assertEqual(len(self.mod.GAMES), 33)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -537,8 +539,8 @@ class FiveMoreGamesTest(MinigameTest):
         for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
                       "かわしサバイバー", "ゆき玉転がし"):
             self.assertIn(title, body)
-        self.assertIn("32 本", body)
-        self.assertEqual(len(self.mod.GAMES), 32)
+        self.assertIn("33 本", body)
+        self.assertEqual(len(self.mod.GAMES), 33)
 
     # ---- hitblow ----
     def test_hitblow_page_ok(self):
@@ -672,8 +674,8 @@ class ZhGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/zhgacha", body)
         self.assertIn("中国語単語ガチャ", body)
-        self.assertIn("32 本", body)
-        self.assertEqual(len(self.mod.GAMES), 32)
+        self.assertIn("33 本", body)
+        self.assertEqual(len(self.mod.GAMES), 33)
         self.assertEqual(len(self.mod.ZH_WORDS), 110)
 
     def test_zhgacha_page_ok(self):
@@ -750,8 +752,8 @@ class ShindanGamesTest(MinigameTest):
             self.assertIn(f"/games/{slug}", body)
         for title in ("三人娘タイプ診断", "今日のおやつ診断", "べんきょうタイプ診断"):
             self.assertIn(title, body)
-        self.assertIn("32 本", body)
-        self.assertEqual(len(self.mod.GAMES), 32)
+        self.assertIn("33 本", body)
+        self.assertEqual(len(self.mod.GAMES), 33)
 
     # ---- 三人娘タイプ診断 ----
     def test_trio_page_ok(self):
@@ -865,6 +867,75 @@ class ShindanGamesTest(MinigameTest):
             self.assertNotIn("sstudy_idx", sess)
         body = self.client.get("/games/shindan-study").get_data(as_text=True)
         self.assertIn("第 1 問 ／ 全 8 問", body)
+
+
+class DotboardTest(MinigameTest):
+    def test_portal_lists_dotboard(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn("/games/dotboard", body)
+        self.assertIn("ドット絵ボード", body)
+        self.assertIn("33 本", body)
+        self.assertEqual(len(self.mod.GAMES), 33)
+
+    def test_dotboard_page_ok(self):
+        res = self.client.get("/games/dotboard")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("ドット絵ボード", body)
+        # 16×16 キャンバス
+        self.assertIn('<canvas id="board" width="16" height="16"', body)
+        # 12色パレット（全色がスウォッチとして並ぶ）
+        self.assertEqual(len(self.mod.DOTBOARD_COLORS), 12)
+        for color in self.mod.DOTBOARD_COLORS:
+            self.assertIn(f'data-color="{color}"', body)
+        # 消しゴム・全消し・PNG保存・描けた！・お題ボタン
+        self.assertIn('id="eraser"', body)
+        self.assertIn("消しゴム", body)
+        self.assertIn("ぜんぶ消す", body)
+        self.assertIn("PNGで保存", body)
+        self.assertIn("描けた！", body)
+        self.assertIn('id="themeBtn"', body)
+        self.assertIn("お題を引く", body)
+        # お題は15〜20個で重複なし、ページ内のJSへもそのまま渡っている
+        # （tojson で \uXXXX 形式にエスケープされるため、デコードして照合する）
+        self.assertGreaterEqual(len(self.mod.DOTBOARD_THEMES), 15)
+        self.assertLessEqual(len(self.mod.DOTBOARD_THEMES), 20)
+        self.assertEqual(
+            len(self.mod.DOTBOARD_THEMES), len(set(self.mod.DOTBOARD_THEMES))
+        )
+        m = re.search(r"var themes = (\[.*?\]);", body)
+        self.assertIsNotNone(m)
+        self.assertEqual(json.loads(m.group(1)), self.mod.DOTBOARD_THEMES)
+
+    def test_dotboard_complete_records(self):
+        res = self.client.post("/games/dotboard/complete")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.get_json(), {"ok": True, "best": 1, "count": 1})
+        rows = self.query("SELECT score FROM scores WHERE game='dotboard'")
+        self.assertEqual([r[0] for r in rows], [1])
+        with self.client.session_transaction() as sess:
+            self.assertEqual(sess.get("dotboard_done"), 1)
+        # 2回目の完成でセッション数とベストが伸びる
+        res = self.client.post("/games/dotboard/complete")
+        self.assertEqual(res.get_json(), {"ok": True, "best": 2, "count": 2})
+        rows = self.query(
+            "SELECT score FROM scores WHERE game='dotboard' ORDER BY id"
+        )
+        self.assertEqual([r[0] for r in rows], [1, 2])
+        # ページにもベスト（完成作品数）が出る
+        body = self.client.get("/games/dotboard").get_data(as_text=True)
+        self.assertIn('id="bestCount">2<', body)
+        self.assertIn('id="doneCount">2<', body)
+
+    def test_dotboard_complete_is_per_session(self):
+        # 別セッション（別ブラウザ相当）では完成数は1から数え直すが、
+        # ベストはサーバー側の記録として残る
+        self.client.post("/games/dotboard/complete")
+        self.client.post("/games/dotboard/complete")
+        other = self.mod.app.test_client()
+        res = other.post("/games/dotboard/complete")
+        self.assertEqual(res.get_json()["count"], 1)
+        self.assertEqual(res.get_json()["best"], 2)
 
 
 if __name__ == "__main__":
