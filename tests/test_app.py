@@ -1332,5 +1332,31 @@ class NewFiveGamesTest(MinigameTest):
             self.assertEqual(res.status_code, 400)
 
 
+class GenreFilterTest(MinigameTest):
+    def test_index_has_genre_filter_buttons(self):
+        body = self.client.get("/").get_data(as_text=True)
+        # 「すべて」ボタンとジャンルごとのボタンがある
+        self.assertIn('data-filter="all"', body)
+        for name in {g["category"] for g in self.mod.GAMES}:
+            self.assertIn(f'data-filter="{name}"', body)
+        # 絞り込みの説明文がある
+        self.assertIn("ジャンルを押すと", body)
+
+    def test_cards_carry_category_for_filtering(self):
+        body = self.client.get("/").get_data(as_text=True)
+        # 全カードに data-category が付いている
+        self.assertEqual(body.count('data-category="'), len(self.mod.GAMES))
+        # ジャンルごとの件数が GAMES の実数と一致する
+        for name in {g["category"] for g in self.mod.GAMES}:
+            expected = sum(1 for g in self.mod.GAMES if g["category"] == name)
+            self.assertEqual(body.count(f'data-category="{name}"'), expected)
+
+    def test_filter_script_and_status_present(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn('id="filterStatus"', body)
+        self.assertIn("querySelectorAll('.cats button[data-filter]')", body)
+        self.assertIn("querySelectorAll('.grid .card')", body)
+
+
 if __name__ == "__main__":
     unittest.main()
