@@ -102,7 +102,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("29 本", body)
+        self.assertIn("32 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -413,8 +413,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("29 本", body)
-        self.assertEqual(len(self.mod.GAMES), 29)
+        self.assertIn("32 本", body)
+        self.assertEqual(len(self.mod.GAMES), 32)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -537,8 +537,8 @@ class FiveMoreGamesTest(MinigameTest):
         for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
                       "かわしサバイバー", "ゆき玉転がし"):
             self.assertIn(title, body)
-        self.assertIn("29 本", body)
-        self.assertEqual(len(self.mod.GAMES), 29)
+        self.assertIn("32 本", body)
+        self.assertEqual(len(self.mod.GAMES), 32)
 
     # ---- hitblow ----
     def test_hitblow_page_ok(self):
@@ -672,8 +672,8 @@ class ZhGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/zhgacha", body)
         self.assertIn("中国語単語ガチャ", body)
-        self.assertIn("29 本", body)
-        self.assertEqual(len(self.mod.GAMES), 29)
+        self.assertIn("32 本", body)
+        self.assertEqual(len(self.mod.GAMES), 32)
         self.assertEqual(len(self.mod.ZH_WORDS), 110)
 
     def test_zhgacha_page_ok(self):
@@ -724,6 +724,147 @@ class ZhGachaTest(MinigameTest):
             self.assertNotIn("zh_last", sess)
         body = self.client.get("/games/zhgacha").get_data(as_text=True)
         self.assertIn('<span id="kindCount">0</span>', body)
+
+
+class ShindanGamesTest(MinigameTest):
+    def answer_all_for_type(self, slug, endpoint_questions, type_key):
+        """指定タイプの選択肢をなるべく選んで進め、最後のページ本文を返す。
+
+        そのタイプの選択肢がない質問では先頭の選択肢で代用する（対象タイプが
+        大差で勝つ設計なので、結果は変わらない）。
+        """
+        body = ""
+        for question in endpoint_questions:
+            idx = next(
+                (i for i, c in enumerate(question["choices"]) if c["type"] == type_key),
+                0,
+            )
+            res = self.client.post(f"/games/{slug}/answer", data={"choice": str(idx)})
+            self.assertIn(res.status_code, (200, 302))
+        body = self.client.get(f"/games/{slug}").get_data(as_text=True)
+        return body
+
+    def test_portal_lists_shindan_games(self):
+        body = self.client.get("/").get_data(as_text=True)
+        for slug in ("shindan-trio", "shindan-snack", "shindan-study"):
+            self.assertIn(f"/games/{slug}", body)
+        for title in ("三人娘タイプ診断", "今日のおやつ診断", "べんきょうタイプ診断"):
+            self.assertIn(title, body)
+        self.assertIn("32 本", body)
+        self.assertEqual(len(self.mod.GAMES), 32)
+
+    # ---- 三人娘タイプ診断 ----
+    def test_trio_page_ok(self):
+        res = self.client.get("/games/shindan-trio")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("三人娘タイプ診断", body)
+        self.assertIn("第 1 問 ／ 全 8 問", body)
+        self.assertEqual(len(self.mod.TRIO_QUESTIONS), 8)
+
+    def test_trio_flow_cocoa(self):
+        body = self.answer_all_for_type(
+            "shindan-trio", self.mod.TRIO_QUESTIONS, "cocoa"
+        )
+        self.assertIn("診断結果", body)
+        self.assertIn("ココア型", body)
+        self.assertIn("もう一度診断する", body)
+        # 数値スコアは記録されない
+        self.assertEqual(
+            self.query("SELECT id FROM scores WHERE game LIKE 'shindan%'"), []
+        )
+
+    def test_trio_flow_chai(self):
+        body = self.answer_all_for_type(
+            "shindan-trio", self.mod.TRIO_QUESTIONS, "chai"
+        )
+        self.assertIn("チャイ型", body)
+
+    def test_trio_tie_breaks_by_definition_order(self):
+        # cocoa と mocha が同点なら、定義順で先のココア型になる
+        result = self.mod.shindan_judge(
+            ["cocoa", "mocha", "chai"], {"cocoa": 2, "mocha": 2, "chai": 1}
+        )
+        self.assertEqual(result, "cocoa")
+        result = self.mod.shindan_judge(
+            ["cocoa", "mocha", "chai"], {"cocoa": 0, "mocha": 3, "chai": 3}
+        )
+        self.assertEqual(result, "mocha")
+
+    def test_trio_reset(self):
+        self.client.post("/games/shindan-trio/answer", data={"choice": "0"})
+        with self.client.session_transaction() as sess:
+            self.assertEqual(sess.get("strio_idx"), 1)
+        res = self.client.post("/games/shindan-trio/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("strio_idx", sess)
+            self.assertNotIn("strio_scores", sess)
+        body = self.client.get("/games/shindan-trio").get_data(as_text=True)
+        self.assertIn("第 1 問 ／ 全 8 問", body)
+
+    # ---- 今日のおやつ診断 ----
+    def test_snack_page_ok(self):
+        res = self.client.get("/games/shindan-snack")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("今日のおやつ診断", body)
+        self.assertIn("第 1 問 ／ 全 6 問", body)
+        self.assertEqual(len(self.mod.SNACK_QUESTIONS), 6)
+        self.assertEqual(len(self.mod.SNACK_TYPES), 6)
+
+    def test_snack_flow_cake(self):
+        body = self.answer_all_for_type(
+            "shindan-snack", self.mod.SNACK_QUESTIONS, "cake"
+        )
+        self.assertIn("診断結果", body)
+        self.assertIn("ケーキ", body)
+        self.assertEqual(
+            self.query("SELECT id FROM scores WHERE game LIKE 'shindan%'"), []
+        )
+
+    def test_snack_reset(self):
+        self.client.post("/games/shindan-snack/answer", data={"choice": "0"})
+        res = self.client.post("/games/shindan-snack/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("ssnack_idx", sess)
+        body = self.client.get("/games/shindan-snack").get_data(as_text=True)
+        self.assertIn("第 1 問 ／ 全 6 問", body)
+
+    # ---- べんきょうタイプ診断 ----
+    def test_study_page_ok(self):
+        res = self.client.get("/games/shindan-study")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("べんきょうタイプ診断", body)
+        self.assertIn("第 1 問 ／ 全 8 問", body)
+        self.assertEqual(len(self.mod.STUDY_QUESTIONS), 8)
+        self.assertEqual(len(self.mod.STUDY_TYPES), 4)
+
+    def test_study_flow_plan(self):
+        body = self.answer_all_for_type(
+            "shindan-study", self.mod.STUDY_QUESTIONS, "plan"
+        )
+        self.assertIn("診断結果", body)
+        self.assertIn("計画コツコツ型", body)
+        # タイプ向けの勉強のコツが添えられている
+        self.assertIn("今日の分", body)
+
+    def test_study_flow_env(self):
+        body = self.answer_all_for_type(
+            "shindan-study", self.mod.STUDY_QUESTIONS, "env"
+        )
+        self.assertIn("環境こだわり型", body)
+
+    def test_study_reset(self):
+        self.client.post("/games/shindan-study/answer", data={"choice": "0"})
+        res = self.client.post("/games/shindan-study/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("sstudy_idx", sess)
+        body = self.client.get("/games/shindan-study").get_data(as_text=True)
+        self.assertIn("第 1 問 ／ 全 8 問", body)
 
 
 if __name__ == "__main__":

@@ -453,6 +453,30 @@ GAMES = [
         "description": "「ガチャを引く」と中国語の単語が1つランダムで出ます。簡体字・ピンイン・日本語訳・例文つき。全110語のコレクション完成を目指そう。",
         "endpoint": "zhgacha",
     },
+    {
+        "slug": "shindan-trio",
+        "title": "三人娘タイプ診断",
+        "category": "抽選・占い",
+        "icon": "☕",
+        "description": "8つの質問に答えると、ココア・モカ・チャイの3人のうち、どのタイプに近いかを診断します。あなたの性格はどの娘タイプ？",
+        "endpoint": "shindan_trio",
+    },
+    {
+        "slug": "shindan-snack",
+        "title": "今日のおやつ診断",
+        "category": "抽選・占い",
+        "icon": "🍮",
+        "description": "気分や空腹度などを聞く6つの質問で、今日のおすすめおやつを診断します。ケーキ？ 和菓子？ それとも塩気？",
+        "endpoint": "shindan_snack",
+    },
+    {
+        "slug": "shindan-study",
+        "title": "べんきょうタイプ診断",
+        "category": "抽選・占い",
+        "icon": "📚",
+        "description": "勉強の進め方を聞く8つの質問で、あなたの学習タイプを診断します。タイプに合った小さな勉強のコツつき。",
+        "endpoint": "shindan_study",
+    },
 ]
 
 
@@ -4278,6 +4302,407 @@ def zhgacha_reset():
     session.pop("zh_last_new", None)
     flash("コレクションをリセットしました。", "ok")
     return redirect(url_for("zhgacha"))
+
+
+# ============================
+# 診断ゲーム共通
+# ============================
+# 1問ずつ表示して選択肢で答えるセッション型。回答ごとにタイプ別ポイントを
+# 加算し、全問終わったら最も高いタイプを結果として表示する。
+# 同点の場合は、タイプの定義順で先に来るものを優先する（shindan_judge）。
+# 数値スコアの記録はしない（診断結果そのものが成果物）。
+
+def shindan_judge(type_keys, scores):
+    """最多ポイントのタイプを返す。同点なら定義順で先のタイプを優先。"""
+    best_key = type_keys[0]
+    best_val = -1
+    for key in type_keys:
+        val = int(scores.get(key, 0))
+        if val > best_val:
+            best_key, best_val = key, val
+    return best_key
+
+
+SHINDAN_TEMPLATE = r"""
+  <h1>{{ icon }} {{ title }}</h1>
+  <p class="howto">{{ howto }}</p>
+  __FLASH__
+  <div class="card">
+    {% if result %}
+      <p class="mid">🎉 診断結果</p>
+      <div class="big">{{ result.name }}</div>
+      <p class="result">{{ result.text }}</p>
+      {% if result.tip %}
+        <p class="result">💡 {{ result.tip }}</p>
+      {% endif %}
+      <form method="post" action="{{ reset_url }}" class="row">
+        <button type="submit">もう一度診断する</button>
+      </form>
+    {% else %}
+      <p class="mid">第 {{ num }} 問 ／ 全 {{ total }} 問</p>
+      <p class="result">{{ question }}</p>
+      <form method="post" action="{{ answer_url }}" class="row" style="flex-direction:column; align-items:stretch;">
+        {% for label in choices %}
+          <button type="submit" name="choice" value="{{ loop.index0 }}">{{ label }}</button>
+        {% endfor %}
+      </form>
+      <form method="post" action="{{ reset_url }}" class="row" style="margin-top:10px;">
+        <button type="submit">最初からやり直す</button>
+      </form>
+    {% endif %}
+  </div>
+"""
+
+
+def render_shindan(cfg):
+    prefix = cfg["prefix"]
+    questions = cfg["questions"]
+    if session.get(prefix + "_idx") is None:
+        session[prefix + "_idx"] = 0
+        session[prefix + "_scores"] = {}
+    idx = int(session.get(prefix + "_idx", 0))
+    scores = session.get(prefix + "_scores", {})
+    if idx >= len(questions):
+        info = cfg["types"][shindan_judge(cfg["type_keys"], scores)]
+        result = {"name": info["name"], "text": info["text"], "tip": info.get("tip", "")}
+        question, choices, num = "", [], len(questions)
+    else:
+        result = None
+        question = questions[idx]["q"]
+        choices = [c["label"] for c in questions[idx]["choices"]]
+        num = idx + 1
+    body = render_template_string(
+        SHINDAN_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        icon=cfg["icon"],
+        title=cfg["title"],
+        howto=cfg["howto"],
+        result=result,
+        num=num,
+        total=len(questions),
+        question=question,
+        choices=choices,
+        answer_url=url_for(cfg["endpoint"] + "_answer"),
+        reset_url=url_for(cfg["endpoint"] + "_reset"),
+    )
+    return game_page(cfg["title"], body)
+
+
+def shindan_handle_answer(cfg):
+    prefix = cfg["prefix"]
+    questions = cfg["questions"]
+    if session.get(prefix + "_idx") is None:
+        session[prefix + "_idx"] = 0
+        session[prefix + "_scores"] = {}
+    idx = int(session.get(prefix + "_idx", 0))
+    if idx >= len(questions):
+        return redirect(url_for(cfg["endpoint"]))
+    raw = request.form.get("choice", "").strip()
+    if raw.isdigit():
+        choice_idx = int(raw)
+        choices = questions[idx]["choices"]
+        if 0 <= choice_idx < len(choices):
+            scores = dict(session.get(prefix + "_scores", {}))
+            type_key = choices[choice_idx]["type"]
+            scores[type_key] = int(scores.get(type_key, 0)) + 1
+            session[prefix + "_scores"] = scores
+            session[prefix + "_idx"] = idx + 1
+    return redirect(url_for(cfg["endpoint"]))
+
+
+def shindan_handle_reset(cfg):
+    prefix = cfg["prefix"]
+    session.pop(prefix + "_idx", None)
+    session.pop(prefix + "_scores", None)
+    flash("最初からやり直します。", "ok")
+    return redirect(url_for(cfg["endpoint"]))
+
+
+# ============================
+# 三人娘タイプ診断
+# ============================
+TRIO_TYPES = {
+    "cocoa": {
+        "name": "ココア型",
+        "text": "知的で感情豊かなタイプ。考えごとが好きで、ふとした日常の中にも意味や面白さを見つけます。自分の世界を大切にしながら、人の気持ちの変化にも敏感です。たまに哲学っぽいことを言い出すのも、このタイプのご愛敬。",
+    },
+    "mocha": {
+        "name": "モカ型",
+        "text": "論理的で冷静なタイプ。計画と整理が得意で、物事を順序立てて考えるのが上手です。面倒見がよく、周りの世話を焼く優しさがあります。困ったときに頼られる、縁の下の力持ちです。",
+    },
+    "chai": {
+        "name": "チャイ型",
+        "text": "活発で直感的なタイプ。思いつきと行動力で場を動かすムードメーカーです。素直で明るく、一緒にいる人を元気にします。その場のノリを楽しむ天才です。",
+    },
+}
+
+TRIO_QUESTIONS = [
+    {"q": "休みの日、気づいたら何をしていることが多い？", "choices": [
+        {"label": "本や記事を読みながら、つい考えごとにふける", "type": "cocoa"},
+        {"label": "部屋を片付けて、来週の予定を整理している", "type": "mocha"},
+        {"label": "思いつきで出かけたり、誰かを誘ったりしている", "type": "chai"},
+    ]},
+    {"q": "困ったことが起きたとき、まずどうする？", "choices": [
+        {"label": "状況を整理して、やることリストを作る", "type": "mocha"},
+        {"label": "ひとりでじっくり原因を考える", "type": "cocoa"},
+        {"label": "とりあえず動いてみる。誰かに相談もする", "type": "chai"},
+    ]},
+    {"q": "飲み物を選ぶなら、どれが近い？", "choices": [
+        {"label": "チャイやジュース。その日の気分で決めたい", "type": "chai"},
+        {"label": "ココア。ゆっくり味わいたい", "type": "cocoa"},
+        {"label": "モカなどのコーヒー。きりっとしたい", "type": "mocha"},
+    ]},
+    {"q": "買い物に行くと、どうなりがち？", "choices": [
+        {"label": "気になる本や小物をじっくり眺めてしまう", "type": "cocoa"},
+        {"label": "目についた面白そうなものをつい買ってしまう", "type": "chai"},
+        {"label": "必要なものをリストどおりに買って終わる", "type": "mocha"},
+    ]},
+    {"q": "グループで集まると、あなたの役回りは？", "choices": [
+        {"label": "進行役。段取りを整えることが多い", "type": "mocha"},
+        {"label": "盛り上げ役。場を明るくする", "type": "chai"},
+        {"label": "話題を深掘りする役。意見を出す", "type": "cocoa"},
+    ]},
+    {"q": "あなたの部屋の様子に近いのは？", "choices": [
+        {"label": "そのときの趣味のものが広がっている", "type": "chai"},
+        {"label": "本や好きなものが積んである、味のある散らかり方", "type": "cocoa"},
+        {"label": "物の定位置が決まっていて、整っている", "type": "mocha"},
+    ]},
+    {"q": "旅行に行くなら、楽しみなのは？", "choices": [
+        {"label": "行き先の歴史や物語を調べること", "type": "cocoa"},
+        {"label": "スケジュールと持ち物をきっちり決めること", "type": "mocha"},
+        {"label": "細かいことは決めず、その場のノリで動くこと", "type": "chai"},
+    ]},
+    {"q": "夕食のあとの過ごし方は？", "choices": [
+        {"label": "みんなでおしゃべりやゲームをして過ごす", "type": "chai"},
+        {"label": "明日の準備をして、早めに休む", "type": "mocha"},
+        {"label": "音楽や本と一緒に、自分の時間を味わう", "type": "cocoa"},
+    ]},
+]
+
+TRIO_CFG = {
+    "prefix": "strio",
+    "endpoint": "shindan_trio",
+    "icon": "☕",
+    "title": "三人娘タイプ診断",
+    "howto": "8つの質問に答えると、ココア・モカ・チャイの3人のうち、どのタイプに近いかを診断します。直感で選んでみてください。",
+    "type_keys": ["cocoa", "mocha", "chai"],
+    "types": TRIO_TYPES,
+    "questions": TRIO_QUESTIONS,
+}
+
+
+@app.route("/games/shindan-trio", methods=["GET"])
+def shindan_trio():
+    return render_shindan(TRIO_CFG)
+
+
+@app.route("/games/shindan-trio/answer", methods=["POST"])
+def shindan_trio_answer():
+    return shindan_handle_answer(TRIO_CFG)
+
+
+@app.route("/games/shindan-trio/reset", methods=["POST"])
+def shindan_trio_reset():
+    return shindan_handle_reset(TRIO_CFG)
+
+
+# ============================
+# 今日のおやつ診断
+# ============================
+SNACK_TYPES = {
+    "cake": {
+        "name": "ケーキ",
+        "text": "ご褒美気分の今日はケーキ。ふわっとした甘さと満足感で、気分までふんわり上向きになりそうです。",
+    },
+    "wagashi": {
+        "name": "和菓子（団子・大福）",
+        "text": "ほっと落ち着きたい今日は和菓子。控えめな甘さともちもちの食感で、ゆっくり一息つきましょう。",
+    },
+    "chocolate": {
+        "name": "チョコレート",
+        "text": "集中の合間の味方はチョコレート。ひとかけらで頭と気分を切り替えて、もうひとがんばり。",
+    },
+    "snack": {
+        "name": "スナック菓子（しょっぱい系）",
+        "text": "今日は塩気が正解。サクサクのスナック菓子で、小腹も気分もリフレッシュしましょう。",
+    },
+    "pudding": {
+        "name": "プリン・ゼリー",
+        "text": "なめらかで優しいプリン・ゼリー。疲れた日でもすっと入る、癒やしのおやつです。",
+    },
+    "drink": {
+        "name": "温かいドリンクと焼き菓子",
+        "text": "温かいドリンクと焼き菓子の組み合わせで、ゆっくり時間を味わうのが今日の正解。香ばしさと温かさでほっとできます。",
+    },
+}
+
+SNACK_QUESTIONS = [
+    {"q": "今の気分に一番近いのは？", "choices": [
+        {"label": "ふんわり甘いもので癒やされたい", "type": "pudding"},
+        {"label": "しっかり甘くて満足感がほしい", "type": "cake"},
+        {"label": "ほっと落ち着きたい", "type": "wagashi"},
+        {"label": "塩気でリフレッシュしたい", "type": "snack"},
+    ]},
+    {"q": "お腹の空き具合は？", "choices": [
+        {"label": "かなり空いた。がっつりいきたい", "type": "cake"},
+        {"label": "小腹が空いた程度", "type": "snack"},
+        {"label": "ほぼ空いていない。気分転換に少しだけ", "type": "chocolate"},
+        {"label": "飲みもので十分", "type": "drink"},
+    ]},
+    {"q": "好きな食感は？", "choices": [
+        {"label": "とろける・なめらか", "type": "pudding"},
+        {"label": "サクサク・パリパリ", "type": "snack"},
+        {"label": "もちもち", "type": "wagashi"},
+        {"label": "ふわふわ・しっとり", "type": "cake"},
+    ]},
+    {"q": "甘さの好みは？", "choices": [
+        {"label": "控えめで上品な甘さ", "type": "wagashi"},
+        {"label": "濃厚な甘さ", "type": "chocolate"},
+        {"label": "ほどよい甘さ", "type": "pudding"},
+        {"label": "甘さより香ばしさ", "type": "drink"},
+    ]},
+    {"q": "今のシーンは？", "choices": [
+        {"label": "家でゆっくり過ごしている", "type": "drink"},
+        {"label": "仕事や勉強の合間", "type": "chocolate"},
+        {"label": "外出先でさくっと済ませたい", "type": "snack"},
+        {"label": "誰かと一緒にいる", "type": "cake"},
+    ]},
+    {"q": "今日はどんな日？", "choices": [
+        {"label": "晴れて活動的な日", "type": "snack"},
+        {"label": "雨でのんびりな日", "type": "drink"},
+        {"label": "肌寒くて温まりたい日", "type": "wagashi"},
+        {"label": "自分へのご褒美の日", "type": "cake"},
+    ]},
+]
+
+SNACK_CFG = {
+    "prefix": "ssnack",
+    "endpoint": "shindan_snack",
+    "icon": "🍮",
+    "title": "今日のおやつ診断",
+    "howto": "気分や空腹度などを聞く6つの質問で、今日のおすすめおやつを診断します。迷ったときのおやつ決めにどうぞ。",
+    "type_keys": ["cake", "wagashi", "chocolate", "snack", "pudding", "drink"],
+    "types": SNACK_TYPES,
+    "questions": SNACK_QUESTIONS,
+}
+
+
+@app.route("/games/shindan-snack", methods=["GET"])
+def shindan_snack():
+    return render_shindan(SNACK_CFG)
+
+
+@app.route("/games/shindan-snack/answer", methods=["POST"])
+def shindan_snack_answer():
+    return shindan_handle_answer(SNACK_CFG)
+
+
+@app.route("/games/shindan-snack/reset", methods=["POST"])
+def shindan_snack_reset():
+    return shindan_handle_reset(SNACK_CFG)
+
+
+# ============================
+# べんきょうタイプ診断
+# ============================
+STUDY_TYPES = {
+    "plan": {
+        "name": "計画コツコツ型",
+        "text": "決めたことを少しずつ積み上げるのが得意なタイプ。計画と記録が、そのまま力になります。",
+        "tip": "計画は「今日の分」まで小さく区切っておくと、ズレた日も立て直しやすくなります。",
+    },
+    "burst": {
+        "name": "短期集中型",
+        "text": "追い込みの瞬発力が持ち味のタイプ。締切が近づいたときの集中力は随一です。",
+        "tip": "詰め込みの前に「やる範囲のリスト」だけ先に作っておくと、集中の質が上がります。",
+    },
+    "mypace": {
+        "name": "気分マイペース型",
+        "text": "気持ちが乗ったときの伸びが大きいタイプ。楽しさが、続ける力になります。",
+        "tip": "やる気待ちの日にも始められるよう、5分だけ触る「入口タスク」を用意しておくのがおすすめです。",
+    },
+    "env": {
+        "name": "環境こだわり型",
+        "text": "場所や道具が整うと力が出るタイプ。環境づくりも、勉強の一部として楽しめます。",
+        "tip": "お気に入りの場所と道具のセットを決めておくと、始めるまでの迷いが減ります。",
+    },
+}
+
+STUDY_QUESTIONS = [
+    {"q": "勉強を始めるタイミングは？", "choices": [
+        {"label": "決めた時間に机に向かう", "type": "plan"},
+        {"label": "締切が見えてきてから一気に", "type": "burst"},
+        {"label": "やる気が出たときに", "type": "mypace"},
+        {"label": "お気に入りの場所に行けたときに", "type": "env"},
+    ]},
+    {"q": "計画の立て方は？", "choices": [
+        {"label": "直前の数日で詰め込む前提で組む", "type": "burst"},
+        {"label": "1週間から1か月の計画を細かく立てる", "type": "plan"},
+        {"label": "まず勉強する場所と道具を整える", "type": "env"},
+        {"label": "計画はざっくり、あとは気分で", "type": "mypace"},
+    ]},
+    {"q": "休憩の取り方は？", "choices": [
+        {"label": "時間を決めてきっちり区切る", "type": "plan"},
+        {"label": "疲れたらすぐ休む", "type": "mypace"},
+        {"label": "区切りがつくまでぶっ続け", "type": "burst"},
+        {"label": "場所を変えてリフレッシュする", "type": "env"},
+    ]},
+    {"q": "苦手な科目にはどう向き合う？", "choices": [
+        {"label": "少しずつ毎日触れる", "type": "plan"},
+        {"label": "好きな科目の合間に混ぜる", "type": "mypace"},
+        {"label": "短期間で集中的に潰す", "type": "burst"},
+        {"label": "参考書やツールを新しくして気分一新", "type": "env"},
+    ]},
+    {"q": "勉強の記録については？", "choices": [
+        {"label": "学習ログを毎日つける", "type": "plan"},
+        {"label": "記録は気が向いたときだけ", "type": "mypace"},
+        {"label": "テスト前にまとめて振り返る", "type": "burst"},
+        {"label": "ノートの見た目や道具にこだわる", "type": "env"},
+    ]},
+    {"q": "集中が切れたらどうする？", "choices": [
+        {"label": "場所を変えたり散歩したりする", "type": "env"},
+        {"label": "今日の分は最低限やって終える", "type": "plan"},
+        {"label": "いったん寝て、起きてから再集中", "type": "burst"},
+        {"label": "別の科目や作業に切り替える", "type": "mypace"},
+    ]},
+    {"q": "目標の決め方は？", "choices": [
+        {"label": "「この試験に受かる」と大きく決める", "type": "burst"},
+        {"label": "数値や範囲で具体的に決める", "type": "plan"},
+        {"label": "楽しみながら続けられる量で決める", "type": "mypace"},
+        {"label": "行きたい場所や使いたい道具とセットで決める", "type": "env"},
+    ]},
+    {"q": "振り返りはどうする？", "choices": [
+        {"label": "計画とのズレを確認して直す", "type": "plan"},
+        {"label": "あまり振り返らない。そのとき学べれば十分", "type": "mypace"},
+        {"label": "結果だけ見て次に活かす", "type": "burst"},
+        {"label": "環境や道具の改善点をメモする", "type": "env"},
+    ]},
+]
+
+STUDY_CFG = {
+    "prefix": "sstudy",
+    "endpoint": "shindan_study",
+    "icon": "📚",
+    "title": "べんきょうタイプ診断",
+    "howto": "勉強の進め方を聞く8つの質問で、あなたの学習タイプを診断します。タイプに合った小さな勉強のコツつき。",
+    "type_keys": ["plan", "burst", "mypace", "env"],
+    "types": STUDY_TYPES,
+    "questions": STUDY_QUESTIONS,
+}
+
+
+@app.route("/games/shindan-study", methods=["GET"])
+def shindan_study():
+    return render_shindan(STUDY_CFG)
+
+
+@app.route("/games/shindan-study/answer", methods=["POST"])
+def shindan_study_answer():
+    return shindan_handle_answer(STUDY_CFG)
+
+
+@app.route("/games/shindan-study/reset", methods=["POST"])
+def shindan_study_reset():
+    return shindan_handle_reset(STUDY_CFG)
 
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
