@@ -563,6 +563,8 @@ PORTAL_TEMPLATE = r"""
     h2 { font-size: 18px; margin: 26px 0 10px; }
     .cats { display: flex; gap: 8px; flex-wrap: wrap; padding: 0; list-style: none; margin: 0; }
     .cats li { border: 1px solid #ddd; background: #fff; border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+    .cats li button { background: none; border: 0; font: inherit; color: inherit; cursor: pointer; padding: 0; }
+    .cats li.active { background: #222; border-color: #222; color: #fff; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
     .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
     .icon { font-size: 40px; line-height: 1; }
@@ -582,15 +584,18 @@ PORTAL_TEMPLATE = r"""
 
   <h2>ジャンル</h2>
   <ul class="cats">
+    <li class="active"><button type="button" data-filter="all">すべて（{{ games|length }}）</button></li>
     {% for name, count in categories %}
-      <li>{{ name }}（{{ count }}）</li>
+      <li><button type="button" data-filter="{{ name }}">{{ name }}（{{ count }}）</button></li>
     {% endfor %}
   </ul>
+  <p class="muted">ジャンルを押すと、そのジャンルのゲームだけが下の一覧に表示されます。「すべて」を押すと全表示に戻ります。</p>
 
   <h2>ゲーム一覧</h2>
+  <p class="muted" id="filterStatus">全 {{ games|length }} 本を表示中</p>
   <div class="grid">
     {% for game in games %}
-      <div class="card">
+      <div class="card" data-category="{{ game.category }}">
         <div class="icon">{{ game.icon }}</div>
         <h3>{{ game.title }}</h3>
         <span class="pill">{{ game.category }}</span>
@@ -607,6 +612,30 @@ PORTAL_TEMPLATE = r"""
     ルーレット抽選で作ったテーブルや抽選結果はサーバーに保存されますが、サービスの再起動・再デプロイで消えることがあります。大事な抽選の結果はメモしておいてください。
   </footer>
 </div>
+<script>
+  (function () {
+    var buttons = document.querySelectorAll('.cats button[data-filter]');
+    var cards = document.querySelectorAll('.grid .card');
+    var status = document.getElementById('filterStatus');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var f = btn.getAttribute('data-filter');
+        buttons.forEach(function (b) { b.parentElement.classList.toggle('active', b === btn); });
+        var shown = 0;
+        cards.forEach(function (card) {
+          var ok = (f === 'all' || card.getAttribute('data-category') === f);
+          card.style.display = ok ? '' : 'none';
+          if (ok) shown++;
+        });
+        if (status) {
+          status.textContent = (f === 'all')
+            ? '全 ' + shown + ' 本を表示中'
+            : '「' + f + '」のゲーム ' + shown + ' 本を表示中';
+        }
+      });
+    });
+  })();
+</script>
 </body>
 </html>
 """
