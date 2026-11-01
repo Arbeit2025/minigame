@@ -485,6 +485,46 @@ GAMES = [
         "description": "単体ツール「dotboard」のポータル版。16×16のキャンバスにドット絵を描けます。お題ボタンで題材を引いて、「描けた！」で完成を記録。PNG保存もできます。",
         "endpoint": "dotboard",
     },
+    {
+        "slug": "slidepuzzle",
+        "title": "スライドパズル",
+        "category": "脳トレ",
+        "icon": "🧩",
+        "description": "3×3の数字パネルを空きマスへスライドさせて、1〜8の順に揃える定番パズル。初期配置は必ず解ける作りで、完成までの手数（少ないほど良い）を記録します。",
+        "endpoint": "slidepuzzle",
+    },
+    {
+        "slug": "touch25",
+        "title": "1→25タッチ",
+        "category": "アクション",
+        "icon": "👆",
+        "description": "5×5に散らばった1〜25の数字を、順番にタッチしていくタイムアタック。間違えた数字はその場で分かるので続行できます。全部押し終えるまでの速さを競います。",
+        "endpoint": "touch25",
+    },
+    {
+        "slug": "marubatsu",
+        "title": "まるばつ対戦",
+        "category": "対戦",
+        "icon": "⭕",
+        "description": "三目並べでCPUと対戦。あなたは○、CPUは×です。先手・後手が選べて、たまに本気を出さない程よい強さのCPU。勝利数を記録します。",
+        "endpoint": "marubatsu",
+    },
+    {
+        "slug": "shiritori",
+        "title": "しりとり対戦",
+        "category": "対戦",
+        "icon": "🔤",
+        "description": "内蔵の単語リスト（ひらがな）だけでCPUとしりとり対戦。「ん」で終わる単語を出した方が負け。続いた単語数を記録します。",
+        "endpoint": "shiritori",
+    },
+    {
+        "slug": "balloonpop",
+        "title": "風船わり",
+        "category": "アクション",
+        "icon": "🎈",
+        "description": "30秒間、画面に出てくる風船をタップ／クリックで割り続ける反射ゲーム。通常の風船は+1点、爆弾を割ると−3点。最終得点を記録します。",
+        "endpoint": "balloonpop",
+    },
 ]
 
 
@@ -4856,6 +4896,870 @@ def dotboard_complete():
     session["dotboard_done"] = count
     record_score("dotboard", count)
     return {"ok": True, "best": best_score("dotboard", "max"), "count": count}
+
+
+# ============================
+# スライドパズル
+# 盤面はサーバー側セッションで管理する（空きマスは 0）。
+# 初期配置は完成状態からランダムにスライドさせて作るので、必ず解ける。
+# ============================
+SLIDEPUZZLE_GOAL = [1, 2, 3, 4, 5, 6, 7, 8, 0]
+
+
+def slidepuzzle_neighbors(index: int) -> list:
+    """3×3盤面で index の上下左右にあるマスの index 一覧。"""
+    row, col = divmod(index, 3)
+    result = []
+    if row > 0:
+        result.append(index - 3)
+    if row < 2:
+        result.append(index + 3)
+    if col > 0:
+        result.append(index - 1)
+    if col < 2:
+        result.append(index + 1)
+    return result
+
+
+def slidepuzzle_is_solved(board) -> bool:
+    return list(board) == SLIDEPUZZLE_GOAL
+
+
+def slidepuzzle_try_move(board, index: int):
+    """index のパネルが空きマスに隣接していれば動かした新しい盤面を返し、
+    動かせなければ None を返す。"""
+    board = list(board)
+    if not (0 <= index < 9) or board[index] == 0:
+        return None
+    blank = board.index(0)
+    if blank not in slidepuzzle_neighbors(index):
+        return None
+    board[blank], board[index] = board[index], board[blank]
+    return board
+
+
+def slidepuzzle_new_board(moves: int = 60):
+    """完成状態からランダムにスライドさせて作る、必ず解ける初期配置。
+    直前に動かしたパネルをすぐ戻す手は選ばない（無駄な往復を減らす）。"""
+    while True:
+        board = list(SLIDEPUZZLE_GOAL)
+        blank = 8
+        prev_blank = -1
+        for _ in range(moves):
+            options = [i for i in slidepuzzle_neighbors(blank) if i != prev_blank]
+            nxt = random.choice(options)
+            board[blank], board[nxt] = board[nxt], board[blank]
+            prev_blank, blank = blank, nxt
+        if not slidepuzzle_is_solved(board):
+            return board
+
+
+def slidepuzzle_new_game() -> None:
+    session["sp_board"] = slidepuzzle_new_board()
+    session["sp_moves"] = 0
+    session["sp_done"] = False
+
+
+SLIDEPUZZLE_TEMPLATE = r"""
+  <h1>🧩 スライドパズル</h1>
+  <p class="howto">1〜8のパネルを、空きマスの上下左右からスライドさせて、左上から 1→8 の順に揃えるパズルです。初期配置は必ず解けるようになっています。完成までの手数を記録します（ベスト＝最小手数）。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">手数: {{ moves }} ／ ベスト（最小手数）: {{ best if best is not none else '—' }}</p>
+    <form method="post" action="{{ url_for('slidepuzzle_move') }}">
+      <div style="display:grid; grid-template-columns: repeat(3, 76px); gap:8px; justify-content:center;">
+        {% for i in range(9) %}
+          {% if board[i] == 0 %}
+            <button type="button" disabled style="height:76px; font-size:26px; background:#eee; border-style:dashed;">&nbsp;</button>
+          {% elif done %}
+            <button type="button" disabled style="height:76px; font-size:26px;">{{ board[i] }}</button>
+          {% else %}
+            <button type="submit" name="index" value="{{ i }}" style="height:76px; font-size:26px;">{{ board[i] }}</button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </form>
+    <form method="post" action="{{ url_for('slidepuzzle_reset') }}" class="row" style="margin-top:12px;">
+      <button type="submit">シャッフルし直す</button>
+    </form>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（手数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 手</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def render_slidepuzzle(message=None):
+    if "sp_board" not in session:
+        slidepuzzle_new_game()
+    body = render_template_string(
+        SLIDEPUZZLE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        board=list(session["sp_board"]),
+        moves=int(session.get("sp_moves", 0)),
+        done=bool(session.get("sp_done", False)),
+        best=best_score("slidepuzzle", "min"),
+        history=recent_scores("slidepuzzle", 10),
+        message=message,
+    )
+    return game_page("スライドパズル", body)
+
+
+@app.route("/games/slidepuzzle", methods=["GET"])
+def slidepuzzle():
+    return render_slidepuzzle()
+
+
+@app.route("/games/slidepuzzle/move", methods=["POST"])
+def slidepuzzle_move():
+    if "sp_board" not in session:
+        slidepuzzle_new_game()
+    if session.get("sp_done"):
+        return render_slidepuzzle()
+    raw = request.form.get("index", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) < 9):
+        return render_slidepuzzle()
+    board = slidepuzzle_try_move(session["sp_board"], int(raw))
+    if board is None:
+        return render_slidepuzzle(
+            message="そのパネルは動かせません。空きマスの上下左右のパネルを選んでね。"
+        )
+    moves = int(session.get("sp_moves", 0)) + 1
+    session["sp_board"] = board
+    session["sp_moves"] = moves
+    if slidepuzzle_is_solved(board):
+        session["sp_done"] = True
+        record_score("slidepuzzle", moves)
+        return render_slidepuzzle(message=f"🎉 完成！ {moves} 手で揃えました。")
+    return render_slidepuzzle()
+
+
+@app.route("/games/slidepuzzle/reset", methods=["POST"])
+def slidepuzzle_reset():
+    slidepuzzle_new_game()
+    flash("シャッフルし直しました。", "ok")
+    return redirect(url_for("slidepuzzle"))
+
+
+# ============================
+# 1→25タッチ
+# 計測はクライアント JS、配置はサーバーでシャッフルして渡す。
+# スコアは秒×10（0.1秒単位）の整数で記録する（ベスト＝最小）。
+# ============================
+TOUCH25_TEMPLATE = r"""
+  <h1>👆 1→25タッチ</h1>
+  <p class="howto">5×5に散らばった 1〜25 の数字を、1から順番にタッチしていくタイムアタックです。「スタート」を押すと計測開始。間違えた数字を押しても光って知らせるだけで、そのまま続けられます。</p>
+  __FLASH__
+  <div class="card">
+    <div id="grid" style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; max-width:360px; margin:0 auto;">
+      {% for n in numbers %}
+        <button type="button" data-value="{{ n }}" disabled style="font-size:20px; padding:12px 0;">{{ n }}</button>
+      {% endfor %}
+    </div>
+    <p class="result" id="bestline">ベスト（最速）: {{ best_disp if best_disp is not none else '—' }}{% if best_disp is not none %} 秒{% endif %}</p>
+    <p class="result" id="message">「スタート」を押してね</p>
+    <p class="mid">経過: <span id="timer">0.0</span> 秒 ／ 次は <span id="next">1</span></p>
+    <div class="row">
+      <button type="button" id="startBtn">スタート</button>
+      <button type="button" onclick="location.reload()">並べ直す</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ '%.1f' % (s.score / 10) }} 秒</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var message = document.getElementById("message");
+  var timerEl = document.getElementById("timer");
+  var nextEl = document.getElementById("next");
+  var startBtn = document.getElementById("startBtn");
+  var buttons = document.querySelectorAll("#grid button");
+  var expected = 1, startedAt = 0, timerId = null, playing = false;
+  startBtn.addEventListener("click", function(){
+    if (playing) { return; }
+    playing = true;
+    startedAt = performance.now();
+    startBtn.disabled = true;
+    buttons.forEach(function(btn){ btn.disabled = false; });
+    message.textContent = "次は 1 を押してね";
+    timerId = setInterval(function(){
+      timerEl.textContent = ((performance.now() - startedAt) / 1000).toFixed(1);
+    }, 100);
+  });
+  buttons.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      if (!playing || btn.disabled) { return; }
+      var value = parseInt(btn.getAttribute("data-value"), 10);
+      if (value !== expected) {
+        var old = btn.style.background;
+        btn.style.background = "#f8c9c9";
+        message.textContent = "それは " + value + "。次は " + expected + " を押してね";
+        setTimeout(function(){ btn.style.background = old; }, 350);
+        return;
+      }
+      btn.disabled = true;
+      btn.style.background = "#bfe8bf";
+      btn.style.borderColor = "#7ab87a";
+      expected += 1;
+      if (expected > 25) {
+        playing = false;
+        clearInterval(timerId);
+        var ds = Math.round((performance.now() - startedAt) / 100);
+        timerEl.textContent = (ds / 10).toFixed(1);
+        var form = new FormData();
+        form.append("ds", String(ds));
+        fetch("{{ url_for('touch25_score') }}", {method: "POST", body: form})
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if (d && d.ok) {
+              message.textContent = "🎉 完了！ " + (ds / 10).toFixed(1) + " 秒";
+              document.getElementById("bestline").textContent = "ベスト（最速）: " + (d.best / 10).toFixed(1) + " 秒";
+            }
+          })
+          .catch(function(){});
+      } else {
+        nextEl.textContent = String(expected);
+        message.textContent = "次は " + expected + " を押してね";
+      }
+    });
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/touch25", methods=["GET"])
+def touch25():
+    numbers = list(range(1, 26))
+    random.shuffle(numbers)
+    best = best_score("touch25", "min")
+    body = render_template_string(
+        TOUCH25_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        numbers=numbers,
+        best_disp=(round(best / 10, 1) if best is not None else None),
+        history=recent_scores("touch25", 10),
+    )
+    return game_page("1→25タッチ", body)
+
+
+@app.route("/games/touch25/score", methods=["POST"])
+def touch25_score():
+    raw = request.form.get("ds", "").strip()
+    if not raw.isdigit() or not (20 <= int(raw) <= 36000):
+        return {"ok": False, "error": "invalid ds"}, 400
+    record_score("touch25", int(raw))
+    return {"ok": True, "best": best_score("touch25", "min")}
+
+
+# ============================
+# まるばつ対戦
+# 盤面・勝敗判定・CPU はサーバー側。プレイヤーは ○、CPU は ×。
+# 勝利数は dotboard と同じ流儀で、セッション累計を record_score する。
+# ============================
+MARUBATSU_LINES = [
+    (0, 1, 2), (3, 4, 5), (6, 7, 8),
+    (0, 3, 6), (1, 4, 7), (2, 5, 8),
+    (0, 4, 8), (2, 4, 6),
+]
+
+
+def marubatsu_winner(board):
+    """勝者がいれば '○' か '×'、引き分けなら 'draw'、継続中なら None。"""
+    for a, b, c in MARUBATSU_LINES:
+        if board[a] and board[a] == board[b] == board[c]:
+            return board[a]
+    if all(board):
+        return "draw"
+    return None
+
+
+def marubatsu_winning_cell(board, mark: str):
+    """mark が次に置けば勝てるマスがあれば、その index（なければ None）。"""
+    for i in range(9):
+        if board[i] == "":
+            trial = list(board)
+            trial[i] = mark
+            if marubatsu_winner(trial) == mark:
+                return i
+    return None
+
+
+def marubatsu_best_move(board, mark: str):
+    """CPU の最善手：勝ち手＞相手の勝ち手の阻止＞中央＞角＞辺。空きがなければ None。"""
+    opponent = "×" if mark == "○" else "○"
+    win = marubatsu_winning_cell(board, mark)
+    if win is not None:
+        return win
+    block = marubatsu_winning_cell(board, opponent)
+    if block is not None:
+        return block
+    for i in (4, 0, 2, 6, 8, 1, 3, 5, 7):
+        if board[i] == "":
+            return i
+    return None
+
+
+def marubatsu_cpu_move(board, mark: str = "×"):
+    """ほどほどの強さの CPU。4回に1回くらいはわざとランダムな手を打つので、
+    毎回完璧にはならない。空きがなければ None。"""
+    empty = [i for i, v in enumerate(board) if v == ""]
+    if not empty:
+        return None
+    if random.random() < 0.25:
+        return random.choice(empty)
+    return marubatsu_best_move(board, mark)
+
+
+def marubatsu_start_board(player_first: bool):
+    """新しい対局の盤面を作る。後手のときは CPU が先に1手打つ。"""
+    board = [""] * 9
+    if not player_first:
+        cpu = marubatsu_cpu_move(board, "×")
+        if cpu is not None:
+            board[cpu] = "×"
+    return board
+
+
+MARUBATSU_TEMPLATE = r"""
+  <h1>⭕ まるばつ対戦</h1>
+  <p class="howto">三目並べで CPU と対戦。あなたは ○、CPU は × です。縦・横・斜めのどれか1列を先に揃えた方が勝ち。CPU は程よい強さで、たまに本気を出しません。勝利数はこのセッションの累計で記録します。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">このセッションの勝利数: {{ wins }} ／ ベスト（勝利数）: {{ best if best is not none else '—' }}</p>
+    {% if board is none %}
+      <p class="mid">先手・後手を選んでスタート</p>
+      <div class="row">
+        <form method="post" action="{{ url_for('marubatsu_start') }}">
+          <input type="hidden" name="first" value="1">
+          <button type="submit">先手（○が先）で始める</button>
+        </form>
+        <form method="post" action="{{ url_for('marubatsu_start') }}">
+          <input type="hidden" name="first" value="0">
+          <button type="submit">後手（CPUが先）で始める</button>
+        </form>
+      </div>
+    {% else %}
+      <form method="post" action="{{ url_for('marubatsu_move') }}">
+        <div style="display:grid; grid-template-columns: repeat(3, 76px); gap:8px; justify-content:center;">
+          {% for i in range(9) %}
+            {% if board[i] %}
+              <button type="button" disabled style="height:76px; font-size:34px;">{{ board[i] }}</button>
+            {% elif over %}
+              <button type="button" disabled style="height:76px; font-size:34px;">&nbsp;</button>
+            {% else %}
+              <button type="submit" name="index" value="{{ i }}" style="height:76px; font-size:34px;">&nbsp;</button>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </form>
+      <div class="row" style="margin-top:12px;">
+        {% if over %}
+          <form method="post" action="{{ url_for('marubatsu_next') }}">
+            <button type="submit">連戦する</button>
+          </form>
+        {% endif %}
+        <form method="post" action="{{ url_for('marubatsu_reset') }}">
+          <button type="submit">先手・後手を選び直す</button>
+        </form>
+      </div>
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（勝利数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 勝</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def render_marubatsu(message=None):
+    board = list(session["mb_board"]) if "mb_board" in session else None
+    body = render_template_string(
+        MARUBATSU_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        board=board,
+        over=bool(session.get("mb_over", False)),
+        wins=int(session.get("mb_wins", 0)),
+        best=best_score("marubatsu", "max"),
+        history=recent_scores("marubatsu", 10),
+        message=message,
+    )
+    return game_page("まるばつ対戦", body)
+
+
+@app.route("/games/marubatsu", methods=["GET"])
+def marubatsu():
+    return render_marubatsu()
+
+
+@app.route("/games/marubatsu/start", methods=["POST"])
+def marubatsu_start():
+    first = request.form.get("first", "1") == "1"
+    session["mb_first"] = first
+    session["mb_over"] = False
+    session["mb_board"] = marubatsu_start_board(first)
+    if first:
+        return render_marubatsu(message="あなたは ○ です。先手なので、好きなマスからどうぞ。")
+    return render_marubatsu(message="あなたは ○ です。後手なので、CPU が先に打ちました。")
+
+
+@app.route("/games/marubatsu/move", methods=["POST"])
+def marubatsu_move():
+    if "mb_board" not in session or session.get("mb_over"):
+        return render_marubatsu()
+    board = list(session["mb_board"])
+    raw = request.form.get("index", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) < 9):
+        return render_marubatsu()
+    idx = int(raw)
+    if board[idx] != "":
+        return render_marubatsu(message="そこはもう埋まっています。")
+    board[idx] = "○"
+    result = marubatsu_winner(board)
+    if result is None:
+        cpu = marubatsu_cpu_move(board, "×")
+        if cpu is not None:
+            board[cpu] = "×"
+        result = marubatsu_winner(board)
+    session["mb_board"] = board
+    if result == "○":
+        session["mb_over"] = True
+        wins = int(session.get("mb_wins", 0)) + 1
+        session["mb_wins"] = wins
+        record_score("marubatsu", wins)
+        return render_marubatsu(message=f"🎉 あなたの勝ち！ このセッション {wins} 勝目です。")
+    if result == "×":
+        session["mb_over"] = True
+        return render_marubatsu(message="CPU の勝ち…。連戦ボタンでもう一局どうぞ。")
+    if result == "draw":
+        session["mb_over"] = True
+        return render_marubatsu(message="引き分けです。連戦ボタンでもう一局どうぞ。")
+    return render_marubatsu()
+
+
+@app.route("/games/marubatsu/next", methods=["POST"])
+def marubatsu_next():
+    first = bool(session.get("mb_first", True))
+    session["mb_over"] = False
+    session["mb_board"] = marubatsu_start_board(first)
+    return render_marubatsu(message="新しい対局です。")
+
+
+@app.route("/games/marubatsu/reset", methods=["POST"])
+def marubatsu_reset():
+    session.pop("mb_board", None)
+    session.pop("mb_over", None)
+    session.pop("mb_first", None)
+    flash("先手・後手を選び直せます。", "ok")
+    return redirect(url_for("marubatsu"))
+
+
+# ============================
+# しりとり対戦
+# 内蔵の単語リスト（ひらがな名詞）だけで CPU と交互にしりとりする。
+# 末尾の「ー」はその前のかなの母音に読み替える（例：かれー → え）。
+# 拗音・促音が末尾に来たらその文字自体を使う（リスト内には末尾が
+# 小さいかなの単語を入れていない）。
+# ============================
+SHIRITORI_WORDS = [
+    # あ行
+    "あめ", "あひる", "あいす",
+    "いぬ", "いちご", "いす", "いか", "いえ",
+    "うみ", "うさぎ", "うた", "うし",
+    "えんぴつ", "えき", "えび", "えいが",
+    "おに", "おかし",
+    # か行
+    "かめ", "かさ", "かぜ", "かばん", "かれー", "かべ",
+    "きつね", "きのこ", "きりん", "きって", "きゅうり",
+    "くま", "くも", "くらげ", "くじら", "くつ",
+    "けーき", "けむり",
+    "こめ", "こおり", "こあら", "ことり", "こんぶ",
+    # さ行
+    "さかな", "さくら", "さる", "さとう",
+    "しか", "しお", "しろ", "しっぽ", "しんぶん",
+    "すいか", "すし", "すずめ",
+    "せみ", "せんせい", "せっけん",
+    "そら", "そば",
+    # た行
+    "たまご", "たぬき", "たいよう", "たけ", "たこ",
+    "ちず", "ちきゅう", "ちーず",
+    "つき", "つな", "つる", "つばめ",
+    "てがみ", "てら", "てんき", "てぶくろ",
+    "とり", "とけい", "とまと", "とら",
+    # な行
+    "なつ", "なみ", "なし", "なっとう",
+    "にじ", "にんじん", "にわとり", "にく",
+    "ぬの",
+    "ねこ", "ねずみ", "ねぎ",
+    "のり", "のこぎり",
+    # は行
+    "はな", "はし", "はと", "はちみつ", "はる",
+    "ひまわり", "ひこうき", "ひよこ",
+    "ふね", "ふくろ", "ふで", "ふうせん",
+    "へび", "へや",
+    "ほし", "ほん", "ほたる",
+    # ま行
+    "まめ", "まど", "まくら", "まつり",
+    "みかん", "みず", "みち", "みそ",
+    "むし", "むぎ", "むら",
+    "めがね", "めろん", "めだか",
+    "もも", "もち", "もみじ",
+    # や・ら・わ行
+    "やま", "やさい", "やね", "やかん",
+    "ゆき", "ゆめ", "ゆび",
+    "よる", "ようふく", "よっと",
+    "らいおん", "らくだ", "らっぱ",
+    "りんご", "りす", "りぼん",
+    "るす",
+    "れもん", "れんげ",
+    "ろうそく", "ろぼっと", "ろけっと",
+    "わに", "わた", "わかめ",
+    # 濁点・半濁点
+    "がっこう", "がらす",
+    "ぎんこう",
+    "げた",
+    "ごりら", "ごま", "ごはん",
+    "ざっし",
+    "じゃがいも", "じかん",
+    "ずぼん",
+    "だるま", "だいこん",
+    "でんわ",
+    "どんぐり",
+    "ばなな", "ばら",
+    "びわ",
+    "ぶどう", "ぶた",
+    "べんきょう",
+    "ぼうし",
+    "ぱん",
+    "ぴざ",
+    "ぽすと",
+]
+
+_VOWEL_OF = {}
+for _row, _vowel in (
+    ("あかさたなはまやらわがざだばぱ", "あ"),
+    ("いきしちにひみりゐぎじぢびぴ", "い"),
+    ("うくすつぬふむゆるぐずづぶぷ", "う"),
+    ("えけせてねへめれゑげぜでべぺ", "え"),
+    ("おこそとのほもよろをごぞどぼぽ", "お"),
+):
+    for _ch in _row:
+        _VOWEL_OF[_ch] = _vowel
+_VOWEL_OF.update(
+    {"ぁ": "あ", "ぃ": "い", "ぅ": "う", "ぇ": "え", "ぉ": "お",
+     "ゃ": "あ", "ゅ": "う", "ょ": "お", "っ": "う", "ゎ": "あ"}
+)
+
+
+def shiritori_last_kana(word: str) -> str:
+    """次の単語が始まるべきかなを返す。末尾の「ー」は、その前のかなの
+    母音に読み替える。それ以外（拗音・促音を含む）は末尾の文字そのまま。"""
+    if not word:
+        return ""
+    if word[-1] == "ー":
+        for ch in reversed(word[:-1]):
+            if ch != "ー":
+                return _VOWEL_OF.get(ch, ch)
+        return ""
+    return word[-1]
+
+
+def shiritori_normalize(text: str) -> str:
+    """入力を正規化する：空白を取り除き、カタカナをひらがなにそろえる。"""
+    text = (text or "").strip().replace(" ", "").replace("　", "")
+    out = []
+    for ch in text:
+        code = ord(ch)
+        if 0x30A1 <= code <= 0x30F6:  # カタカナ → ひらがな
+            out.append(chr(code - 0x60))
+        else:
+            out.append(ch)
+    return "".join(out)
+
+
+def shiritori_check(word: str, required: str, used) -> str:
+    """入力チェック。'ok' / 'not_in_list' / 'used' / 'wrong_start' のいずれか。"""
+    if word not in SHIRITORI_WORDS:
+        return "not_in_list"
+    if word in used:
+        return "used"
+    if required and word[0] != required:
+        return "wrong_start"
+    return "ok"
+
+
+def shiritori_candidates(required: str, used) -> list:
+    used_set = set(used)
+    return [w for w in SHIRITORI_WORDS if w[0] == required and w not in used_set]
+
+
+def shiritori_cpu_word(required: str, used):
+    """CPU の手。「ん」で終わらない単語を優先してランダムに選ぶ。
+    続けられる単語がなければ None。"""
+    cands = shiritori_candidates(required, used)
+    if not cands:
+        return None
+    safe = [w for w in cands if not w.endswith("ん")]
+    return random.choice(safe if safe else cands)
+
+
+def shiritori_new_game() -> None:
+    session["st_chain"] = []
+    session["st_over"] = False
+
+
+SHIRITORI_TEMPLATE = r"""
+  <h1>🔤 しりとり対戦</h1>
+  <p class="howto">CPU と交互にしりとりする対戦ゲーム。使えるのは内蔵リスト（全 {{ word_total }} 語、ひらがな名詞）にある単語だけです。カタカナで入力してもひらがなに直して判定します。「ん」で終わる単語を出した方が負け。同じ単語は2回使えません。言葉が続かなくなった側の負けで、続いた単語数を記録します。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">つながった単語数: {{ chain|length }} ／ ベスト（最長）: {{ best if best is not none else '—' }}</p>
+    {% if chain %}
+      <p style="font-size:18px; line-height:1.9; text-align:center;">
+        {% for word, who in chain %}
+          <span class="pill">{{ who }}</span> {{ word }}{% if not loop.last %} → {% endif %}
+        {% endfor %}
+      </p>
+    {% else %}
+      <p class="mid">まだ単語がありません。最初の単語はリスト内のどれでもOKです。</p>
+    {% endif %}
+    {% if not over %}
+      <form method="post" action="{{ url_for('shiritori_play') }}" class="row">
+        <input type="text" name="word" placeholder="{% if required %}「{{ required }}」から始まる単語{% else %}ひらがなで単語を入力{% endif %}" autocomplete="off">
+        <button type="submit">出す</button>
+      </form>
+      {% if required %}
+        <p class="muted" style="text-align:center;">次は「{{ required }}」から始まる単語です。</p>
+      {% endif %}
+    {% endif %}
+    <form method="post" action="{{ url_for('shiritori_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">はじめから</button>
+    </form>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（単語数）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 語</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def render_shiritori(message=None):
+    if "st_chain" not in session:
+        shiritori_new_game()
+    chain = [list(pair) for pair in session["st_chain"]]
+    used = [w for w, _who in chain]
+    required = shiritori_last_kana(used[-1]) if used and not session.get("st_over") else ""
+    body = render_template_string(
+        SHIRITORI_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        chain=chain,
+        over=bool(session.get("st_over", False)),
+        required=required,
+        word_total=len(SHIRITORI_WORDS),
+        best=best_score("shiritori", "max"),
+        history=recent_scores("shiritori", 10),
+        message=message,
+    )
+    return game_page("しりとり対戦", body)
+
+
+def shiritori_finish(chain, message: str):
+    session["st_chain"] = chain
+    session["st_over"] = True
+    record_score("shiritori", len(chain))
+    return render_shiritori(message=f"{message}（{len(chain)} 語つながりました）")
+
+
+@app.route("/games/shiritori", methods=["GET"])
+def shiritori():
+    return render_shiritori()
+
+
+@app.route("/games/shiritori/play", methods=["POST"])
+def shiritori_play():
+    if "st_chain" not in session:
+        shiritori_new_game()
+    if session.get("st_over"):
+        return render_shiritori()
+    chain = [list(pair) for pair in session["st_chain"]]
+    used = [w for w, _who in chain]
+    required = shiritori_last_kana(used[-1]) if used else ""
+    word = shiritori_normalize(request.form.get("word", ""))
+    status = shiritori_check(word, required, used) if word else "not_in_list"
+    if status == "not_in_list":
+        return render_shiritori(
+            message="その単語はリストにありません。リストにある単語（ひらがな）でお願いします。"
+        )
+    if status == "used":
+        return render_shiritori(message=f"「{word}」はもう使われています。")
+    if status == "wrong_start":
+        return render_shiritori(message=f"「{required}」から始まる単語をどうぞ。")
+    chain.append([word, "あなた"])
+    session["st_chain"] = chain
+    if word.endswith("ん"):
+        return shiritori_finish(chain, f"「{word}」は「ん」で終わるので、あなたの負け…。")
+    nxt = shiritori_last_kana(word)
+    cpu = shiritori_cpu_word(nxt, [w for w, _who in chain])
+    if cpu is None:
+        return shiritori_finish(
+            chain, f"CPU は「{nxt}」から始まる単語を続けられませんでした。あなたの勝ち！"
+        )
+    chain.append([cpu, "CPU"])
+    session["st_chain"] = chain
+    if cpu.endswith("ん"):
+        return shiritori_finish(
+            chain, f"CPU の「{cpu}」は「ん」で終わるので、あなたの勝ち！"
+        )
+    return render_shiritori(
+        message=f"CPU： {cpu}。次は「{shiritori_last_kana(cpu)}」から始まる単語をどうぞ。"
+    )
+
+
+@app.route("/games/shiritori/reset", methods=["POST"])
+def shiritori_reset():
+    shiritori_new_game()
+    flash("はじめからやり直します。", "ok")
+    return redirect(url_for("shiritori"))
+
+
+# ============================
+# 風船わり
+# 30秒間の反射ゲーム。進行はクライアント JS、終了時に得点を POST する。
+# 通常の風船 +1点、爆弾 −3点（合計は0未満にしない）。
+# ============================
+BALLOONPOP_TEMPLATE = r"""
+  <h1>🎈 風船わり</h1>
+  <p class="howto">「スタート」を押すと30秒のカウントダウンが始まります。出てくる風船をタップ／クリックで割ってください。通常の風船は +1点、爆弾（💣）を割ると −3点（0点未満にはなりません）。風船は少し放っておくと消えてしまいます。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト（最高得点）: {{ best if best is not none else '—' }}</p>
+    <p class="mid">残り時間: <span id="timeLeft">30.0</span> 秒 ／ 得点: <span id="score">0</span></p>
+    <div id="area" style="position:relative; height:360px; border:1px solid #ddd; border-radius:12px; background:#f4f9ff; overflow:hidden; margin:10px 0;"></div>
+    <p class="result" id="message">「スタート」を押してね</p>
+    <div class="row">
+      <button type="button" id="startBtn">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var area = document.getElementById("area");
+  var message = document.getElementById("message");
+  var scoreEl = document.getElementById("score");
+  var timeEl = document.getElementById("timeLeft");
+  var startBtn = document.getElementById("startBtn");
+  var COLORS = ["#ef6461", "#f2b134", "#6bcb77", "#4d96ff", "#b983ff", "#ff8fb1"];
+  var playing = false, score = 0, endsAt = 0, spawnId = null, tickId = null;
+  function spawn(){
+    if (!playing) { return; }
+    var bomb = Math.random() < 0.18;
+    var size = 46 + Math.floor(Math.random() * 18);
+    var el = document.createElement("button");
+    el.type = "button";
+    el.textContent = bomb ? "💣" : "🎈";
+    el.style.cssText = "position:absolute; border-radius:50%; border:2px solid rgba(0,0,0,.15);"
+      + " width:" + size + "px; height:" + size + "px; padding:0; cursor:pointer;"
+      + " font-size:" + Math.floor(size * 0.55) + "px; line-height:1;"
+      + " background:" + (bomb ? "#666" : COLORS[Math.floor(Math.random() * COLORS.length)])
+      + "; left:" + (Math.random() * 86) + "%; top:" + (Math.random() * 80) + "%;";
+    el.addEventListener("click", function(){
+      if (!playing) { return; }
+      if (bomb) { score = Math.max(0, score - 3); } else { score += 1; }
+      scoreEl.textContent = String(score);
+      el.remove();
+    });
+    area.appendChild(el);
+    setTimeout(function(){ el.remove(); }, 1500);
+  }
+  function finish(){
+    playing = false;
+    clearInterval(spawnId);
+    clearInterval(tickId);
+    timeEl.textContent = "0.0";
+    area.innerHTML = "";
+    startBtn.disabled = false;
+    startBtn.textContent = "もう一度";
+    var form = new FormData();
+    form.append("score", String(score));
+    fetch("{{ url_for('balloonpop_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          message.textContent = "🎉 終了！ 得点は " + score + " 点でした";
+          document.getElementById("bestline").textContent = "ベスト（最高得点）: " + d.best;
+        }
+      })
+      .catch(function(){});
+  }
+  startBtn.addEventListener("click", function(){
+    if (playing) { return; }
+    playing = true;
+    score = 0;
+    scoreEl.textContent = "0";
+    area.innerHTML = "";
+    message.textContent = "風船を割ろう！ 爆弾は避けてね";
+    startBtn.disabled = true;
+    endsAt = Date.now() + 30000;
+    spawnId = setInterval(spawn, 650);
+    spawn();
+    tickId = setInterval(function(){
+      var left = Math.max(0, endsAt - Date.now());
+      timeEl.textContent = (left / 1000).toFixed(1);
+      if (left <= 0) { finish(); }
+    }, 100);
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/balloonpop", methods=["GET"])
+def balloonpop():
+    body = render_template_string(
+        BALLOONPOP_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("balloonpop", "max"),
+        history=recent_scores("balloonpop", 10),
+    )
+    return game_page("風船わり", body)
+
+
+@app.route("/games/balloonpop/score", methods=["POST"])
+def balloonpop_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 300):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("balloonpop", int(raw))
+    return {"ok": True, "best": best_score("balloonpop", "max")}
 
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
