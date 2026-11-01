@@ -102,7 +102,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("23 本", body)
+        self.assertIn("28 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -413,8 +413,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("23 本", body)
-        self.assertEqual(len(self.mod.GAMES), 23)
+        self.assertIn("28 本", body)
+        self.assertEqual(len(self.mod.GAMES), 28)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -527,6 +527,144 @@ class NewFourGamesTest(MinigameTest):
         with self.client.session_transaction() as sess:
             self.assertNotIn("esc_escape-cocoa_flags", sess)
             self.assertNotIn("esc_escape-cocoa_items", sess)
+
+
+class FiveMoreGamesTest(MinigameTest):
+    def test_portal_lists_five_more_games(self):
+        body = self.client.get("/").get_data(as_text=True)
+        for slug in ("hitblow", "shoefly", "fishing", "dodge", "snowball"):
+            self.assertIn(f"/games/{slug}", body)
+        for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
+                      "かわしサバイバー", "ゆき玉転がし"):
+            self.assertIn(title, body)
+        self.assertIn("28 本", body)
+        self.assertEqual(len(self.mod.GAMES), 28)
+
+    # ---- hitblow ----
+    def test_hitblow_page_ok(self):
+        res = self.client.get("/games/hitblow")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("あいことば推理", res.get_data(as_text=True))
+
+    def test_hitblow_guess_flow_and_win(self):
+        self.client.get("/games/hitblow")
+        with self.client.session_transaction() as sess:
+            secret = sess["hb_secret"]
+        self.assertEqual(len(secret), 4)
+        self.assertEqual(len(set(secret)), 4)
+        # 先頭2桁を入れ替えると 2ヒット2ブロー になる（残り2桁は位置も一致）
+        guess = secret[1] + secret[0] + secret[2:]
+        res = self.client.post("/games/hitblow/guess", data={"guess": guess})
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("2 ヒット / 2 ブロー", body)
+        self.assertEqual(self.query("SELECT id FROM scores WHERE game='hitblow'"), [])
+        # 正解するとスコア（回数）が記録される
+        res = self.client.post("/games/hitblow/guess", data={"guess": secret})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("正解", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game='hitblow'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 2)
+
+    def test_hitblow_invalid_guess(self):
+        self.client.get("/games/hitblow")
+        res = self.client.post("/games/hitblow/guess", data={"guess": "112"})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("重複のない4桁の数字", res.get_data(as_text=True))
+        res = self.client.post("/games/hitblow/guess", data={"guess": "1123"})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("重複のない4桁の数字", res.get_data(as_text=True))
+        self.assertEqual(self.query("SELECT id FROM scores WHERE game='hitblow'"), [])
+
+    def test_hitblow_reset(self):
+        self.client.get("/games/hitblow")
+        with self.client.session_transaction() as sess:
+            self.assertIn("hb_secret", sess)
+        res = self.client.post("/games/hitblow/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("hb_secret", sess)
+
+    # ---- shoefly ----
+    def test_shoefly_page_and_score(self):
+        res = self.client.get("/games/shoefly")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("くつ飛ばし", res.get_data(as_text=True))
+        res = self.client.post("/games/shoefly/score", data={"dist10": "325"})
+        self.assertEqual(res.get_json(), {"ok": True, "best": 325})
+        res = self.client.post("/games/shoefly/score", data={"dist10": "250"})
+        self.assertEqual(res.get_json()["best"], 325)
+        res = self.client.post("/games/shoefly/score", data={"dist10": "9999"})
+        self.assertEqual(res.status_code, 400)
+
+    # ---- fishing ----
+    def test_fishing_page_ok(self):
+        res = self.client.get("/games/fishing")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("つりぼり図鑑", body)
+        self.assertIn('<span id="kindCount">0</span>', body)
+        self.assertIn("？？？", body)
+        self.assertEqual(len(self.mod.FISH_KINDS), 12)
+
+    def test_fishing_cast_escape_and_catch(self):
+        self.client.get("/games/fishing")
+        # 反応が遅すぎると逃げる
+        res = self.client.post("/games/fishing/cast", data={"ms": "9999"})
+        self.assertEqual(res.get_json(), {"ok": True, "caught": False})
+        self.assertEqual(self.query("SELECT id FROM scores WHERE game='fishing'"), [])
+        # 速く反応すれば必ず何か釣れて、図鑑とスコアに残る
+        res = self.client.post("/games/fishing/cast", data={"ms": "100"})
+        data = res.get_json()
+        self.assertTrue(data["ok"])
+        self.assertTrue(data["caught"])
+        self.assertIn(data["name"], [f["name"] for f in self.mod.FISH_KINDS])
+        self.assertEqual(data["kinds"], 1)
+        self.assertEqual(data["total"], 12)
+        rows = self.query("SELECT score FROM scores WHERE game='fishing'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], data["points"])
+        # 図鑑の進み具合がページに出る
+        body = self.client.get("/games/fishing").get_data(as_text=True)
+        self.assertIn('<span id="kindCount">1</span>', body)
+        self.assertIn(data["name"], body)
+        # 不正な値は 400
+        res = self.client.post("/games/fishing/cast", data={"ms": "abc"})
+        self.assertEqual(res.status_code, 400)
+
+    def test_fishing_reset(self):
+        self.client.post("/games/fishing/cast", data={"ms": "100"})
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess.get("fish_caught", [])), 1)
+        res = self.client.post("/games/fishing/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("fish_caught", sess)
+
+    # ---- dodge ----
+    def test_dodge_page_and_score(self):
+        res = self.client.get("/games/dodge")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("かわしサバイバー", res.get_data(as_text=True))
+        res = self.client.post("/games/dodge/score", data={"sec10": "123"})
+        self.assertEqual(res.get_json(), {"ok": True, "best": 123})
+        res = self.client.post("/games/dodge/score", data={"sec10": "100"})
+        self.assertEqual(res.get_json()["best"], 123)
+        res = self.client.post("/games/dodge/score", data={"sec10": "-5"})
+        self.assertEqual(res.status_code, 400)
+
+    # ---- snowball ----
+    def test_snowball_page_and_score(self):
+        res = self.client.get("/games/snowball")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("ゆき玉転がし", res.get_data(as_text=True))
+        res = self.client.post("/games/snowball/score", data={"meters": "45"})
+        self.assertEqual(res.get_json(), {"ok": True, "best": 45})
+        res = self.client.post("/games/snowball/score", data={"meters": "30"})
+        self.assertEqual(res.get_json()["best"], 45)
+        res = self.client.post("/games/snowball/score", data={"meters": "xyz"})
+        self.assertEqual(res.status_code, 400)
 
 
 if __name__ == "__main__":
