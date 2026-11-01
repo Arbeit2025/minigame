@@ -102,7 +102,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("28 本", body)
+        self.assertIn("29 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -413,8 +413,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("28 本", body)
-        self.assertEqual(len(self.mod.GAMES), 28)
+        self.assertIn("29 本", body)
+        self.assertEqual(len(self.mod.GAMES), 29)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -537,8 +537,8 @@ class FiveMoreGamesTest(MinigameTest):
         for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
                       "かわしサバイバー", "ゆき玉転がし"):
             self.assertIn(title, body)
-        self.assertIn("28 本", body)
-        self.assertEqual(len(self.mod.GAMES), 28)
+        self.assertIn("29 本", body)
+        self.assertEqual(len(self.mod.GAMES), 29)
 
     # ---- hitblow ----
     def test_hitblow_page_ok(self):
@@ -665,6 +665,65 @@ class FiveMoreGamesTest(MinigameTest):
         self.assertEqual(res.get_json()["best"], 45)
         res = self.client.post("/games/snowball/score", data={"meters": "xyz"})
         self.assertEqual(res.status_code, 400)
+
+
+class ZhGachaTest(MinigameTest):
+    def test_portal_lists_zhgacha(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn("/games/zhgacha", body)
+        self.assertIn("中国語単語ガチャ", body)
+        self.assertIn("29 本", body)
+        self.assertEqual(len(self.mod.GAMES), 29)
+        self.assertEqual(len(self.mod.ZH_WORDS), 110)
+
+    def test_zhgacha_page_ok(self):
+        res = self.client.get("/games/zhgacha")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("中国語単語ガチャ", body)
+        self.assertIn('<span id="kindCount">0</span>', body)
+        self.assertIn("/ 110 種", body)
+
+    def test_zhgacha_draw_collects_and_scores(self):
+        res = self.client.post("/games/zhgacha/draw")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess.get("zh_collected", [])), 1)
+            idx = sess["zh_last"]
+        word = self.mod.ZH_WORDS[idx]
+        # 引いた単語カード（簡体字・ピンイン・日本語訳）がページに出る
+        body = self.client.get("/games/zhgacha").get_data(as_text=True)
+        self.assertIn(word["hanzi"], body)
+        self.assertIn(word["pinyin"], body)
+        self.assertIn(word["meaning"], body)
+        self.assertIn('<span id="kindCount">1</span>', body)
+        # 種類数（1）がスコアとして記録される
+        rows = self.query("SELECT score FROM scores WHERE game='zhgacha'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 1)
+
+    def test_zhgacha_draw_duplicate_does_not_score(self):
+        with self.client.session_transaction() as sess:
+            sess["zh_collected"] = list(range(len(self.mod.ZH_WORDS)))
+        res = self.client.post("/games/zhgacha/draw")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess["zh_collected"]), 110)
+        self.assertEqual(self.query("SELECT id FROM scores WHERE game='zhgacha'"), [])
+        body = self.client.get("/games/zhgacha").get_data(as_text=True)
+        self.assertIn('<span id="kindCount">110</span>', body)
+
+    def test_zhgacha_reset(self):
+        self.client.post("/games/zhgacha/draw")
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess.get("zh_collected", [])), 1)
+        res = self.client.post("/games/zhgacha/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("zh_collected", sess)
+            self.assertNotIn("zh_last", sess)
+        body = self.client.get("/games/zhgacha").get_data(as_text=True)
+        self.assertIn('<span id="kindCount">0</span>', body)
 
 
 if __name__ == "__main__":

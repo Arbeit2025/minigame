@@ -445,6 +445,14 @@ GAMES = [
         "description": "雪玉を左右に動かして岩を避けながら転がすゲーム。転がるほど玉は大きくなり、岩に当たると小さくなります。進んだ距離がスコアです。",
         "endpoint": "snowball",
     },
+    {
+        "slug": "zhgacha",
+        "title": "中国語単語ガチャ",
+        "category": "クイズ・知識",
+        "icon": "🇨🇳",
+        "description": "「ガチャを引く」と中国語の単語が1つランダムで出ます。簡体字・ピンイン・日本語訳・例文つき。全110語のコレクション完成を目指そう。",
+        "endpoint": "zhgacha",
+    },
 ]
 
 
@@ -3957,6 +3965,320 @@ def snowball_score():
         return {"ok": False, "error": "invalid meters"}, 400
     record_score("snowball", int(raw))
     return {"ok": True, "best": best_score("snowball", "max")}
+
+
+# ============================
+# 中国語単語ガチャ
+# 単語データ（ZH_WORDS）は単体ツール「zhwordgacha」の内蔵データ（全110語）を
+# そのまま取り込んだもの。単体版にあった SQLite の履歴保存は移植せず、
+# コレクションはセッション保持のみ（スコアには集めた種類数を記録する）。
+# ============================
+ZH_WORDS = [
+    {"hanzi": "你好", "pinyin": "nǐhǎo", "meaning": "こんにちは",
+     "example_cn": "你好，很高兴见到你。", "example_jp": "こんにちは、お会いできてうれしいです。"},
+    {"hanzi": "谢谢", "pinyin": "xièxie", "meaning": "ありがとう",
+     "example_cn": "谢谢你的帮助。", "example_jp": "助けてくれてありがとう。"},
+    {"hanzi": "学习", "pinyin": "xuéxí", "meaning": "勉強する",
+     "example_cn": "我每天学习中文。", "example_jp": "私は毎日中国語を勉強します。"},
+    {"hanzi": "朋友", "pinyin": "péngyou", "meaning": "友達",
+     "example_cn": "他是我的好朋友。", "example_jp": "彼は私の良い友達です。"},
+    {"hanzi": "学校", "pinyin": "xuéxiào", "meaning": "学校",
+     "example_cn": "我去学校上课。", "example_jp": "私は学校へ授業を受けに行きます。"},
+    {"hanzi": "老师", "pinyin": "lǎoshī", "meaning": "先生",
+     "example_cn": "老师讲得很清楚。", "example_jp": "先生の説明はとても分かりやすいです。"},
+    {"hanzi": "学生", "pinyin": "xuésheng", "meaning": "学生",
+     "example_cn": "我是大学生。", "example_jp": "私は大学生です。"},
+    {"hanzi": "中国", "pinyin": "Zhōngguó", "meaning": "中国",
+     "example_cn": "我想去中国旅行。", "example_jp": "私は中国へ旅行に行きたいです。"},
+    {"hanzi": "日本", "pinyin": "Rìběn", "meaning": "日本",
+     "example_cn": "我来自日本。", "example_jp": "私は日本から来ました。"},
+    {"hanzi": "语言", "pinyin": "yǔyán", "meaning": "言語",
+     "example_cn": "语言是沟通的工具。", "example_jp": "言語はコミュニケーションの道具です。"},
+    {"hanzi": "时间", "pinyin": "shíjiān", "meaning": "時間",
+     "example_cn": "我没有时间。", "example_jp": "私には時間がありません。"},
+    {"hanzi": "今天", "pinyin": "jīntiān", "meaning": "今日",
+     "example_cn": "今天是星期六。", "example_jp": "今日は土曜日です。"},
+    {"hanzi": "明天", "pinyin": "míngtiān", "meaning": "明日",
+     "example_cn": "明天见！", "example_jp": "また明日！"},
+    {"hanzi": "昨天", "pinyin": "zuótiān", "meaning": "昨日",
+     "example_cn": "昨天我去了图书馆。", "example_jp": "昨日私は図書館へ行きました。"},
+    {"hanzi": "现在", "pinyin": "xiànzài", "meaning": "今",
+     "example_cn": "现在几点？", "example_jp": "今何時ですか。"},
+    {"hanzi": "早上", "pinyin": "zǎoshang", "meaning": "朝",
+     "example_cn": "我早上七点起床。", "example_jp": "私は朝7時に起きます。"},
+    {"hanzi": "晚上", "pinyin": "wǎnshang", "meaning": "夜・晩",
+     "example_cn": "晚上我要看书。", "example_jp": "夜は本を読みます。"},
+    {"hanzi": "工作", "pinyin": "gōngzuò", "meaning": "仕事",
+     "example_cn": "我的工作很忙。", "example_jp": "私の仕事はとても忙しいです。"},
+    {"hanzi": "家", "pinyin": "jiā", "meaning": "家・家庭",
+     "example_cn": "我家有四口人。", "example_jp": "私の家は4人家族です。"},
+    {"hanzi": "人", "pinyin": "rén", "meaning": "人",
+     "example_cn": "这里有很多人。", "example_jp": "ここにはたくさんの人がいます。"},
+    {"hanzi": "大", "pinyin": "dà", "meaning": "大きい",
+     "example_cn": "这个房间很大。", "example_jp": "この部屋は大きいです。"},
+    {"hanzi": "小", "pinyin": "xiǎo", "meaning": "小さい",
+     "example_cn": "这只猫很小。", "example_jp": "この猫は小さいです。"},
+    {"hanzi": "多", "pinyin": "duō", "meaning": "多い",
+     "example_cn": "今天人很多。", "example_jp": "今日は人が多いです。"},
+    {"hanzi": "少", "pinyin": "shǎo", "meaning": "少ない",
+     "example_cn": "糖少一点。", "example_jp": "砂糖は少なめでお願いします。"},
+    {"hanzi": "好", "pinyin": "hǎo", "meaning": "良い",
+     "example_cn": "这个办法很好。", "example_jp": "この方法はとても良いです。"},
+    {"hanzi": "新", "pinyin": "xīn", "meaning": "新しい",
+     "example_cn": "我买了新手机。", "example_jp": "私は新しいスマホを買いました。"},
+    {"hanzi": "忙", "pinyin": "máng", "meaning": "忙しい",
+     "example_cn": "最近我很忙。", "example_jp": "最近私は忙しいです。"},
+    {"hanzi": "累", "pinyin": "lèi", "meaning": "疲れた",
+     "example_cn": "今天我很累。", "example_jp": "今日は疲れました。"},
+    {"hanzi": "高兴", "pinyin": "gāoxìng", "meaning": "うれしい",
+     "example_cn": "见到你我很高兴。", "example_jp": "あなたに会えてうれしいです。"},
+    {"hanzi": "喜欢", "pinyin": "xǐhuan", "meaning": "好き・気に入る",
+     "example_cn": "我喜欢喝茶。", "example_jp": "私はお茶を飲むのが好きです。"},
+    {"hanzi": "爱", "pinyin": "ài", "meaning": "愛する・大好き",
+     "example_cn": "我爱我的家人。", "example_jp": "私は家族を愛しています。"},
+    {"hanzi": "想", "pinyin": "xiǎng", "meaning": "〜したい・思う",
+     "example_cn": "我想喝水。", "example_jp": "水が飲みたいです。"},
+    {"hanzi": "知道", "pinyin": "zhīdào", "meaning": "知っている",
+     "example_cn": "我知道他的名字。", "example_jp": "私は彼の名前を知っています。"},
+    {"hanzi": "觉得", "pinyin": "juéde", "meaning": "〜と思う・感じる",
+     "example_cn": "我觉得这本书很有意思。", "example_jp": "この本はとても面白いと思います。"},
+    {"hanzi": "可以", "pinyin": "kěyǐ", "meaning": "〜できる・〜してもよい",
+     "example_cn": "我可以进来吗？", "example_jp": "入ってもいいですか。"},
+    {"hanzi": "会", "pinyin": "huì", "meaning": "〜できる（習得して）・〜だろう",
+     "example_cn": "我会说一点中文。", "example_jp": "私は少し中国語が話せます。"},
+    {"hanzi": "去", "pinyin": "qù", "meaning": "行く",
+     "example_cn": "我去商店买东西。", "example_jp": "私は店へ買い物に行きます。"},
+    {"hanzi": "来", "pinyin": "lái", "meaning": "来る",
+     "example_cn": "他明天来我家。", "example_jp": "彼は明日私の家に来ます。"},
+    {"hanzi": "回家", "pinyin": "huí jiā", "meaning": "帰宅する",
+     "example_cn": "我六点回家。", "example_jp": "私は6時に帰宅します。"},
+    {"hanzi": "吃", "pinyin": "chī", "meaning": "食べる",
+     "example_cn": "我们一起吃饭吧。", "example_jp": "一緒にご飯を食べましょう。"},
+    {"hanzi": "喝", "pinyin": "hē", "meaning": "飲む",
+     "example_cn": "我每天喝咖啡。", "example_jp": "私は毎日コーヒーを飲みます。"},
+    {"hanzi": "看", "pinyin": "kàn", "meaning": "見る・読む",
+     "example_cn": "我喜欢看电影。", "example_jp": "私は映画を見るのが好きです。"},
+    {"hanzi": "听", "pinyin": "tīng", "meaning": "聞く",
+     "example_cn": "请听我说。", "example_jp": "私の話を聞いてください。"},
+    {"hanzi": "说", "pinyin": "shuō", "meaning": "話す・言う",
+     "example_cn": "他说中文说得很好。", "example_jp": "彼は中国語を話すのが上手です。"},
+    {"hanzi": "读", "pinyin": "dú", "meaning": "読む・音読する",
+     "example_cn": "我每天读报纸。", "example_jp": "私は毎日新聞を読みます。"},
+    {"hanzi": "写", "pinyin": "xiě", "meaning": "書く",
+     "example_cn": "请写你的名字。", "example_jp": "名前を書いてください。"},
+    {"hanzi": "买", "pinyin": "mǎi", "meaning": "買う",
+     "example_cn": "我想买这本书。", "example_jp": "私はこの本を買いたいです。"},
+    {"hanzi": "卖", "pinyin": "mài", "meaning": "売る",
+     "example_cn": "这家店卖水果。", "example_jp": "この店は果物を売っています。"},
+    {"hanzi": "走", "pinyin": "zǒu", "meaning": "歩く・去る",
+     "example_cn": "我们走吧。", "example_jp": "行きましょう。"},
+    {"hanzi": "跑步", "pinyin": "pǎobù", "meaning": "ジョギングする",
+     "example_cn": "我每天早上跑步。", "example_jp": "私は毎朝ジョギングします。"},
+    {"hanzi": "坐", "pinyin": "zuò", "meaning": "座る・（乗り物に）乗る",
+     "example_cn": "请坐。", "example_jp": "どうぞ座ってください。"},
+    {"hanzi": "站", "pinyin": "zhàn", "meaning": "立つ",
+     "example_cn": "他站在门口。", "example_jp": "彼はドアの前に立っています。"},
+    {"hanzi": "开", "pinyin": "kāi", "meaning": "開ける・運転する",
+     "example_cn": "请开门。", "example_jp": "ドアを開けてください。"},
+    {"hanzi": "关", "pinyin": "guān", "meaning": "閉める",
+     "example_cn": "请关窗户。", "example_jp": "窓を閉めてください。"},
+    {"hanzi": "打电话", "pinyin": "dǎ diànhuà", "meaning": "電話をかける",
+     "example_cn": "我晚上给他打电话。", "example_jp": "夜に彼へ電話をかけます。"},
+    {"hanzi": "上班", "pinyin": "shàngbān", "meaning": "出勤する",
+     "example_cn": "我九点上班。", "example_jp": "私は9時に出勤します。"},
+    {"hanzi": "下班", "pinyin": "xiàbān", "meaning": "退勤する",
+     "example_cn": "他五点下班。", "example_jp": "彼は5時に退勤します。"},
+    {"hanzi": "睡觉", "pinyin": "shuìjiào", "meaning": "寝る",
+     "example_cn": "我十一点睡觉。", "example_jp": "私は11時に寝ます。"},
+    {"hanzi": "起床", "pinyin": "qǐchuáng", "meaning": "起きる・起床する",
+     "example_cn": "我每天六点起床。", "example_jp": "私は毎日6時に起きます。"},
+    {"hanzi": "洗澡", "pinyin": "xǐzǎo", "meaning": "入浴する・シャワーを浴びる",
+     "example_cn": "我晚上洗澡。", "example_jp": "私は夜にお風呂に入ります。"},
+    {"hanzi": "做饭", "pinyin": "zuò fàn", "meaning": "料理する",
+     "example_cn": "妈妈在做饭。", "example_jp": "母が料理をしています。"},
+    {"hanzi": "唱歌", "pinyin": "chànggē", "meaning": "歌を歌う",
+     "example_cn": "她唱歌唱得很好听。", "example_jp": "彼女は歌が上手です。"},
+    {"hanzi": "跳舞", "pinyin": "tiàowǔ", "meaning": "踊る",
+     "example_cn": "他们在跳舞。", "example_jp": "彼らは踊っています。"},
+    {"hanzi": "游泳", "pinyin": "yóuyǒng", "meaning": "泳ぐ",
+     "example_cn": "夏天我喜欢游泳。", "example_jp": "夏は泳ぐのが好きです。"},
+    {"hanzi": "旅行", "pinyin": "lǚxíng", "meaning": "旅行する",
+     "example_cn": "我喜欢去国外旅行。", "example_jp": "海外旅行が好きです。"},
+    {"hanzi": "运动", "pinyin": "yùndòng", "meaning": "運動する・スポーツ",
+     "example_cn": "运动对身体好。", "example_jp": "運動は体に良いです。"},
+    {"hanzi": "水", "pinyin": "shuǐ", "meaning": "水",
+     "example_cn": "请给我一杯水。", "example_jp": "水を一杯ください。"},
+    {"hanzi": "茶", "pinyin": "chá", "meaning": "お茶",
+     "example_cn": "中国人喜欢喝茶。", "example_jp": "中国人はお茶を飲むのが好きです。"},
+    {"hanzi": "咖啡", "pinyin": "kāfēi", "meaning": "コーヒー",
+     "example_cn": "我想喝一杯咖啡。", "example_jp": "コーヒーを一杯飲みたいです。"},
+    {"hanzi": "米饭", "pinyin": "mǐfàn", "meaning": "ご飯（炊いた米）",
+     "example_cn": "我吃米饭和菜。", "example_jp": "私はご飯とおかずを食べます。"},
+    {"hanzi": "面条", "pinyin": "miàntiáo", "meaning": "麺",
+     "example_cn": "这家店的面条很好吃。", "example_jp": "この店の麺はとてもおいしいです。"},
+    {"hanzi": "水果", "pinyin": "shuǐguǒ", "meaning": "果物",
+     "example_cn": "我每天吃水果。", "example_jp": "私は毎日果物を食べます。"},
+    {"hanzi": "苹果", "pinyin": "píngguǒ", "meaning": "りんご",
+     "example_cn": "这个苹果很甜。", "example_jp": "このりんごは甘いです。"},
+    {"hanzi": "天气", "pinyin": "tiānqì", "meaning": "天気",
+     "example_cn": "今天天气很好。", "example_jp": "今日は天気がとても良いです。"},
+    {"hanzi": "下雨", "pinyin": "xiàyǔ", "meaning": "雨が降る",
+     "example_cn": "明天会下雨。", "example_jp": "明日は雨が降るでしょう。"},
+    {"hanzi": "雪", "pinyin": "xuě", "meaning": "雪",
+     "example_cn": "冬天下雪了。", "example_jp": "冬に雪が降りました。"},
+    {"hanzi": "热", "pinyin": "rè", "meaning": "暑い・熱い",
+     "example_cn": "今天很热。", "example_jp": "今日は暑いです。"},
+    {"hanzi": "冷", "pinyin": "lěng", "meaning": "寒い",
+     "example_cn": "冬天很冷。", "example_jp": "冬は寒いです。"},
+    {"hanzi": "猫", "pinyin": "māo", "meaning": "猫",
+     "example_cn": "我家有一只猫。", "example_jp": "私の家には猫が一匹います。"},
+    {"hanzi": "狗", "pinyin": "gǒu", "meaning": "犬",
+     "example_cn": "这只狗很可爱。", "example_jp": "この犬はとてもかわいいです。"},
+    {"hanzi": "鸟", "pinyin": "niǎo", "meaning": "鳥",
+     "example_cn": "树上有一只鸟。", "example_jp": "木の上に鳥が一羽います。"},
+    {"hanzi": "鱼", "pinyin": "yú", "meaning": "魚",
+     "example_cn": "我喜欢吃鱼。", "example_jp": "私は魚を食べるのが好きです。"},
+    {"hanzi": "书", "pinyin": "shū", "meaning": "本",
+     "example_cn": "这本书很有意思。", "example_jp": "この本はとても面白いです。"},
+    {"hanzi": "电脑", "pinyin": "diànnǎo", "meaning": "パソコン",
+     "example_cn": "我的电脑坏了。", "example_jp": "私のパソコンが壊れました。"},
+    {"hanzi": "手机", "pinyin": "shǒujī", "meaning": "スマートフォン",
+     "example_cn": "我忘了带手机。", "example_jp": "スマホを持ってくるのを忘れました。"},
+    {"hanzi": "电影", "pinyin": "diànyǐng", "meaning": "映画",
+     "example_cn": "我们周末去看电影吧。", "example_jp": "週末に映画を見に行きましょう。"},
+    {"hanzi": "音乐", "pinyin": "yīnyuè", "meaning": "音楽",
+     "example_cn": "我喜欢听音乐。", "example_jp": "私は音楽を聞くのが好きです。"},
+    {"hanzi": "钱", "pinyin": "qián", "meaning": "お金",
+     "example_cn": "我没有钱了。", "example_jp": "お金がなくなりました。"},
+    {"hanzi": "商店", "pinyin": "shāngdiàn", "meaning": "店・商店",
+     "example_cn": "商店几点开门？", "example_jp": "店は何時に開きますか。"},
+    {"hanzi": "医院", "pinyin": "yīyuàn", "meaning": "病院",
+     "example_cn": "他去医院看病了。", "example_jp": "彼は病院へ診察に行きました。"},
+    {"hanzi": "图书馆", "pinyin": "túshūguǎn", "meaning": "図書館",
+     "example_cn": "我在图书馆学习。", "example_jp": "私は図書館で勉強します。"},
+    {"hanzi": "公园", "pinyin": "gōngyuán", "meaning": "公園",
+     "example_cn": "公园里有很多人。", "example_jp": "公園にはたくさんの人がいます。"},
+    {"hanzi": "车站", "pinyin": "chēzhàn", "meaning": "駅・停留所",
+     "example_cn": "车站在前面。", "example_jp": "駅は前方にあります。"},
+    {"hanzi": "飞机", "pinyin": "fēijī", "meaning": "飛行機",
+     "example_cn": "我坐飞机去北京。", "example_jp": "私は飛行機で北京へ行きます。"},
+    {"hanzi": "火车", "pinyin": "huǒchē", "meaning": "列車",
+     "example_cn": "火车几点到？", "example_jp": "列車は何時に着きますか。"},
+    {"hanzi": "自行车", "pinyin": "zìxíngchē", "meaning": "自転車",
+     "example_cn": "我骑自行车上学。", "example_jp": "私は自転車で通学します。"},
+    {"hanzi": "快", "pinyin": "kuài", "meaning": "速い・もうすぐ",
+     "example_cn": "他跑得很快。", "example_jp": "彼は走るのが速いです。"},
+    {"hanzi": "慢", "pinyin": "màn", "meaning": "遅い・ゆっくり",
+     "example_cn": "请慢一点说。", "example_jp": "ゆっくり話してください。"},
+    {"hanzi": "贵", "pinyin": "guì", "meaning": "高い（値段）",
+     "example_cn": "这件衣服太贵了。", "example_jp": "この服は高すぎます。"},
+    {"hanzi": "便宜", "pinyin": "piányi", "meaning": "安い（値段）",
+     "example_cn": "这家店的东西很便宜。", "example_jp": "この店の物は安いです。"},
+    {"hanzi": "近", "pinyin": "jìn", "meaning": "近い",
+     "example_cn": "我家离学校很近。", "example_jp": "私の家は学校から近いです。"},
+    {"hanzi": "远", "pinyin": "yuǎn", "meaning": "遠い",
+     "example_cn": "机场离这里很远。", "example_jp": "空港はここから遠いです。"},
+    {"hanzi": "问题", "pinyin": "wèntí", "meaning": "問題・質問",
+     "example_cn": "我有一个问题。", "example_jp": "質問が一つあります。"},
+    {"hanzi": "意思", "pinyin": "yìsi", "meaning": "意味",
+     "example_cn": "这个词是什么意思？", "example_jp": "この単語はどういう意味ですか。"},
+    {"hanzi": "名字", "pinyin": "míngzi", "meaning": "名前",
+     "example_cn": "你叫什么名字？", "example_jp": "あなたの名前は何ですか。"},
+    {"hanzi": "东西", "pinyin": "dōngxi", "meaning": "物・もの",
+     "example_cn": "我去买东西。", "example_jp": "買い物に行きます。"},
+    {"hanzi": "一起", "pinyin": "yìqǐ", "meaning": "一緒に",
+     "example_cn": "我们一起学习吧。", "example_jp": "一緒に勉強しましょう。"},
+    {"hanzi": "已经", "pinyin": "yǐjīng", "meaning": "すでに・もう",
+     "example_cn": "我已经吃过饭了。", "example_jp": "私はすでにご飯を食べました。"},
+    {"hanzi": "还", "pinyin": "hái", "meaning": "まだ・さらに",
+     "example_cn": "我还没做完。", "example_jp": "私はまだ終わっていません。"},
+    {"hanzi": "再", "pinyin": "zài", "meaning": "再び・改めて",
+     "example_cn": "我们明天再见面。", "example_jp": "また明日会いましょう。"},
+]
+
+
+ZHGACHA_TEMPLATE = r"""
+  <h1>🇨🇳 中国語単語ガチャ</h1>
+  <p class="howto">「ガチャを引く」を押すと、中国語の単語（HSK初級〜中級程度）が1つランダムで出ます。簡体字・ピンイン・日本語訳・例文つき。全 {{ total }} 語のコレクション完成を目指そう。引いた単語はこのページを開いている間だけ記録されます（単体版のような履歴保存はありません）。</p>
+  __FLASH__
+  <div class="card">
+    <form method="post" action="{{ url_for('zhgacha_draw') }}" class="row">
+      <button type="submit">🎰 ガチャを引く</button>
+    </form>
+    {% if card %}
+      <div style="text-align:center; margin-top:16px;">
+        <div style="font-size:40px; font-weight:bold;">{{ card.hanzi }}</div>
+        <div style="font-size:18px;">{{ card.pinyin }}</div>
+        <div style="font-size:18px; margin-top:4px;">{{ card.meaning }}</div>
+        {% if is_new %}<p class="result">🆕 新しい単語をゲット！</p>{% endif %}
+        <p style="margin-top:12px;">{{ card.example_cn }}<br><span class="muted">{{ card.example_jp }}</span></p>
+      </div>
+    {% else %}
+      <p class="muted" style="margin-top:12px;">まだ引いていません。ガチャを引いてみよう。</p>
+    {% endif %}
+    <p class="result">ベスト（集めた種類数）: {{ best if best is not none else '—' }}{% if best is not none %} / {{ total }} 種{% endif %}</p>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 8px;">📖 コレクション（<span id="kindCount">{{ kinds }}</span> / {{ total }} 種）</h3>
+    {% if word_list %}
+      <table>
+        {% for w in word_list %}
+          <tr><td>{{ w.hanzi }}</td><td class="muted">{{ w.pinyin }}</td><td class="muted">{{ w.meaning }}</td></tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted">まだ単語を集めていません。</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('zhgacha_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">コレクションをリセット</button>
+    </form>
+  </div>
+"""
+
+
+def render_zhgacha():
+    collected = session.get("zh_collected", [])
+    last = session.get("zh_last")
+    card = ZH_WORDS[last] if isinstance(last, int) and 0 <= last < len(ZH_WORDS) else None
+    body = render_template_string(
+        ZHGACHA_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        total=len(ZH_WORDS),
+        kinds=len(collected),
+        word_list=[ZH_WORDS[i] for i in collected],
+        card=card,
+        is_new=bool(session.get("zh_last_new")),
+        best=best_score("zhgacha", "max"),
+    )
+    return game_page("中国語単語ガチャ", body)
+
+
+@app.route("/games/zhgacha", methods=["GET"])
+def zhgacha():
+    return render_zhgacha()
+
+
+@app.route("/games/zhgacha/draw", methods=["POST"])
+def zhgacha_draw():
+    idx = random.randrange(len(ZH_WORDS))
+    collected = list(session.get("zh_collected", []))
+    is_new = idx not in collected
+    if is_new:
+        collected.append(idx)
+        session["zh_collected"] = collected
+        record_score("zhgacha", len(collected))
+    session["zh_last"] = idx
+    session["zh_last_new"] = is_new
+    return redirect(url_for("zhgacha"))
+
+
+@app.route("/games/zhgacha/reset", methods=["POST"])
+def zhgacha_reset():
+    session.pop("zh_collected", None)
+    session.pop("zh_last", None)
+    session.pop("zh_last_new", None)
+    flash("コレクションをリセットしました。", "ok")
+    return redirect(url_for("zhgacha"))
+
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
 init_db()
