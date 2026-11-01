@@ -104,7 +104,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("38 本", body)
+        self.assertIn("40 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -415,8 +415,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("38 本", body)
-        self.assertEqual(len(self.mod.GAMES), 38)
+        self.assertIn("40 本", body)
+        self.assertEqual(len(self.mod.GAMES), 40)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -539,8 +539,8 @@ class FiveMoreGamesTest(MinigameTest):
         for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
                       "かわしサバイバー", "ゆき玉転がし"):
             self.assertIn(title, body)
-        self.assertIn("38 本", body)
-        self.assertEqual(len(self.mod.GAMES), 38)
+        self.assertIn("40 本", body)
+        self.assertEqual(len(self.mod.GAMES), 40)
 
     # ---- hitblow ----
     def test_hitblow_page_ok(self):
@@ -674,8 +674,8 @@ class ZhGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/zhgacha", body)
         self.assertIn("中国語単語ガチャ", body)
-        self.assertIn("38 本", body)
-        self.assertEqual(len(self.mod.GAMES), 38)
+        self.assertIn("40 本", body)
+        self.assertEqual(len(self.mod.GAMES), 40)
         self.assertEqual(len(self.mod.ZH_WORDS), 110)
 
     def test_zhgacha_page_ok(self):
@@ -728,6 +728,140 @@ class ZhGachaTest(MinigameTest):
         self.assertIn('<span id="kindCount">0</span>', body)
 
 
+class EnGachaTest(MinigameTest):
+    def test_portal_lists_engacha(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn("/games/engacha", body)
+        self.assertIn("英単語ガチャ", body)
+        self.assertIn("40 本", body)
+        self.assertEqual(len(self.mod.GAMES), 40)
+        self.assertEqual(len(self.mod.EN_WORDS), 110)
+
+    def test_en_words_data_valid(self):
+        words = [w["word"] for w in self.mod.EN_WORDS]
+        self.assertEqual(len(words), len(set(words)))
+        for w in self.mod.EN_WORDS:
+            self.assertTrue(w["word"])
+            self.assertTrue(w["kana"])
+            self.assertTrue(w["meaning"])
+            self.assertTrue(w["example"])
+
+    def test_engacha_page_ok(self):
+        res = self.client.get("/games/engacha")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("英単語ガチャ", body)
+        self.assertIn('<span id="kindCount">0</span>', body)
+        self.assertIn("/ 110 種", body)
+
+    def test_engacha_draw_collects_and_scores(self):
+        res = self.client.post("/games/engacha/draw")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess.get("en_collected", [])), 1)
+            idx = sess["en_last"]
+        word = self.mod.EN_WORDS[idx]
+        # 引いた単語カード（英単語・カタカナ読み・日本語訳・例文）がページに出る
+        body = self.client.get("/games/engacha").get_data(as_text=True)
+        self.assertIn(word["word"], body)
+        self.assertIn(word["kana"], body)
+        self.assertIn(word["meaning"], body)
+        self.assertIn(word["example"], body)
+        self.assertIn('<span id="kindCount">1</span>', body)
+        # 種類数（1）がスコアとして記録される
+        rows = self.query("SELECT score FROM scores WHERE game='engacha'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 1)
+
+    def test_engacha_draw_duplicate_does_not_score(self):
+        with self.client.session_transaction() as sess:
+            sess["en_collected"] = list(range(len(self.mod.EN_WORDS)))
+        res = self.client.post("/games/engacha/draw")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess["en_collected"]), 110)
+        self.assertEqual(self.query("SELECT id FROM scores WHERE game='engacha'"), [])
+        body = self.client.get("/games/engacha").get_data(as_text=True)
+        self.assertIn('<span id="kindCount">110</span>', body)
+
+    def test_engacha_reset(self):
+        self.client.post("/games/engacha/draw")
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess.get("en_collected", [])), 1)
+        res = self.client.post("/games/engacha/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("en_collected", sess)
+            self.assertNotIn("en_last", sess)
+        body = self.client.get("/games/engacha").get_data(as_text=True)
+        self.assertIn('<span id="kindCount">0</span>', body)
+
+
+class EoGachaTest(MinigameTest):
+    def test_portal_lists_eogacha(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn("/games/eogacha", body)
+        self.assertIn("エスペラント単語ガチャ", body)
+        self.assertEqual(len(self.mod.EO_WORDS), 110)
+
+    def test_eo_words_data_valid(self):
+        words = [w["word"] for w in self.mod.EO_WORDS]
+        self.assertEqual(len(words), len(set(words)))
+        for w in self.mod.EO_WORDS:
+            self.assertTrue(w["word"])
+            self.assertTrue(w["meaning"])
+            self.assertTrue(w["example"])
+
+    def test_eogacha_page_ok(self):
+        res = self.client.get("/games/eogacha")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("エスペラント単語ガチャ", body)
+        self.assertIn("綴りをそのまま読める", body)
+        self.assertIn('<span id="kindCount">0</span>', body)
+        self.assertIn("/ 110 種", body)
+
+    def test_eogacha_draw_collects_and_scores(self):
+        res = self.client.post("/games/eogacha/draw")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess.get("eo_collected", [])), 1)
+            idx = sess["eo_last"]
+        word = self.mod.EO_WORDS[idx]
+        # 引いた単語カード（単語・日本語訳・例文）がページに出る
+        body = self.client.get("/games/eogacha").get_data(as_text=True)
+        self.assertIn(word["word"], body)
+        self.assertIn(word["meaning"], body)
+        self.assertIn(word["example"], body)
+        self.assertIn('<span id="kindCount">1</span>', body)
+        # 種類数（1）がスコアとして記録される
+        rows = self.query("SELECT score FROM scores WHERE game='eogacha'")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], 1)
+
+    def test_eogacha_draw_duplicate_does_not_score(self):
+        with self.client.session_transaction() as sess:
+            sess["eo_collected"] = list(range(len(self.mod.EO_WORDS)))
+        res = self.client.post("/games/eogacha/draw")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess["eo_collected"]), 110)
+        self.assertEqual(self.query("SELECT id FROM scores WHERE game='eogacha'"), [])
+        body = self.client.get("/games/eogacha").get_data(as_text=True)
+        self.assertIn('<span id="kindCount">110</span>', body)
+
+    def test_eogacha_reset(self):
+        self.client.post("/games/eogacha/draw")
+        with self.client.session_transaction() as sess:
+            self.assertEqual(len(sess.get("eo_collected", [])), 1)
+        res = self.client.post("/games/eogacha/reset")
+        self.assertIn(res.status_code, (200, 302))
+        with self.client.session_transaction() as sess:
+            self.assertNotIn("eo_collected", sess)
+            self.assertNotIn("eo_last", sess)
+        body = self.client.get("/games/eogacha").get_data(as_text=True)
+        self.assertIn('<span id="kindCount">0</span>', body)
+
 class ShindanGamesTest(MinigameTest):
     def answer_all_for_type(self, slug, endpoint_questions, type_key):
         """指定タイプの選択肢をなるべく選んで進め、最後のページ本文を返す。
@@ -752,8 +886,8 @@ class ShindanGamesTest(MinigameTest):
             self.assertIn(f"/games/{slug}", body)
         for title in ("三人娘タイプ診断", "今日のおやつ診断", "べんきょうタイプ診断"):
             self.assertIn(title, body)
-        self.assertIn("38 本", body)
-        self.assertEqual(len(self.mod.GAMES), 38)
+        self.assertIn("40 本", body)
+        self.assertEqual(len(self.mod.GAMES), 40)
 
     # ---- 三人娘タイプ診断 ----
     def test_trio_page_ok(self):
@@ -874,8 +1008,8 @@ class DotboardTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/dotboard", body)
         self.assertIn("ドット絵ボード", body)
-        self.assertIn("38 本", body)
-        self.assertEqual(len(self.mod.GAMES), 38)
+        self.assertIn("40 本", body)
+        self.assertEqual(len(self.mod.GAMES), 40)
 
     def test_dotboard_page_ok(self):
         res = self.client.get("/games/dotboard")
@@ -946,8 +1080,8 @@ class NewFiveGamesTest(MinigameTest):
         for title in ("スライドパズル", "1→25タッチ", "まるばつ対戦",
                       "しりとり対戦", "風船わり"):
             self.assertIn(title, body)
-        self.assertIn("38 本", body)
-        self.assertEqual(len(self.mod.GAMES), 38)
+        self.assertIn("40 本", body)
+        self.assertEqual(len(self.mod.GAMES), 40)
 
     # ---- slidepuzzle ----
     def test_slidepuzzle_page_ok(self):

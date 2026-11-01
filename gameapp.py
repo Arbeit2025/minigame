@@ -454,6 +454,22 @@ GAMES = [
         "endpoint": "zhgacha",
     },
     {
+        "slug": "engacha",
+        "title": "英単語ガチャ",
+        "category": "クイズ・知識",
+        "icon": "🇬🇧",
+        "description": "中国語単語ガチャの英語版。「ガチャを引く」と英単語が1つランダムで出ます。カタカナ読み・日本語訳・例文つき。全110語のコレクション完成を目指そう。",
+        "endpoint": "engacha",
+    },
+    {
+        "slug": "eogacha",
+        "title": "エスペラント単語ガチャ",
+        "category": "クイズ・知識",
+        "icon": "🌟",
+        "description": "中国語単語ガチャのエスペラント版。「ガチャを引く」とエスペラントの単語が1つランダムで出ます。日本語訳・例文つき。全110語のコレクション完成を目指そう。",
+        "endpoint": "eogacha",
+    },
+    {
         "slug": "shindan-trio",
         "title": "三人娘タイプ診断",
         "category": "抽選・占い",
@@ -4350,6 +4366,412 @@ def zhgacha_reset():
     session.pop("zh_last_new", None)
     flash("コレクションをリセットしました。", "ok")
     return redirect(url_for("zhgacha"))
+
+
+# ============================
+# 英単語ガチャ
+# 中国語単語ガチャ（zhgacha）の英語版。単語データは日常的な基礎単語
+# （CEFR A1〜A2 程度）110語を内蔵。遊び方は zhgacha と同じで、
+# コレクションはセッション保持のみ（スコアには集めた種類数を記録する）。
+# ============================
+EN_WORDS = [
+    {"word": "apple", "kana": "アップル", "meaning": "りんご", "example": "I eat an apple every day."},
+    {"word": "book", "kana": "ブック", "meaning": "本", "example": "This book is interesting."},
+    {"word": "cat", "kana": "キャット", "meaning": "猫", "example": "The cat is sleeping."},
+    {"word": "dog", "kana": "ドッグ", "meaning": "犬", "example": "My dog likes to run."},
+    {"word": "water", "kana": "ウォーター", "meaning": "水", "example": "Please give me some water."},
+    {"word": "school", "kana": "スクール", "meaning": "学校", "example": "I go to school by bus."},
+    {"word": "friend", "kana": "フレンド", "meaning": "友達", "example": "She is my best friend."},
+    {"word": "family", "kana": "ファミリー", "meaning": "家族", "example": "My family lives in Tokyo."},
+    {"word": "house", "kana": "ハウス", "meaning": "家", "example": "Their house is near the park."},
+    {"word": "car", "kana": "カー", "meaning": "車", "example": "He drives a red car."},
+    {"word": "train", "kana": "トレイン", "meaning": "電車・列車", "example": "The train is late today."},
+    {"word": "music", "kana": "ミュージック", "meaning": "音楽", "example": "I listen to music every night."},
+    {"word": "movie", "kana": "ムービー", "meaning": "映画", "example": "Let's watch a movie tonight."},
+    {"word": "food", "kana": "フード", "meaning": "食べ物", "example": "Japanese food is delicious."},
+    {"word": "coffee", "kana": "コーヒー", "meaning": "コーヒー", "example": "I drink coffee in the morning."},
+    {"word": "tea", "kana": "ティー", "meaning": "お茶", "example": "Would you like some tea?"},
+    {"word": "morning", "kana": "モーニング", "meaning": "朝", "example": "Good morning, everyone."},
+    {"word": "night", "kana": "ナイト", "meaning": "夜", "example": "I can see the moon at night."},
+    {"word": "day", "kana": "デイ", "meaning": "日・一日", "example": "Today is a sunny day."},
+    {"word": "week", "kana": "ウィーク", "meaning": "週", "example": "See you next week."},
+    {"word": "month", "kana": "マンス", "meaning": "月", "example": "June is my favorite month."},
+    {"word": "year", "kana": "イヤー", "meaning": "年", "example": "Happy New Year!"},
+    {"word": "time", "kana": "タイム", "meaning": "時間", "example": "What time is it now?"},
+    {"word": "money", "kana": "マネー", "meaning": "お金", "example": "I need some money for lunch."},
+    {"word": "city", "kana": "シティ", "meaning": "市・都市", "example": "This city is very big."},
+    {"word": "country", "kana": "カントリー", "meaning": "国", "example": "Japan is a beautiful country."},
+    {"word": "sea", "kana": "シー", "meaning": "海", "example": "We swim in the sea in summer."},
+    {"word": "mountain", "kana": "マウンテン", "meaning": "山", "example": "The mountain is high."},
+    {"word": "river", "kana": "リバー", "meaning": "川", "example": "The river runs through the city."},
+    {"word": "flower", "kana": "フラワー", "meaning": "花", "example": "These flowers are pretty."},
+    {"word": "tree", "kana": "ツリー", "meaning": "木", "example": "A bird is in the tree."},
+    {"word": "sun", "kana": "サン", "meaning": "太陽", "example": "The sun is bright today."},
+    {"word": "rain", "kana": "レイン", "meaning": "雨", "example": "It will rain tomorrow."},
+    {"word": "snow", "kana": "スノー", "meaning": "雪", "example": "Children play in the snow."},
+    {"word": "bird", "kana": "バード", "meaning": "鳥", "example": "I can hear a bird singing."},
+    {"word": "fish", "kana": "フィッシュ", "meaning": "魚", "example": "We eat fish for dinner."},
+    {"word": "hand", "kana": "ハンド", "meaning": "手", "example": "Wash your hands, please."},
+    {"word": "eye", "kana": "アイ", "meaning": "目", "example": "She has blue eyes."},
+    {"word": "door", "kana": "ドア", "meaning": "ドア・扉", "example": "Please close the door."},
+    {"word": "window", "kana": "ウィンドウ", "meaning": "窓", "example": "Open the window, please."},
+    {"word": "table", "kana": "テーブル", "meaning": "テーブル・机", "example": "The book is on the table."},
+    {"word": "chair", "kana": "チェア", "meaning": "いす", "example": "Sit on this chair."},
+    {"word": "room", "kana": "ルーム", "meaning": "部屋", "example": "My room is small but clean."},
+    {"word": "key", "kana": "キー", "meaning": "鍵", "example": "I can't find my key."},
+    {"word": "phone", "kana": "フォン", "meaning": "電話・スマホ", "example": "My phone is new."},
+    {"word": "computer", "kana": "コンピューター", "meaning": "コンピューター", "example": "I use a computer at work."},
+    {"word": "picture", "kana": "ピクチャー", "meaning": "写真・絵", "example": "This picture is beautiful."},
+    {"word": "question", "kana": "クエスチョン", "meaning": "質問", "example": "I have a question."},
+    {"word": "answer", "kana": "アンサー", "meaning": "答え", "example": "The answer is easy."},
+    {"word": "name", "kana": "ネーム", "meaning": "名前", "example": "My name is Anna."},
+    {"word": "teacher", "kana": "ティーチャー", "meaning": "先生", "example": "Our teacher is kind."},
+    {"word": "student", "kana": "スチューデント", "meaning": "学生・生徒", "example": "He is a high school student."},
+    {"word": "child", "kana": "チャイルド", "meaning": "子ども", "example": "The child is playing in the park."},
+    {"word": "man", "kana": "マン", "meaning": "男の人", "example": "That man is my father."},
+    {"word": "woman", "kana": "ウーマン", "meaning": "女の人", "example": "The woman is a doctor."},
+    {"word": "shop", "kana": "ショップ", "meaning": "店", "example": "The shop opens at nine."},
+    {"word": "station", "kana": "ステーション", "meaning": "駅", "example": "The station is near my house."},
+    {"word": "park", "kana": "パーク", "meaning": "公園", "example": "Let's play in the park."},
+    {"word": "hospital", "kana": "ホスピタル", "meaning": "病院", "example": "She works at a hospital."},
+    {"word": "library", "kana": "ライブラリー", "meaning": "図書館", "example": "I study at the library."},
+    {"word": "eat", "kana": "イート", "meaning": "食べる", "example": "We eat breakfast at seven."},
+    {"word": "drink", "kana": "ドリンク", "meaning": "飲む", "example": "I drink water after running."},
+    {"word": "go", "kana": "ゴー", "meaning": "行く", "example": "I go to school every day."},
+    {"word": "come", "kana": "カム", "meaning": "来る", "example": "Come here, please."},
+    {"word": "see", "kana": "シー", "meaning": "見る・会う", "example": "I see a bird in the sky."},
+    {"word": "read", "kana": "リード", "meaning": "読む", "example": "I read a book before bed."},
+    {"word": "write", "kana": "ライト", "meaning": "書く", "example": "Please write your name here."},
+    {"word": "speak", "kana": "スピーク", "meaning": "話す", "example": "She can speak English."},
+    {"word": "listen", "kana": "リッスン", "meaning": "聞く", "example": "Listen to the teacher."},
+    {"word": "walk", "kana": "ウォーク", "meaning": "歩く", "example": "I walk to the station."},
+    {"word": "run", "kana": "ラン", "meaning": "走る", "example": "They run in the park."},
+    {"word": "swim", "kana": "スイム", "meaning": "泳ぐ", "example": "Fish swim in the river."},
+    {"word": "sing", "kana": "シング", "meaning": "歌う", "example": "She sings very well."},
+    {"word": "play", "kana": "プレイ", "meaning": "遊ぶ・弾く", "example": "Children play soccer."},
+    {"word": "study", "kana": "スタディ", "meaning": "勉強する", "example": "I study English every day."},
+    {"word": "work", "kana": "ワーク", "meaning": "働く・仕事する", "example": "My father works in an office."},
+    {"word": "sleep", "kana": "スリープ", "meaning": "眠る", "example": "I sleep for eight hours."},
+    {"word": "buy", "kana": "バイ", "meaning": "買う", "example": "I buy bread at that shop."},
+    {"word": "make", "kana": "メイク", "meaning": "作る", "example": "Let's make a cake."},
+    {"word": "like", "kana": "ライク", "meaning": "好き", "example": "I like music."},
+    {"word": "want", "kana": "ウォント", "meaning": "欲しい・〜したい", "example": "I want a new bicycle."},
+    {"word": "know", "kana": "ノウ", "meaning": "知っている", "example": "I know his name."},
+    {"word": "think", "kana": "シンク", "meaning": "思う・考える", "example": "I think so too."},
+    {"word": "help", "kana": "ヘルプ", "meaning": "助ける・手伝う", "example": "Please help me."},
+    {"word": "open", "kana": "オープン", "meaning": "開ける", "example": "Open the book, please."},
+    {"word": "close", "kana": "クローズ", "meaning": "閉める", "example": "Close your eyes."},
+    {"word": "start", "kana": "スタート", "meaning": "始める・始まる", "example": "The movie starts at seven."},
+    {"word": "finish", "kana": "フィニッシュ", "meaning": "終わる・終える", "example": "I finish my homework early."},
+    {"word": "live", "kana": "リブ", "meaning": "住む・生きる", "example": "I live in Japan."},
+    {"word": "love", "kana": "ラブ", "meaning": "大好き・愛する", "example": "I love my family."},
+    {"word": "big", "kana": "ビッグ", "meaning": "大きい", "example": "This is a big house."},
+    {"word": "small", "kana": "スモール", "meaning": "小さい", "example": "The cat is small."},
+    {"word": "new", "kana": "ニュー", "meaning": "新しい", "example": "I have a new bike."},
+    {"word": "old", "kana": "オールド", "meaning": "古い・年をとった", "example": "This is an old book."},
+    {"word": "good", "kana": "グッド", "meaning": "良い", "example": "This is a good idea."},
+    {"word": "happy", "kana": "ハッピー", "meaning": "うれしい・幸せな", "example": "I am happy today."},
+    {"word": "hot", "kana": "ホット", "meaning": "暑い・熱い", "example": "Today is very hot."},
+    {"word": "cold", "kana": "コールド", "meaning": "寒い・冷たい", "example": "The water is cold."},
+    {"word": "easy", "kana": "イージー", "meaning": "簡単な", "example": "This question is easy."},
+    {"word": "difficult", "kana": "ディフィカルト", "meaning": "難しい", "example": "This puzzle is difficult."},
+    {"word": "busy", "kana": "ビジー", "meaning": "忙しい", "example": "I am busy today."},
+    {"word": "fast", "kana": "ファスト", "meaning": "速い", "example": "He runs fast."},
+    {"word": "slow", "kana": "スロー", "meaning": "遅い・ゆっくりした", "example": "The train is slow."},
+    {"word": "beautiful", "kana": "ビューティフル", "meaning": "美しい", "example": "The sea is beautiful."},
+    {"word": "delicious", "kana": "デリシャス", "meaning": "おいしい", "example": "The cake is delicious."},
+    {"word": "interesting", "kana": "インタレスティング", "meaning": "面白い", "example": "The movie is interesting."},
+    {"word": "kind", "kana": "カインド", "meaning": "親切な", "example": "She is kind to everyone."},
+    {"word": "strong", "kana": "ストロング", "meaning": "強い", "example": "He is strong."},
+    {"word": "young", "kana": "ヤング", "meaning": "若い", "example": "She is a young teacher."},
+    {"word": "long", "kana": "ロング", "meaning": "長い", "example": "This is a long story."},
+]
+
+# ============================
+# エスペラント単語ガチャ
+# 中国語単語ガチャ（zhgacha）のエスペラント版。単語データは基礎語彙
+# 110語を内蔵。綴り通り読める言語なので読み欄は設けず、文字は
+# x-system ではなく字上符つき文字（ĉ ĝ ĥ ĵ ŝ ŭ）をそのまま使う。
+# 遊び方は zhgacha と同じで、コレクションはセッション保持のみ
+# （スコアには集めた種類数を記録する）。
+# ============================
+EO_WORDS = [
+    {"word": "saluton", "meaning": "こんにちは", "example": "Saluton! Kiel vi fartas?"},
+    {"word": "libro", "meaning": "本", "example": "Mi legas libron ĉiutage."},
+    {"word": "hundo", "meaning": "犬", "example": "La hundo kuras en la parko."},
+    {"word": "kato", "meaning": "猫", "example": "La kato dormas sur la seĝo."},
+    {"word": "akvo", "meaning": "水", "example": "Mi trinkas akvon matene."},
+    {"word": "pano", "meaning": "パン", "example": "Ŝi manĝas panon."},
+    {"word": "pomo", "meaning": "りんご", "example": "La pomo estas ruĝa."},
+    {"word": "domo", "meaning": "家", "example": "Mia domo estas malgranda."},
+    {"word": "urbo", "meaning": "市・町", "example": "Tokio estas granda urbo."},
+    {"word": "lernejo", "meaning": "学校", "example": "La infanoj iras al la lernejo."},
+    {"word": "instruisto", "meaning": "先生", "example": "La instruisto estas afabla."},
+    {"word": "studento", "meaning": "学生", "example": "Li estas studento."},
+    {"word": "amiko", "meaning": "友達", "example": "Li estas mia bona amiko."},
+    {"word": "familio", "meaning": "家族", "example": "Mia familio estas granda."},
+    {"word": "patro", "meaning": "父", "example": "Mia patro laboras en oficejo."},
+    {"word": "patrino", "meaning": "母", "example": "Mia patrino kuiras bone."},
+    {"word": "frato", "meaning": "兄弟", "example": "Mi havas unu fraton."},
+    {"word": "fratino", "meaning": "姉妹", "example": "Ŝia fratino estas juna."},
+    {"word": "infano", "meaning": "子ども", "example": "La infano ludas en la parko."},
+    {"word": "viro", "meaning": "男の人", "example": "La viro estas alta."},
+    {"word": "virino", "meaning": "女の人", "example": "La virino estas kuracisto."},
+    {"word": "homo", "meaning": "人", "example": "Multaj homoj loĝas ĉi tie."},
+    {"word": "tago", "meaning": "日・一日", "example": "Hodiaŭ estas bela tago."},
+    {"word": "nokto", "meaning": "夜", "example": "La nokto estas malluma."},
+    {"word": "mateno", "meaning": "朝", "example": "Mi vekiĝas frue en la mateno."},
+    {"word": "vespero", "meaning": "夕方・晩", "example": "Ni promenas vespere."},
+    {"word": "semajno", "meaning": "週", "example": "Unu semajno havas sep tagojn."},
+    {"word": "monato", "meaning": "月", "example": "Junio estas varma monato."},
+    {"word": "jaro", "meaning": "年", "example": "Feliĉan Novan Jaron!"},
+    {"word": "tempo", "meaning": "時間", "example": "Mi ne havas tempon."},
+    {"word": "suno", "meaning": "太陽", "example": "La suno brilas hodiaŭ."},
+    {"word": "luno", "meaning": "月（天体）", "example": "La luno estas plena."},
+    {"word": "stelo", "meaning": "星", "example": "Multaj steloj brilas en la ĉielo."},
+    {"word": "ĉielo", "meaning": "空", "example": "La ĉielo estas blua."},
+    {"word": "maro", "meaning": "海", "example": "Ni naĝas en la maro."},
+    {"word": "rivero", "meaning": "川", "example": "La rivero estas longa."},
+    {"word": "monto", "meaning": "山", "example": "La monto estas alta."},
+    {"word": "arbo", "meaning": "木", "example": "Birdo sidas sur la arbo."},
+    {"word": "floro", "meaning": "花", "example": "La floroj estas belaj."},
+    {"word": "pluvo", "meaning": "雨", "example": "La pluvo falas ekde la mateno."},
+    {"word": "neĝo", "meaning": "雪", "example": "La infanoj ludas en la neĝo."},
+    {"word": "vento", "meaning": "風", "example": "La vento blovas forte."},
+    {"word": "birdo", "meaning": "鳥", "example": "La birdo kantas bele."},
+    {"word": "fiŝo", "meaning": "魚", "example": "Mi ŝatas fiŝon."},
+    {"word": "ĉevalo", "meaning": "馬", "example": "La ĉevalo kuras rapide."},
+    {"word": "muso", "meaning": "ネズミ", "example": "Malgranda muso estas sub la tablo."},
+    {"word": "tablo", "meaning": "テーブル・机", "example": "La libro estas sur la tablo."},
+    {"word": "seĝo", "meaning": "いす", "example": "Sidu sur la seĝo, bonvolu."},
+    {"word": "pordo", "meaning": "ドア・扉", "example": "Bonvolu fermi la pordon."},
+    {"word": "fenestro", "meaning": "窓", "example": "Malfermu la fenestron, bonvolu."},
+    {"word": "ĉambro", "meaning": "部屋", "example": "Mia ĉambro estas pura."},
+    {"word": "ŝlosilo", "meaning": "鍵", "example": "Mi perdis mian ŝlosilon."},
+    {"word": "telefono", "meaning": "電話", "example": "Mia telefono estas nova."},
+    {"word": "komputilo", "meaning": "コンピューター", "example": "Mi uzas komputilon por labori."},
+    {"word": "ĝardeno", "meaning": "庭", "example": "La ĝardeno estas plena de floroj."},
+    {"word": "vorto", "meaning": "単語", "example": "Tiu vorto estas malfacila."},
+    {"word": "lingvo", "meaning": "言語", "example": "Esperanto estas internacia lingvo."},
+    {"word": "demando", "meaning": "質問", "example": "Mi havas demandon."},
+    {"word": "respondo", "meaning": "答え", "example": "La respondo estas facila."},
+    {"word": "nomo", "meaning": "名前", "example": "Mia nomo estas Ken."},
+    {"word": "mono", "meaning": "お金", "example": "Mi bezonas iom da mono."},
+    {"word": "vendejo", "meaning": "店", "example": "La vendejo malfermiĝas je la naŭa horo."},
+    {"word": "stacio", "meaning": "駅", "example": "La stacio estas proksime de mia domo."},
+    {"word": "parko", "meaning": "公園", "example": "La parko estas granda kaj verda."},
+    {"word": "hospitalo", "meaning": "病院", "example": "Ŝi laboras en hospitalo."},
+    {"word": "biblioteko", "meaning": "図書館", "example": "Mi studas en la biblioteko."},
+    {"word": "aŭto", "meaning": "車", "example": "Li veturas per ruĝa aŭto."},
+    {"word": "trajno", "meaning": "電車・列車", "example": "La trajno malfruas hodiaŭ."},
+    {"word": "biciklo", "meaning": "自転車", "example": "Mi volas novan biciklon."},
+    {"word": "ĵurnalo", "meaning": "新聞", "example": "Mi legas ĵurnalon matene."},
+    {"word": "manĝi", "meaning": "食べる", "example": "Ni manĝas kune."},
+    {"word": "trinki", "meaning": "飲む", "example": "Mi trinkas teon post la manĝo."},
+    {"word": "iri", "meaning": "行く", "example": "Mi iras al la lernejo piede."},
+    {"word": "veni", "meaning": "来る", "example": "Venu ĉi tien, bonvolu."},
+    {"word": "vidi", "meaning": "見る", "example": "Mi vidas birdon en la arbo."},
+    {"word": "aŭdi", "meaning": "聞く", "example": "Mi aŭdas belan muzikon."},
+    {"word": "paroli", "meaning": "話す", "example": "Ŝi parolas Esperanton tre bone."},
+    {"word": "legi", "meaning": "読む", "example": "Mi legas libron ĉiuvespere."},
+    {"word": "skribi", "meaning": "書く", "example": "Bonvolu skribi vian nomon."},
+    {"word": "lerni", "meaning": "学ぶ", "example": "Mi lernas Esperanton."},
+    {"word": "labori", "meaning": "働く", "example": "Ŝi laboras tre multe."},
+    {"word": "dormi", "meaning": "眠る", "example": "Mi dormas ok horojn."},
+    {"word": "ludi", "meaning": "遊ぶ", "example": "La infanoj ludas ekstere."},
+    {"word": "kanti", "meaning": "歌う", "example": "Ŝi kantas tre bele."},
+    {"word": "danci", "meaning": "踊る", "example": "Ili dancas kune."},
+    {"word": "naĝi", "meaning": "泳ぐ", "example": "Ni naĝas en la rivero somere."},
+    {"word": "kuri", "meaning": "走る", "example": "Li kuras ĉiun matenon."},
+    {"word": "marŝi", "meaning": "歩く", "example": "Mi marŝas al la stacio."},
+    {"word": "ami", "meaning": "愛する・大好き", "example": "Mi amas mian familion."},
+    {"word": "ŝati", "meaning": "好き・気に入る", "example": "Mi ŝatas muzikon."},
+    {"word": "voli", "meaning": "欲しい・〜したい", "example": "Mi volas trinki akvon."},
+    {"word": "povi", "meaning": "できる", "example": "Mi povas helpi vin."},
+    {"word": "devi", "meaning": "〜しなければならない", "example": "Mi devas lerni hodiaŭ."},
+    {"word": "scii", "meaning": "知っている", "example": "Mi scias lian nomon."},
+    {"word": "pensi", "meaning": "思う・考える", "example": "Mi pensas same kiel vi."},
+    {"word": "helpi", "meaning": "助ける", "example": "Bonvolu helpi min."},
+    {"word": "aĉeti", "meaning": "買う", "example": "Mi aĉetas panon en la vendejo."},
+    {"word": "fari", "meaning": "する・作る", "example": "Ni faras kukon kune."},
+    {"word": "loĝi", "meaning": "住む", "example": "Mi loĝas en Japanio."},
+    {"word": "vojaĝi", "meaning": "旅行する", "example": "Ili vojaĝas al Eŭropo."},
+    {"word": "granda", "meaning": "大きい", "example": "La domo estas granda."},
+    {"word": "malgranda", "meaning": "小さい", "example": "La kato estas malgranda."},
+    {"word": "bona", "meaning": "良い", "example": "Tio estas bona ideo."},
+    {"word": "nova", "meaning": "新しい", "example": "Ŝi havas novan telefonon."},
+    {"word": "malnova", "meaning": "古い", "example": "Tio estas malnova domo."},
+    {"word": "varma", "meaning": "暖かい・熱い", "example": "Hodiaŭ estas varma tago."},
+    {"word": "malvarma", "meaning": "寒い・冷たい", "example": "La akvo estas malvarma."},
+    {"word": "ĥoro", "meaning": "合唱団・コーラス", "example": "La ĥoro kantas bele."},
+    {"word": "malfacila", "meaning": "難しい", "example": "La ekzameno estas malfacila."},
+    {"word": "feliĉa", "meaning": "幸せな・うれしい", "example": "Mi estas feliĉa hodiaŭ."},
+]
+
+
+ENGACHA_TEMPLATE = r"""
+  <h1>🇬🇧 英単語ガチャ</h1>
+  <p class="howto">「ガチャを引く」を押すと、英単語（日常的な基礎単語）が1つランダムで出ます。カタカナ読み・日本語訳・例文つき。全 {{ total }} 語のコレクション完成を目指そう。引いた単語はこのページを開いている間だけ記録されます（履歴保存はありません）。</p>
+  __FLASH__
+  <div class="card">
+    <form method="post" action="{{ url_for('engacha_draw') }}" class="row">
+      <button type="submit">🎰 ガチャを引く</button>
+    </form>
+    {% if card %}
+      <div style="text-align:center; margin-top:16px;">
+        <div style="font-size:40px; font-weight:bold;">{{ card.word }}</div>
+        <div style="font-size:18px;">{{ card.kana }}</div>
+        <div style="font-size:18px; margin-top:4px;">{{ card.meaning }}</div>
+        {% if is_new %}<p class="result">🆕 新しい単語をゲット！</p>{% endif %}
+        <p style="margin-top:12px;">{{ card.example }}</p>
+      </div>
+    {% else %}
+      <p class="muted" style="margin-top:12px;">まだ引いていません。ガチャを引いてみよう。</p>
+    {% endif %}
+    <p class="result">ベスト（集めた種類数）: {{ best if best is not none else '—' }}{% if best is not none %} / {{ total }} 種{% endif %}</p>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 8px;">📖 コレクション（<span id="kindCount">{{ kinds }}</span> / {{ total }} 種）</h3>
+    {% if word_list %}
+      <table>
+        {% for w in word_list %}
+          <tr><td>{{ w.word }}</td><td class="muted">{{ w.kana }}</td><td class="muted">{{ w.meaning }}</td></tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted">まだ単語を集めていません。</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('engacha_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">コレクションをリセット</button>
+    </form>
+  </div>
+"""
+
+
+def render_engacha():
+    collected = session.get("en_collected", [])
+    last = session.get("en_last")
+    card = EN_WORDS[last] if isinstance(last, int) and 0 <= last < len(EN_WORDS) else None
+    body = render_template_string(
+        ENGACHA_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        total=len(EN_WORDS),
+        kinds=len(collected),
+        word_list=[EN_WORDS[i] for i in collected],
+        card=card,
+        is_new=bool(session.get("en_last_new")),
+        best=best_score("engacha", "max"),
+    )
+    return game_page("英単語ガチャ", body)
+
+
+@app.route("/games/engacha", methods=["GET"])
+def engacha():
+    return render_engacha()
+
+
+@app.route("/games/engacha/draw", methods=["POST"])
+def engacha_draw():
+    idx = random.randrange(len(EN_WORDS))
+    collected = list(session.get("en_collected", []))
+    is_new = idx not in collected
+    if is_new:
+        collected.append(idx)
+        session["en_collected"] = collected
+        record_score("engacha", len(collected))
+    session["en_last"] = idx
+    session["en_last_new"] = is_new
+    return redirect(url_for("engacha"))
+
+
+@app.route("/games/engacha/reset", methods=["POST"])
+def engacha_reset():
+    session.pop("en_collected", None)
+    session.pop("en_last", None)
+    session.pop("en_last_new", None)
+    flash("コレクションをリセットしました。", "ok")
+    return redirect(url_for("engacha"))
+
+
+EOGACHA_TEMPLATE = r"""
+  <h1>🌟 エスペラント単語ガチャ</h1>
+  <p class="howto">「ガチャを引く」を押すと、エスペラントの単語（基礎単語）が1つランダムで出ます。日本語訳・例文つき。全 {{ total }} 語のコレクション完成を目指そう。エスペラントは綴りをそのまま読める言語なので、読みがなは付けていません（ĉ や ĝ のような字上符つき文字もそのまま使っています）。引いた単語はこのページを開いている間だけ記録されます（履歴保存はありません）。</p>
+  __FLASH__
+  <div class="card">
+    <form method="post" action="{{ url_for('eogacha_draw') }}" class="row">
+      <button type="submit">🎰 ガチャを引く</button>
+    </form>
+    {% if card %}
+      <div style="text-align:center; margin-top:16px;">
+        <div style="font-size:40px; font-weight:bold;">{{ card.word }}</div>
+        <div style="font-size:18px; margin-top:4px;">{{ card.meaning }}</div>
+        {% if is_new %}<p class="result">🆕 新しい単語をゲット！</p>{% endif %}
+        <p style="margin-top:12px;">{{ card.example }}</p>
+      </div>
+    {% else %}
+      <p class="muted" style="margin-top:12px;">まだ引いていません。ガチャを引いてみよう。</p>
+    {% endif %}
+    <p class="result">ベスト（集めた種類数）: {{ best if best is not none else '—' }}{% if best is not none %} / {{ total }} 種{% endif %}</p>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 8px;">📖 コレクション（<span id="kindCount">{{ kinds }}</span> / {{ total }} 種）</h3>
+    {% if word_list %}
+      <table>
+        {% for w in word_list %}
+          <tr><td>{{ w.word }}</td><td class="muted">{{ w.meaning }}</td></tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted">まだ単語を集めていません。</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('eogacha_reset') }}" class="row" style="margin-top:10px;">
+      <button type="submit">コレクションをリセット</button>
+    </form>
+  </div>
+"""
+
+
+def render_eogacha():
+    collected = session.get("eo_collected", [])
+    last = session.get("eo_last")
+    card = EO_WORDS[last] if isinstance(last, int) and 0 <= last < len(EO_WORDS) else None
+    body = render_template_string(
+        EOGACHA_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        total=len(EO_WORDS),
+        kinds=len(collected),
+        word_list=[EO_WORDS[i] for i in collected],
+        card=card,
+        is_new=bool(session.get("eo_last_new")),
+        best=best_score("eogacha", "max"),
+    )
+    return game_page("エスペラント単語ガチャ", body)
+
+
+@app.route("/games/eogacha", methods=["GET"])
+def eogacha():
+    return render_eogacha()
+
+
+@app.route("/games/eogacha/draw", methods=["POST"])
+def eogacha_draw():
+    idx = random.randrange(len(EO_WORDS))
+    collected = list(session.get("eo_collected", []))
+    is_new = idx not in collected
+    if is_new:
+        collected.append(idx)
+        session["eo_collected"] = collected
+        record_score("eogacha", len(collected))
+    session["eo_last"] = idx
+    session["eo_last_new"] = is_new
+    return redirect(url_for("eogacha"))
+
+
+@app.route("/games/eogacha/reset", methods=["POST"])
+def eogacha_reset():
+    session.pop("eo_collected", None)
+    session.pop("eo_last", None)
+    session.pop("eo_last_new", None)
+    flash("コレクションをリセットしました。", "ok")
+    return redirect(url_for("eogacha"))
 
 
 # ============================
