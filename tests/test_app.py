@@ -104,7 +104,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("40 本", body)
+        self.assertIn("85 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -415,8 +415,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("40 本", body)
-        self.assertEqual(len(self.mod.GAMES), 40)
+        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -539,8 +539,8 @@ class FiveMoreGamesTest(MinigameTest):
         for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
                       "かわしサバイバー", "ゆき玉転がし"):
             self.assertIn(title, body)
-        self.assertIn("40 本", body)
-        self.assertEqual(len(self.mod.GAMES), 40)
+        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
 
     # ---- hitblow ----
     def test_hitblow_page_ok(self):
@@ -674,8 +674,8 @@ class ZhGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/zhgacha", body)
         self.assertIn("中国語単語ガチャ", body)
-        self.assertIn("40 本", body)
-        self.assertEqual(len(self.mod.GAMES), 40)
+        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
         self.assertEqual(len(self.mod.ZH_WORDS), 110)
 
     def test_zhgacha_page_ok(self):
@@ -733,8 +733,8 @@ class EnGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/engacha", body)
         self.assertIn("英単語ガチャ", body)
-        self.assertIn("40 本", body)
-        self.assertEqual(len(self.mod.GAMES), 40)
+        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
         self.assertEqual(len(self.mod.EN_WORDS), 110)
 
     def test_en_words_data_valid(self):
@@ -886,8 +886,8 @@ class ShindanGamesTest(MinigameTest):
             self.assertIn(f"/games/{slug}", body)
         for title in ("三人娘タイプ診断", "今日のおやつ診断", "べんきょうタイプ診断"):
             self.assertIn(title, body)
-        self.assertIn("40 本", body)
-        self.assertEqual(len(self.mod.GAMES), 40)
+        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
 
     # ---- 三人娘タイプ診断 ----
     def test_trio_page_ok(self):
@@ -1008,8 +1008,8 @@ class DotboardTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/dotboard", body)
         self.assertIn("ドット絵ボード", body)
-        self.assertIn("40 本", body)
-        self.assertEqual(len(self.mod.GAMES), 40)
+        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
 
     def test_dotboard_page_ok(self):
         res = self.client.get("/games/dotboard")
@@ -1080,8 +1080,8 @@ class NewFiveGamesTest(MinigameTest):
         for title in ("スライドパズル", "1→25タッチ", "まるばつ対戦",
                       "しりとり対戦", "風船わり"):
             self.assertIn(title, body)
-        self.assertIn("40 本", body)
-        self.assertEqual(len(self.mod.GAMES), 40)
+        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
 
     # ---- slidepuzzle ----
     def test_slidepuzzle_page_ok(self):
@@ -1357,6 +1357,997 @@ class GenreFilterTest(MinigameTest):
         self.assertIn("querySelectorAll('.cats button[data-filter]')", body)
         self.assertIn("querySelectorAll('.grid .card')", body)
 
+
+
+
+class SnsNov02GamesTest(MinigameTest):
+    """2026-11-02 配信の保留案から実装した15本（SNS10＋ふりーむ5）のテスト。"""
+
+    NEW_SLUGS = ("flasksort", "cupshuffle", "colorwall", "trio-card", "flat3d",
+                 "gomoku-tsume", "iceweak", "saisen", "suzuatume", "tunnelface",
+                 "bagpack", "wordmonster", "mojiotoshi", "mensetsu", "suishitsu")
+
+    def test_portal_lists_fifteen_new_games(self):
+        body = self.client.get("/").get_data(as_text=True)
+        for slug in self.NEW_SLUGS:
+            self.assertIn(f"/games/{slug}", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("85 本", body)
+
+    def test_new_games_categories(self):
+        cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
+        expected = {
+            "flasksort": "脳トレ", "cupshuffle": "抽選・占い", "colorwall": "アクション",
+            "trio-card": "カード・数字", "flat3d": "脳トレ", "gomoku-tsume": "脳トレ",
+            "iceweak": "アクション", "saisen": "アクション", "suzuatume": "アクション",
+            "tunnelface": "脳トレ", "bagpack": "創作", "wordmonster": "対戦",
+            "mojiotoshi": "脳トレ", "mensetsu": "クイズ・知識", "suishitsu": "クイズ・知識",
+        }
+        for slug, cat in expected.items():
+            self.assertEqual(cats[slug], cat, slug)
+        allowed = {"アクション", "脳トレ", "抽選・占い", "クイズ・知識",
+                   "対戦", "脱出・謎解き", "カード・数字", "創作"}
+        self.assertTrue(set(cats.values()) <= allowed)
+
+    def check_js_score_game(self, slug, title, good, bad_values):
+        res = self.client.get(f"/games/{slug}")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(title, res.get_data(as_text=True))
+        res = self.client.post(f"/games/{slug}/score", data={"score": good})
+        self.assertEqual(res.get_json(), {"ok": True, "best": int(good)})
+        for bad in bad_values:
+            res = self.client.post(f"/games/{slug}/score", data={"score": bad})
+            self.assertEqual(res.status_code, 400, (slug, bad))
+
+    # ---- JS進行ゲーム（ページ＋スコア保存） ----
+    def test_cupshuffle_page_and_score(self):
+        self.check_js_score_game("cupshuffle", "カップシャッフル当て", "12", ("-1", "abc", "1000"))
+
+    def test_colorwall_page_and_score(self):
+        self.check_js_score_game("colorwall", "カラー壁ぬけ", "23", ("-1", "abc", "1000"))
+
+    def test_iceweak_page_and_score(self):
+        self.check_js_score_game("iceweak", "氷の弱点タップ", "9", ("-1", "abc", "1000"))
+
+    def test_suzuatume_page_and_score(self):
+        self.check_js_score_game("suzuatume", "すずあつめ落ちもの", "31", ("-1", "abc", "1000"))
+
+    def test_tunnelface_page_and_score(self):
+        self.check_js_score_game("tunnelface", "トンネル顔出し当て", "4", ("-1", "abc", "1000"))
+
+    def test_mojiotoshi_page_and_score(self):
+        self.check_js_score_game("mojiotoshi", "もじおとし", "6", ("-1", "abc", "1000"))
+
+    def test_saisen_page_and_score(self):
+        # 10投制なので上限は10
+        self.check_js_score_game("saisen", "賽銭チャレンジ", "7", ("-1", "abc", "11"))
+        res = self.client.post("/games/saisen/score", data={"score": "10"})
+        self.assertEqual(res.get_json()["best"], 10)
+
+    # ---- いろわけフラスコ ----
+    def test_flasksort_pour_rules(self):
+        m = self.mod
+        # 同色の上のかたまりがまとめて移る
+        out = m.flasksort_pour([[0, 0], [1], [], []], 0, 2)
+        self.assertEqual(out, [[], [1], [0, 0], []])
+        # 異なる色の上には注げない
+        self.assertIsNone(m.flasksort_pour([[0], [1], [], []], 0, 1))
+        # 空きが1つしかなければ1つだけ移る
+        out = m.flasksort_pour([[0, 0, 0], [0, 0, 0], [], []], 0, 1)
+        self.assertEqual(out, [[0, 0], [0, 0, 0, 0], [], []])
+        # 空のフラスコからは注げない
+        self.assertIsNone(m.flasksort_pour([[], [1], [], []], 0, 2))
+        # 完成判定
+        self.assertTrue(m.flasksort_is_solved([[0, 0, 0, 0], [1, 1, 1, 1], []]))
+        self.assertFalse(m.flasksort_is_solved([[0, 0, 0], [1, 1, 1, 1], [0]]))
+
+    def test_flasksort_new_state_invariants(self):
+        m = self.mod
+        for _ in range(20):
+            state = m.flasksort_new_state()
+            counts = {0: 0, 1: 0, 2: 0}
+            for flask in state:
+                self.assertLessEqual(len(flask), 4)
+                for color in flask:
+                    counts[color] += 1
+            self.assertEqual(counts, {0: 4, 1: 4, 2: 4})
+            self.assertFalse(m.flasksort_is_solved(state))
+
+    def test_flasksort_solve_flow_records_score(self):
+        res = self.client.get("/games/flasksort")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("いろわけフラスコ", res.get_data(as_text=True))
+        with self.client.session_transaction() as sess:
+            sess["fs_flasks"] = [[0, 0, 0, 0], [1, 1, 1, 1], [2, 2, 2], [2]]
+            sess["fs_moves"] = 0
+            sess["fs_sel"] = -1
+            sess["fs_done"] = False
+        self.client.post("/games/flasksort/tap", data={"index": "2"})
+        res = self.client.post("/games/flasksort/tap", data={"index": "3"})
+        self.assertIn("完成", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game = 'flasksort'")
+        self.assertEqual(rows, [(1,)])
+
+    # ---- 三すくみカード ----
+    def test_triocard_judge(self):
+        j = self.mod.triocard_judge
+        self.assertEqual(j("炎", 1, "草", 9), "win")   # 属性で勝ち（数字は無関係）
+        self.assertEqual(j("草", 9, "炎", 1), "lose")
+        self.assertEqual(j("水", 2, "炎", 8), "win")
+        self.assertEqual(j("炎", 7, "炎", 3), "win")   # 同属性は数字勝負
+        self.assertEqual(j("炎", 3, "炎", 7), "lose")
+        self.assertEqual(j("炎", 5, "炎", 5), "draw")
+
+    def test_triocard_five_rounds_complete(self):
+        res = self.client.get("/games/trio-card")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("三すくみカード", res.get_data(as_text=True))
+        for _ in range(4):
+            res = self.client.post("/games/trio-card/play", data={"card": "0"})
+            self.assertEqual(res.status_code, 200)
+        res = self.client.post("/games/trio-card/play", data={"card": "0"})
+        self.assertIn("対戦終了", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game = 'trio-card'")
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(0 <= rows[0][0] <= 5)
+
+    # ---- 平面⇔立体パズル ----
+    def test_flat3d_step_rules(self):
+        m = self.mod
+        start = m.flat3d_find(m.FLAT3D_MAP, "S")
+        bridge = m.flat3d_find(m.FLAT3D_MAP, "b")
+        self.assertIsNotNone(bridge)
+        self.assertFalse(m.flat3d_can_step(m.FLAT3D_MAP, 0, 0, "flat"))     # 壁
+        self.assertTrue(m.flat3d_can_step(m.FLAT3D_MAP, start[0], start[1], "flat"))
+        self.assertFalse(m.flat3d_can_step(m.FLAT3D_MAP, bridge[0], bridge[1], "flat"))
+        self.assertTrue(m.flat3d_can_step(m.FLAT3D_MAP, bridge[0], bridge[1], "solid"))
+
+    def test_flat3d_goal_needs_solid_mode(self):
+        from collections import deque
+        m = self.mod
+        start = m.flat3d_find(m.FLAT3D_MAP, "S")
+        goal = m.flat3d_find(m.FLAT3D_MAP, "G")
+
+        def reachable(use_toggle):
+            modes = ("flat", "solid") if use_toggle else ("flat",)
+            seen = {(start, "flat")}
+            q = deque([(start, "flat")])
+            while q:
+                (r, c), mode = q.popleft()
+                if (r, c) == goal:
+                    return True
+                for nm in modes:
+                    if ((r, c), nm) not in seen:
+                        seen.add(((r, c), nm))
+                        q.append(((r, c), nm))
+                for dr, dc in m.FLAT3D_DIRS.values():
+                    nr, nc = r + dr, c + dc
+                    if m.flat3d_can_step(m.FLAT3D_MAP, nr, nc, mode) and ((nr, nc), mode) not in seen:
+                        seen.add(((nr, nc), mode))
+                        q.append(((nr, nc), mode))
+            return False
+
+        self.assertFalse(reachable(use_toggle=False))  # 平面だけでは届かない
+        self.assertTrue(reachable(use_toggle=True))    # 切替を使えば届く
+
+    def test_flat3d_page_and_toggle(self):
+        res = self.client.get("/games/flat3d")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("平面⇔立体パズル", res.get_data(as_text=True))
+        res = self.client.post("/games/flat3d/toggle")
+        self.assertIn("立体", res.get_data(as_text=True))
+        res = self.client.post("/games/flat3d/move", data={"dir": "right"})
+        self.assertEqual(res.status_code, 200)
+
+    # ---- ゴモク一手詰め ----
+    def test_gomoku_winning_moves(self):
+        m = self.mod
+        board = ["." * 9 for _ in range(9)]
+        row = list(board[4])
+        for c in (2, 3, 4, 5):
+            row[c] = "B"
+        board[4] = "".join(row)
+        wins = m.gomoku_winning_moves(board, "B")
+        self.assertIn((4, 1), wins)
+        self.assertIn((4, 6), wins)
+        # 間に空きがある四つ並びは真ん中が勝ち手
+        row = list(board[6])
+        for c in (2, 3, 5, 6):
+            row[c] = "B"
+        board[6] = "".join(row)
+        self.assertIn((6, 4), m.gomoku_winning_moves(board, "B"))
+        self.assertFalse(m.gomoku_five(board, "B"))
+
+    def test_gomoku_new_puzzle_is_unique(self):
+        m = self.mod
+        for _ in range(5):
+            board, answer = m.gomoku_new_puzzle()
+            wins = m.gomoku_winning_moves(board, "B")
+            self.assertEqual(len(wins), 1)
+            self.assertEqual(wins[0], answer)
+            self.assertFalse(m.gomoku_five(board, "B"))
+            self.assertFalse(m.gomoku_five(board, "W"))
+
+    def test_gomoku_answer_flow(self):
+        res = self.client.get("/games/gomoku-tsume")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("ゴモク一手詰め", res.get_data(as_text=True))
+        with self.client.session_transaction() as sess:
+            answer = sess["gm_answer"]
+        res = self.client.post(
+            "/games/gomoku-tsume/move", data={"cell": f"{answer[0]}-{answer[1]}"}
+        )
+        self.assertIn("正解", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game = 'gomoku-tsume'")
+        self.assertEqual(rows, [(1,)])
+
+    # ---- バッグ詰めパズルバトル ----
+    def test_bagpack_place_and_rotate(self):
+        m = self.mod
+        grid = [[0] * 6 for _ in range(6)]
+        vertical = [(0, 0), (0, 1), (0, 2)]
+        rotated = m.bagpack_rotate(vertical)
+        self.assertEqual(rotated, [(0, 0), (1, 0), (2, 0)])
+        self.assertTrue(m.bagpack_can_place(grid, vertical, 0, 0))
+        grid2 = m.bagpack_place(grid, vertical, 0, 0, 1)
+        self.assertEqual(m.bagpack_count(grid2), 3)
+        self.assertFalse(m.bagpack_can_place(grid2, vertical, 0, 0))  # 重なる
+        wide = [(0, 0), (0, 1), (0, 2), (0, 3)]
+        self.assertFalse(m.bagpack_can_place(grid, wide, 0, 3))        # はみ出す
+        self.assertTrue(m.bagpack_can_place(grid, wide, 0, 2))
+
+    def test_bagpack_cpu_fill(self):
+        for _ in range(5):
+            filled = self.mod.bagpack_cpu_fill(self.mod.BAGPACK_ITEMS)
+            self.assertTrue(0 < filled <= 36)
+
+    def test_bagpack_skip_all_finishes_round(self):
+        res = self.client.get("/games/bagpack")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("バッグ詰めパズルバトル", res.get_data(as_text=True))
+        for _ in range(len(self.mod.BAGPACK_ITEMS)):
+            res = self.client.post("/games/bagpack/skip")
+            self.assertEqual(res.status_code, 200)
+        self.assertIn("vs CPU", res.get_data(as_text=True))
+        with self.client.session_transaction() as sess:
+            self.assertTrue(sess["bp_over"])
+
+    # ---- 3ワードモンスター ----
+    def test_wordmonster_stats_deterministic(self):
+        m = self.mod
+        a = m.wordmonster_stats("ほのお", "ドラゴン", "まじめ")
+        b = m.wordmonster_stats("ほのお", "ドラゴン", "まじめ")
+        self.assertEqual(a, b)
+        self.assertEqual(a["type"], "炎")
+        self.assertTrue(40 <= a["hp"] <= 80)
+        self.assertTrue(10 <= a["atk"] <= 30)
+        self.assertTrue(5 <= a["spd"] <= 20)
+
+    def test_wordmonster_battle_outcomes(self):
+        m = self.mod
+        strong = {"hp": 80, "atk": 30, "spd": 20, "type": "炎"}
+        weak = {"hp": 40, "atk": 10, "spd": 5, "type": "草"}
+        self.assertEqual(m.wordmonster_battle(strong, weak), "win")
+        self.assertEqual(m.wordmonster_battle(weak, strong), "lose")
+
+    def test_wordmonster_flow(self):
+        res = self.client.get("/games/wordmonster")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("3ワードモンスター", res.get_data(as_text=True))
+        res = self.client.post(
+            "/games/wordmonster/battle",
+            data={"属性": "ほのお", "体": "ドラゴン", "性格": "まじめ"},
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("CPU のモンスター", res.get_data(as_text=True))
+        res = self.client.post(
+            "/games/wordmonster/battle",
+            data={"属性": "そら", "体": "ドラゴン", "性格": "まじめ"},
+        )
+        self.assertIn("言葉を3つ選んでください", res.get_data(as_text=True))
+
+    # ---- 面接吹き出しジャッジ ----
+    def test_mensetsu_grade(self):
+        g = self.mod.mensetsu_grade
+        self.assertEqual(g(60), "S")
+        self.assertEqual(g(55), "S")
+        self.assertEqual(g(54), "A")
+        self.assertEqual(g(45), "A")
+        self.assertEqual(g(44), "B")
+        self.assertEqual(g(30), "B")
+        self.assertEqual(g(29), "C")
+        self.assertEqual(g(15), "C")
+        self.assertEqual(g(14), "D")
+        self.assertEqual(g(0), "D")
+
+    def test_mensetsu_all_best_answers_give_s(self):
+        res = self.client.get("/games/mensetsu")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("面接吹き出しジャッジ", res.get_data(as_text=True))
+        for _ in range(len(self.mod.MENSETSU_QUESTIONS)):
+            with self.client.session_transaction() as sess:
+                choices = sess["ms_choices"]
+            best_idx = choices.index(max(choices))
+            res = self.client.post("/games/mensetsu/answer", data={"choice": str(best_idx)})
+            self.assertEqual(res.status_code, 200)
+        self.assertIn("評価は S", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game = 'mensetsu'")
+        self.assertEqual(rows, [(5,)])
+
+    # ---- 水質バランス処理 ----
+    def test_suishitsu_apply_and_range(self):
+        m = self.mod
+        state = {"turbidity": 50, "ph": 105, "bacteria": 50, "cost": 0}
+        out = m.suishitsu_apply(state, "filter")
+        self.assertEqual(out["turbidity"], 20)
+        self.assertEqual(out["bacteria"], 45)
+        self.assertEqual(out["cost"], 8)
+        out = m.suishitsu_apply(state, "chlorine")
+        self.assertEqual(out["bacteria"], 10)
+        self.assertEqual(out["ph"], 107)
+        self.assertTrue(m.suishitsu_in_range({"turbidity": 20, "ph": 85, "bacteria": 10}))
+        self.assertFalse(m.suishitsu_in_range({"turbidity": 21, "ph": 85, "bacteria": 10}))
+        self.assertFalse(m.suishitsu_in_range({"turbidity": 0, "ph": 54, "bacteria": 0}))
+
+    def test_suishitsu_round_score(self):
+        m = self.mod
+        center = {"turbidity": 10, "ph": 70, "bacteria": 5, "cost": 0}
+        self.assertAlmostEqual(m.suishitsu_round_score(center), 35.0, places=5)
+        costly = dict(center, cost=10)
+        self.assertAlmostEqual(m.suishitsu_round_score(costly), 25.0, places=5)
+        out = {"turbidity": 99, "ph": 70, "bacteria": 5, "cost": 0}
+        self.assertEqual(m.suishitsu_round_score(out), 0.0)
+
+    def test_suishitsu_ship_flow(self):
+        res = self.client.get("/games/suishitsu")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("水質バランス処理", res.get_data(as_text=True))
+        with self.client.session_transaction() as sess:
+            sess["ss_water"] = {"turbidity": 50, "ph": 105, "bacteria": 50, "cost": 0}
+            sess["ss_round"] = 1
+            sess["ss_total10"] = 0
+            sess["ss_over"] = False
+            sess["ss_log"] = []
+        self.client.post("/games/suishitsu/act", data={"action": "filter"})
+        self.client.post("/games/suishitsu/act", data={"action": "acid"})
+        self.client.post("/games/suishitsu/act", data={"action": "acid"})
+        self.client.post("/games/suishitsu/act", data={"action": "chlorine"})
+        res = self.client.post("/games/suishitsu/ship")
+        self.assertEqual(res.status_code, 200)
+        with self.client.session_transaction() as sess:
+            self.assertEqual(sess["ss_round"], 2)
+            self.assertGreater(sess["ss_total10"], 0)
+
+
+
+class SnsNov03GamesTest(MinigameTest):
+    """2026-11-03 配信の保留案から実装した15本（SNS10＋ふりーむ5）のテスト。"""
+
+    NEW_SLUGS = ("boomerang", "timing-tennis", "secret-name", "current-shot",
+                 "tier-party", "shodo", "rousoku", "shield-moji", "ramen-oil",
+                 "ikasama", "machigai-card", "poyon-rhythm", "bubble-shot",
+                 "draw-poker", "ronpa")
+
+    def test_portal_lists_fifteen_new_games(self):
+        body = self.client.get("/").get_data(as_text=True)
+        for slug in self.NEW_SLUGS:
+            self.assertIn(f"/games/{slug}", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("85 本", body)
+
+    def test_new_games_categories(self):
+        cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
+        expected = {
+            "boomerang": "アクション", "timing-tennis": "アクション",
+            "secret-name": "クイズ・知識", "current-shot": "アクション",
+            "tier-party": "創作", "shodo": "創作", "rousoku": "アクション",
+            "shield-moji": "アクション", "ramen-oil": "アクション",
+            "ikasama": "カード・数字", "machigai-card": "カード・数字",
+            "poyon-rhythm": "アクション", "bubble-shot": "アクション",
+            "draw-poker": "カード・数字", "ronpa": "脱出・謎解き",
+        }
+        for slug, cat in expected.items():
+            self.assertEqual(cats[slug], cat, slug)
+        allowed = {"アクション", "脳トレ", "抽選・占い", "クイズ・知識",
+                   "対戦", "脱出・謎解き", "カード・数字", "創作"}
+        self.assertTrue(set(cats.values()) <= allowed)
+
+    def check_js_score_game(self, slug, title, good, bad_values):
+        res = self.client.get(f"/games/{slug}")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(title, res.get_data(as_text=True))
+        res = self.client.post(f"/games/{slug}/score", data={"score": good})
+        self.assertEqual(res.get_json(), {"ok": True, "best": int(good)})
+        for bad in bad_values:
+            res = self.client.post(f"/games/{slug}/score", data={"score": bad})
+            self.assertEqual(res.status_code, 400, (slug, bad))
+
+    # ---- JS進行ゲーム（ページ＋スコア保存） ----
+    def test_boomerang_page_and_score(self):
+        self.check_js_score_game("boomerang", "ブーメラン軌道アタック", "12", ("-1", "abc", "1000"))
+
+    def test_timing_tennis_page_and_score(self):
+        self.check_js_score_game("timing-tennis", "タイミング返球テニス", "25", ("-1", "abc", "1000"))
+
+    def test_current_shot_page_and_score(self):
+        self.check_js_score_game("current-shot", "海流ながれ弾シューティング", "18", ("-1", "abc", "1000"))
+
+    def test_shodo_page_and_score(self):
+        # 採点は 0〜100
+        self.check_js_score_game("shodo", "おてほん書道採点", "80", ("-1", "abc", "101"))
+
+    def test_rousoku_page_and_score(self):
+        self.check_js_score_game("rousoku", "一息ろうそく消し", "9", ("-1", "abc", "100"))
+
+    def test_shield_moji_page_and_score(self):
+        self.check_js_score_game("shield-moji", "胸ポケットの盾文字", "21", ("-1", "abc", "1000"))
+
+    def test_ramen_oil_page_and_score(self):
+        self.check_js_score_game("ramen-oil", "ラーメン油あつめ", "20", ("-1", "abc", "100"))
+
+    def test_poyon_rhythm_page_and_score(self):
+        self.check_js_score_game("poyon-rhythm", "2ボタンぽよんリズム", "1500", ("-1", "abc", "10000"))
+
+    def test_bubble_shot_page_and_score(self):
+        self.check_js_score_game("bubble-shot", "カラフルバブルシュート", "350", ("-1", "abc", "10000"))
+
+    # ---- ひみつネーム即死当て ----
+    def test_secretname_feedback(self):
+        fb = self.mod.secretname_feedback
+        self.assertEqual(fb("ライオン", "ライオン"), ["exact"] * 4)
+        self.assertEqual(fb("ライオン", "シマウマ"),
+                         ["absent", "absent", "absent", "absent"])
+        self.assertEqual(fb("アルパカ", "アカパル"),
+                         ["exact", "present", "exact", "present"])
+        # 同じ文字が複数ある場合は、まず位置一致を優先して数える
+        self.assertEqual(fb("シマウマ", "ママママ"),
+                         ["absent", "exact", "absent", "exact"])
+
+    def test_secretname_win_score(self):
+        self.assertEqual(self.mod.secretname_win_score(1), 120)
+        self.assertEqual(self.mod.secretname_win_score(3), 80)
+        self.assertEqual(self.mod.secretname_win_score(6), 20)
+
+    def _fix_secretname(self, secret="ライオン", trap="ペンギン"):
+        self.client.get("/games/secret-name")
+        with self.client.session_transaction() as sess:
+            sess["sn_secret"] = secret
+            sess["sn_trap"] = trap
+            sess["sn_tries"] = []
+            sess["sn_over"] = False
+            sess["sn_win"] = False
+            sess["sn_dead"] = False
+
+    def test_secretname_flow_win(self):
+        self._fix_secretname()
+        res = self.client.post("/games/secret-name/guess", data={"guess": "ライオン"})
+        self.assertEqual(res.status_code, 200)
+        rows = self.query("SELECT score FROM scores WHERE game = 'secret-name'")
+        self.assertEqual(rows, [(120,)])
+
+    def test_secretname_trap_instant_death(self):
+        self._fix_secretname()
+        res = self.client.post("/games/secret-name/guess", data={"guess": "ペンギン"})
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("即死", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game = 'secret-name'")
+        self.assertEqual(rows, [(0,)])
+
+    def test_secretname_bad_input_not_recorded(self):
+        self._fix_secretname()
+        res = self.client.post("/games/secret-name/guess", data={"guess": "abc"})
+        self.assertEqual(res.status_code, 200)
+        rows = self.query("SELECT score FROM scores WHERE game = 'secret-name'")
+        self.assertEqual(rows, [])
+
+    # ---- ティアならべパーティ ----
+    def test_tierparty_score(self):
+        s = self.mod.tierparty_score
+        theme = self.mod.TIERPARTY_THEMES[0]
+        # 全一致＋全ティア使用ボーナス
+        self.assertEqual(s(theme["consensus"], theme["consensus"]), 85)
+        # 全て A(1)：consensus [0,0,1,2,1,1,3,2] との差で 46 点
+        self.assertEqual(s([1] * 8, theme["consensus"]), 46)
+        # 全て C(3)
+        self.assertEqual(s([3] * 8, theme["consensus"]), 18)
+
+    def test_tierparty_submit_flow(self):
+        res = self.client.get("/games/tier-party")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("ティアならべパーティ", res.get_data(as_text=True))
+        data = {f"item{i}": "1" for i in range(8)}
+        res = self.client.post("/games/tier-party/submit", data=data)
+        self.assertEqual(res.status_code, 200)
+        rows = self.query("SELECT score FROM scores WHERE game = 'tier-party'")
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(0 <= rows[0][0] <= 85)
+
+    # ---- イカサマ割合ハイボール ----
+    def test_ikasama_judge_and_profit(self):
+        m = self.mod
+        self.assertEqual(m.ikasama_profit(30), 50)
+        self.assertEqual(m.ikasama_profit(70), 10)
+        self.assertEqual(m.ikasama_judge(29, 30), (True, "busted"))
+        self.assertEqual(m.ikasama_judge(30, 30), (False, "close"))
+        self.assertEqual(m.ikasama_judge(40, 30), (False, "ok"))
+        self.assertEqual(m.ikasama_judge(50, 30), (False, "rich"))
+
+    def test_ikasama_serve_flow_ten_customers(self):
+        self.client.get("/games/ikasama")
+        # 割合70%ならどの客の許容ライン（最大55%）も下回らない
+        for _ in range(10):
+            res = self.client.post("/games/ikasama/serve", data={"ratio": "70"})
+            self.assertEqual(res.status_code, 200)
+        rows = self.query("SELECT score FROM scores WHERE game = 'ikasama'")
+        self.assertEqual(rows, [(100,)])
+
+    def test_ikasama_invalid_ratio(self):
+        self.client.get("/games/ikasama")
+        res = self.client.post("/games/ikasama/serve", data={"ratio": "abc"})
+        self.assertEqual(res.status_code, 200)
+        res = self.client.post("/games/ikasama/serve", data={"ratio": "1"})
+        self.assertEqual(res.status_code, 200)
+        rows = self.query("SELECT score FROM scores WHERE game = 'ikasama'")
+        self.assertEqual(rows, [])
+
+    # ---- まちがいカード見抜き ----
+    def test_machigai_claim_rules(self):
+        import random as _random
+        rng = _random.Random(42)
+        cs, cr = self.mod.machigai_make_claim("ハート", 7, False, rng)
+        self.assertEqual((cs, cr), ("ハート", 7))
+        for _ in range(30):
+            cs, cr = self.mod.machigai_make_claim("ハート", 7, True, rng)
+            self.assertTrue(
+                self.mod.machigai_is_wrong(("ハート", 7), (cs, cr)))
+
+    def test_machigai_flow_ten_rounds_all_correct(self):
+        self.client.get("/games/machigai-card")
+        for _ in range(10):
+            with self.client.session_transaction() as sess:
+                card = sess["mg_card"]
+                claim = sess["mg_claim"]
+            wrong = self.mod.machigai_is_wrong(card, claim)
+            res = self.client.post(
+                "/games/machigai-card/answer",
+                data={"answer": "wrong" if wrong else "right"})
+            self.assertEqual(res.status_code, 200)
+        rows = self.query("SELECT score FROM scores WHERE game = 'machigai-card'")
+        self.assertEqual(rows, [(10,)])
+
+    # ---- 1回交換ドローポーカー ----
+    def test_drawpoker_evaluate(self):
+        e = self.mod.drawpoker_evaluate
+        # ストレートフラッシュ（Aハイ）
+        self.assertEqual(e([(0, 10), (0, 11), (0, 12), (0, 13), (0, 1)]), (8, (14,)))
+        # ストレートフラッシュ（ホイール A-2-3-4-5）
+        self.assertEqual(e([(0, 1), (0, 2), (0, 3), (0, 4), (0, 5)]), (8, (5,)))
+        # フォーカード
+        self.assertEqual(e([(0, 9), (1, 9), (2, 9), (3, 9), (0, 13)]), (7, (9, 13)))
+        # フルハウス
+        self.assertEqual(e([(0, 5), (1, 5), (2, 5), (0, 9), (1, 9)]), (6, (5, 9)))
+        # フラッシュ
+        self.assertEqual(e([(2, 2), (2, 5), (2, 7), (2, 9), (2, 11)]),
+                         (5, (11, 9, 7, 5, 2)))
+        # ストレート
+        self.assertEqual(e([(0, 5), (1, 6), (2, 7), (3, 8), (0, 9)]), (4, (9,)))
+        # スリーカード
+        self.assertEqual(e([(0, 7), (1, 7), (2, 7), (0, 13), (1, 2)]), (3, (7, 13, 2)))
+        # ツーペア（A がキッカー）
+        self.assertEqual(e([(0, 4), (1, 4), (2, 11), (3, 11), (0, 1)]), (2, (11, 4, 14)))
+        # ワンペア
+        self.assertEqual(e([(0, 10), (1, 10), (2, 3), (3, 5), (0, 1)]),
+                         (1, (10, 14, 5, 3)))
+        # ハイカード
+        self.assertEqual(e([(0, 2), (1, 5), (2, 7), (3, 9), (0, 12)]),
+                         (0, (12, 9, 7, 5, 2)))
+        # 比較：Aハイのストレートフラッシュ > ホイール
+        self.assertEqual(self.mod.drawpoker_compare((8, (14,)), (8, (5,))), 1)
+        self.assertEqual(self.mod.drawpoker_compare((1, (10, 14, 5, 3)),
+                                                    (1, (10, 14, 5, 3))), 0)
+
+    def test_drawpoker_cpu_discards_keeps_pair(self):
+        d = self.mod.drawpoker_cpu_discards(
+            [(0, 8), (1, 8), (2, 3), (3, 5), (0, 12)])
+        self.assertNotIn(0, d)
+        self.assertNotIn(1, d)
+        self.assertLessEqual(len(d), 3)
+        # 無役なら高い2枚を残して3枚交換
+        d2 = self.mod.drawpoker_cpu_discards(
+            [(0, 2), (1, 5), (2, 7), (3, 9), (0, 11)])
+        self.assertEqual(len(d2), 3)
+        self.assertNotIn(4, d2)  # J は残す
+        self.assertNotIn(3, d2)  # 9 は残す
+
+    def test_drawpoker_flow_five_rounds(self):
+        res = self.client.get("/games/draw-poker")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("1回交換ドローポーカー", res.get_data(as_text=True))
+        for _ in range(5):
+            res = self.client.post("/games/draw-poker/exchange", data={})
+            self.assertEqual(res.status_code, 200)
+            res = self.client.post("/games/draw-poker/next")
+            self.assertEqual(res.status_code, 200)
+        rows = self.query("SELECT score FROM scores WHERE game = 'draw-poker'")
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(0 <= rows[0][0] <= 15)
+
+    # ---- 手がかり論破レスバ ----
+    def test_ronpa_data_integrity(self):
+        self.assertEqual(len(self.mod.RONPA_SCENARIOS), 3)
+        for sc in self.mod.RONPA_SCENARIOS:
+            correct = [e for e in sc["evidences"] if e["correct"]]
+            self.assertEqual(len(correct), 1, sc["title"])
+            self.assertEqual(len(sc["evidences"]), 3, sc["title"])
+            self.assertGreaterEqual(len(sc["posts"]), 4, sc["title"])
+
+    def test_ronpa_flow_all_first_try(self):
+        res = self.client.get("/games/ronpa")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("手がかり論破レスバ", res.get_data(as_text=True))
+        for sc in self.mod.RONPA_SCENARIOS:
+            correct_idx = next(
+                i for i, e in enumerate(sc["evidences"]) if e["correct"])
+            res = self.client.post("/games/ronpa/present",
+                                   data={"ev": str(correct_idx)})
+            self.assertEqual(res.status_code, 200)
+            res = self.client.post("/games/ronpa/next")
+            self.assertEqual(res.status_code, 200)
+        rows = self.query("SELECT score FROM scores WHERE game = 'ronpa'")
+        self.assertEqual(rows, [(90,)])
+
+    def test_ronpa_wrong_then_correct_scores_less(self):
+        self.client.get("/games/ronpa")
+        sc = self.mod.RONPA_SCENARIOS[0]
+        wrong_idx = next(
+            i for i, e in enumerate(sc["evidences"]) if not e["correct"])
+        correct_idx = next(
+            i for i, e in enumerate(sc["evidences"]) if e["correct"])
+        self.client.post("/games/ronpa/present", data={"ev": str(wrong_idx)})
+        self.assertEqual(
+            self.query("SELECT score FROM scores WHERE game = 'ronpa'"), [])
+        self.client.post("/games/ronpa/present", data={"ev": str(correct_idx)})
+        with self.client.session_transaction() as sess:
+            self.assertEqual(sess["rp_points"], 20)
+            self.assertTrue(sess["rp_solved"])
+
+
+class SnsNov04GamesTest(MinigameTest):
+    """2026-11-04 配信の保留案から実装した15本（SNS10＋ふりーむ5）のテスト。"""
+
+    NEW_SLUGS = ("curling-tsume", "prism-mirror", "eyeball-sokoban",
+                 "ushi-tomato", "oyatsu-kaba", "swipe-ushi", "kyushin-judge",
+                 "kagiban", "block-survive", "meiga-naoshi", "fukuwarai",
+                 "majyo-suiri", "hikigiwa-dungeon", "draft-meate",
+                 "color-hamekomi")
+
+    def test_portal_lists_fifteen_new_games(self):
+        body = self.client.get("/").get_data(as_text=True)
+        for slug in self.NEW_SLUGS:
+            self.assertIn(f"/games/{slug}", body)
+        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("85 本", body)
+
+    def test_new_games_categories(self):
+        cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
+        expected = {
+            "curling-tsume": "脳トレ", "prism-mirror": "脳トレ",
+            "eyeball-sokoban": "脳トレ", "ushi-tomato": "アクション",
+            "oyatsu-kaba": "アクション", "swipe-ushi": "アクション",
+            "kyushin-judge": "クイズ・知識", "kagiban": "脳トレ",
+            "block-survive": "アクション", "meiga-naoshi": "創作",
+            "fukuwarai": "クイズ・知識", "majyo-suiri": "脱出・謎解き",
+            "hikigiwa-dungeon": "カード・数字", "draft-meate": "クイズ・知識",
+            "color-hamekomi": "脳トレ",
+        }
+        for slug, cat in expected.items():
+            self.assertEqual(cats[slug], cat, slug)
+        allowed = {"アクション", "脳トレ", "抽選・占い", "クイズ・知識",
+                   "対戦", "脱出・謎解き", "カード・数字", "創作"}
+        self.assertTrue(set(cats.values()) <= allowed)
+
+    def check_js_score_game(self, slug, title, good, bad_values):
+        res = self.client.get(f"/games/{slug}")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(title, res.get_data(as_text=True))
+        res = self.client.post(f"/games/{slug}/score", data={"score": good})
+        self.assertEqual(res.get_json(), {"ok": True, "best": int(good)})
+        for bad in bad_values:
+            res = self.client.post(f"/games/{slug}/score", data={"score": bad})
+            self.assertEqual(res.status_code, 400, (slug, bad))
+
+    # ---- JS進行ゲーム（ページ＋スコア保存） ----
+    def test_ushi_tomato_page_and_score(self):
+        self.check_js_score_game("ushi-tomato", "ウシおどかしトマト", "120",
+                                 ("-1", "abc", "1000"))
+
+    def test_oyatsu_kaba_page_and_score(self):
+        self.check_js_score_game("oyatsu-kaba", "おやつカバ60秒", "350",
+                                 ("-1", "abc", "10000"))
+
+    def test_swipe_ushi_page_and_score(self):
+        self.check_js_score_game("swipe-ushi", "スワイプ加速ウシ", "54321",
+                                 ("-1", "abc", "1000000"))
+
+    def test_block_survive_page_and_score(self):
+        self.check_js_score_game("block-survive", "ブロック側サバイバル", "1234",
+                                 ("-1", "abc", "100000"))
+
+    def test_meiga_naoshi_page_and_score(self):
+        # 採点は 0〜100
+        self.check_js_score_game("meiga-naoshi", "名画おなおしミニ", "85",
+                                 ("-1", "abc", "101"))
+
+    def test_fukuwarai_page_and_score(self):
+        # 採点は 0〜100
+        self.check_js_score_game("fukuwarai", "証言ふくわらい捜査", "72",
+                                 ("-1", "abc", "101"))
+
+    # ---- カーリング一投詰め ----
+    def test_curling_points_cases(self):
+        cp = self.mod.curling_points
+        self.assertEqual(cp([(0.0, 2.0, True), (6.0, 2.0, False)]), 40)
+        self.assertEqual(cp([(0.0, 10.0, True), (30.0, 0.0, False)]), 20)
+        self.assertEqual(cp([(0.0, 5.0, True), (0.0, 3.0, False)]), 0)
+
+    def test_curling_simulate_known_throws(self):
+        m = self.mod
+        self.assertEqual(
+            m.curling_points(m.curling_simulate([[6, 2]], 0, 80, 0)), 40)
+        self.assertEqual(
+            m.curling_points(m.curling_simulate([[0, 0], [10, 8]], -16, 84, 10)), 30)
+
+    def test_curling_flow_records_total(self):
+        self.client.get("/games/curling-tsume")
+        throws = [("0", "80", "0"), ("-19", "82", "10"), ("-16", "84", "10")]
+        for ang, pw, cu in throws:
+            self.client.post("/games/curling-tsume/throw",
+                             data={"angle": ang, "power": pw, "curl": cu})
+            self.client.post("/games/curling-tsume/next")
+        rows = self.query("SELECT score FROM scores WHERE game = 'curling-tsume'")
+        self.assertEqual(rows, [(100,)])
+
+    # ---- プリズム鏡あわせ ----
+    def test_prism_solutions_light_all_crystals(self):
+        m = self.mod
+        for stage in m.PRISM_STAGES:
+            mirrors = {tuple(x[:2]): x[2] for x in stage["mirrors"]}
+            lit, _path = m.prism_trace(mirrors, stage["emitter"], stage["crystals"])
+            self.assertEqual(lit, {tuple(c) for c in stage["crystals"]})
+            # 初期配置（スクランブル）では1つも光らない
+            init = {tuple(x[:2]): stage["init"][i]
+                    for i, x in enumerate(stage["mirrors"])}
+            lit0, _ = m.prism_trace(init, stage["emitter"], stage["crystals"])
+            self.assertEqual(lit0, set())
+
+    def test_prism_flow_records_total(self):
+        self.client.get("/games/prism-mirror")
+        for toggles in ([0, 1], [0, 1, 2], [0, 1, 2, 3]):
+            for idx in toggles:
+                self.client.post("/games/prism-mirror/toggle",
+                                 data={"cell": str(idx)})
+            self.client.post("/games/prism-mirror/next")
+        rows = self.query("SELECT score FROM scores WHERE game = 'prism-mirror'")
+        self.assertEqual(rows, [(136,)])
+
+    # ---- 目玉みはり倉庫番 ----
+    def test_sokoban_solutions_solve_all_stages(self):
+        m = self.mod
+        sols = ["RR", "UULDULD", "RRRLLDDRR"]
+        for stage, sol in zip(m.EYEBALL_STAGES, sols):
+            walls, goals, boxes, player, eyeballs = m.eyeball_parse(stage)
+            gaze = m.eyeball_gaze_cells(walls, eyeballs,
+                                         len(stage["lines"]),
+                                         len(stage["lines"][0]))
+            prev = None
+            cur_boxes = frozenset(boxes)
+            for ch in sol:
+                old = player
+                player, cur_boxes, moved = m.eyeball_try_move(
+                    player, cur_boxes, prev, ch, walls, eyeballs, gaze)
+                self.assertTrue(moved, (stage, sol, ch))
+                prev = old
+            self.assertTrue(goals <= set(cur_boxes))
+
+    def test_sokoban_flow_records_total(self):
+        self.client.get("/games/eyeball-sokoban")
+        for sol in ("RR", "UULDULD", "RRRLLDDRR"):
+            for ch in sol:
+                self.client.post("/games/eyeball-sokoban/move", data={"dir": ch})
+            self.client.post("/games/eyeball-sokoban/next")
+        rows = self.query("SELECT score FROM scores WHERE game = 'eyeball-sokoban'")
+        self.assertEqual(rows, [(162,)])
+
+    # ---- 球審ジャッジ ----
+    def test_kyushin_is_strike_cases(self):
+        f = self.mod.kyushin_is_strike
+        self.assertTrue(f(0, 0))
+        self.assertTrue(f(15, 18))
+        self.assertTrue(f(-15, -18))
+        self.assertFalse(f(16, 0))
+        self.assertFalse(f(0, 19))
+        self.assertFalse(f(-20, -25))
+
+    def test_kyushin_flow_records_correct_on_three_misses(self):
+        self.client.get("/games/kyushin-judge")
+        with self.client.session_transaction() as sess:
+            sess["kj_x"] = 0
+            sess["kj_y"] = 0
+        self.client.post("/games/kyushin-judge/answer", data={"judge": "strike"})
+        with self.client.session_transaction() as sess:
+            self.assertEqual(sess["kj_correct"], 1)
+            sess["kj_x"] = 0
+            sess["kj_y"] = 0
+            sess["kj_miss"] = 2
+        self.client.post("/games/kyushin-judge/answer", data={"judge": "ball"})
+        rows = self.query("SELECT score FROM scores WHERE game = 'kyushin-judge'")
+        self.assertEqual(rows, [(1,)])
+
+    # ---- カギバンさばき ----
+    def test_kagiban_should_approve_rules(self):
+        f = self.mod.kagiban_should_approve
+        clean = {"icon": True, "posts": 10, "bio": "よろしく",
+                 "link": False, "days": 100}
+        self.assertTrue(f(clean, 5))
+        self.assertTrue(f({**clean, "icon": False}, 0))
+        self.assertFalse(f({**clean, "icon": False}, 1))
+        self.assertTrue(f({**clean, "posts": 0}, 1))
+        self.assertFalse(f({**clean, "posts": 0}, 2))
+        self.assertFalse(f({**clean, "bio": ""}, 3))
+        self.assertFalse(f({**clean, "link": True}, 4))
+        self.assertTrue(f({**clean, "days": 2}, 4))
+        self.assertFalse(f({**clean, "days": 2}, 5))
+
+    def test_kagiban_flow_records_done(self):
+        clean = {"name": "テスト", "icon": True, "posts": 10, "bio": "よろしく",
+                 "link": False, "days": 100}
+        self.client.get("/games/kagiban")
+        with self.client.session_transaction() as sess:
+            sess["kb_profile"] = clean
+        self.client.post("/games/kagiban/answer", data={"act": "approve"})
+        with self.client.session_transaction() as sess:
+            self.assertEqual(sess["kb_done"], 1)
+            sess["kb_profile"] = {**clean, "icon": False}
+            sess["kb_miss"] = 2
+        self.client.post("/games/kagiban/answer", data={"act": "approve"})
+        rows = self.query("SELECT score FROM scores WHERE game = 'kagiban'")
+        self.assertEqual(rows, [(1,)])
+
+    # ---- 憑依まじょ推理 ----
+    def test_majyo_scenarios_integrity(self):
+        for sc in self.mod.MAJYO_SCENARIOS:
+            self.assertEqual(len(sc["villagers"]), 4)
+            self.assertEqual(
+                sum(1 for v in sc["villagers"] if v["possessed"]), 1)
+            self.assertGreaterEqual(len(sc["facts"]), 2)
+
+    def test_majyo_flow_all_first_try(self):
+        self.client.get("/games/majyo-suiri")
+        for sc in self.mod.MAJYO_SCENARIOS:
+            target = next(i for i, v in enumerate(sc["villagers"])
+                          if v["possessed"])
+            self.client.post("/games/majyo-suiri/accuse",
+                             data={"v": str(target)})
+            self.client.post("/games/majyo-suiri/next")
+        rows = self.query("SELECT score FROM scores WHERE game = 'majyo-suiri'")
+        self.assertEqual(rows, [(90,)])
+
+    # ---- 引き際ダンジョンすごろく ----
+    def test_hikigiwa_battle_result_cases(self):
+        f = self.mod.hikigiwa_battle_result
+        self.assertEqual(f(9, 5), (True, 15))
+        self.assertEqual(f(5, 5), (True, 15))
+        self.assertEqual(f(3, 7), (False, 5))
+
+    def test_hikigiwa_retreat_records_gold(self):
+        self.client.get("/games/hikigiwa-dungeon")
+        with self.client.session_transaction() as sess:
+            sess["hd_gold"] = 25
+        self.client.post("/games/hikigiwa-dungeon/retreat")
+        rows = self.query(
+            "SELECT score FROM scores WHERE game = 'hikigiwa-dungeon'")
+        self.assertEqual(rows, [(25,)])
+
+    def test_hikigiwa_roll_loop_records_once(self):
+        self.client.get("/games/hikigiwa-dungeon")
+        for _ in range(40):
+            with self.client.session_transaction() as sess:
+                over = sess.get("hd_over", False)
+                battle = sess.get("hd_battle")
+            if over:
+                break
+            if battle:
+                self.client.post("/games/hikigiwa-dungeon/fight",
+                                 data={"card": "0"})
+            else:
+                self.client.post("/games/hikigiwa-dungeon/roll")
+        rows = self.query(
+            "SELECT score FROM scores WHERE game = 'hikigiwa-dungeon'")
+        self.assertEqual(len(rows), 1)
+
+    # ---- ドラフト目利き ----
+    def test_draft_candidates_invariants(self):
+        import random as _random_module
+        rng = _random_module.Random(7)
+        cands = self.mod.draft_make_candidates(rng)
+        self.assertEqual(len(cands), 3)
+        noises = [n for _s, n in self.mod.DRAFT_SCOUTS]
+        for cand in cands:
+            self.assertTrue(25 <= cand["actual"] <= 98)
+            for rep, noise in zip(cand["reports"], noises):
+                self.assertLessEqual(abs(rep - cand["actual"]), noise)
+            self.assertLessEqual(abs(cand["sub"] - cand["actual"]), 15)
+
+    def test_draft_flow_records_total(self):
+        fixed = [
+            {"name": "候補A", "pos": "投手", "actual": 80,
+             "reports": [80, 80, 80], "sub": 80},
+            {"name": "候補B", "pos": "捕手", "actual": 50,
+             "reports": [50, 50, 50], "sub": 50},
+            {"name": "候補C", "pos": "外野手", "actual": 30,
+             "reports": [30, 30, 30], "sub": 30},
+        ]
+        self.client.get("/games/draft-meate")
+        for _ in range(5):
+            with self.client.session_transaction() as sess:
+                sess["dm_candidates"] = fixed
+            self.client.post("/games/draft-meate/pick", data={"c": "0"})
+        rows = self.query("SELECT score FROM scores WHERE game = 'draft-meate'")
+        self.assertEqual(rows, [(400,)])
+
+    # ---- 回してはめこみカラー探し ----
+    def test_hamekomi_rotate_roundtrip(self):
+        cells = [[0, 0, 1], [0, 1, 1], [1, 0, 2]]
+        rotated = self.mod.hamekomi_rotate(cells, 4)
+        self.assertEqual(sorted(map(tuple, rotated)),
+                         sorted(map(tuple, cells)))
+        once = self.mod.hamekomi_rotate(cells, 1)
+        self.assertEqual(sorted(once), [(0, 0, 2), (0, 1, 1), (1, 1, 1)])
+
+    def test_hamekomi_targets_cover_pieces(self):
+        m = self.mod
+        for stage in m.HAMEKOMI_STAGES:
+            targets = m.hamekomi_targets(stage)
+            total = sum(len(p["cells"]) for p in stage["pieces"])
+            # 目標マスに重なりがないこと
+            self.assertEqual(len(targets), total)
+            occupied = {}
+            for piece in stage["pieces"]:
+                cells = m.hamekomi_rotate(piece["cells"], 0)
+                ar, ac = piece["anchor"]
+                self.assertTrue(
+                    m.hamekomi_can_place(targets, occupied, cells, ar, ac))
+                for (r, c, col) in cells:
+                    occupied[(ar + r, ac + c)] = col
+            self.assertEqual(set(occupied), set(targets))
+
+    def test_hamekomi_flow_records_total(self):
+        self.client.get("/games/color-hamekomi")
+        for stage in self.mod.HAMEKOMI_STAGES:
+            for piece in stage["pieces"]:
+                for _ in range((4 - piece["init_rot"]) % 4):
+                    self.client.post("/games/color-hamekomi/rotate")
+                ar, ac = piece["anchor"]
+                self.client.post("/games/color-hamekomi/put",
+                                 data={"cell": f"{ar}-{ac}"})
+            self.client.post("/games/color-hamekomi/next")
+        rows = self.query(
+            "SELECT score FROM scores WHERE game = 'color-hamekomi'")
+        self.assertEqual(rows, [(128,)])
+
+    # ---- 証言ふくわらい捜査（事件データの整合性） ----
+    def test_fukuwarai_case_consistency(self):
+        case = self.mod.FUKUWARAI_CASE
+        self.assertEqual(len(case["parts"]), 5)
+        targets = {p["key"]: p["target"] for p in case["parts"]}
+        for p in case["parts"]:
+            r, c = p["target"]
+            self.assertTrue(0 <= r < 10 and 0 <= c < 8)
+        # 正解の配置は全ての証言を満たすこと
+        for s in case["statements"]:
+            t = targets[s["part"]]
+            v = t[0] if s["axis"] == "r" else t[1]
+            self.assertTrue(s["min"] <= v <= s["max"], s["text"])
 
 if __name__ == "__main__":
     unittest.main()
