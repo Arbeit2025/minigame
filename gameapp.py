@@ -11,6 +11,9 @@ import os
 import sqlite3
 import math
 import random
+import html
+import json
+import re
 import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -35,6 +38,11 @@ TEMPLATE = r"""
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ルーレット抽選｜自作ミニゲーム集</title>
+  <meta name="description" content="重み付きで抽選できるルーレット。テーブルを作って名前と重みを登録し、抽選結果の履歴も残せます。" />
+  <meta property="og:title" content="ルーレット抽選｜自作ミニゲーム集" />
+  <meta property="og:description" content="重み付きで抽選できるルーレット。テーブルを作って名前と重みを登録し、抽選結果の履歴も残せます。" />
+  <meta property="og:type" content="website" />
+__MG_THEME_INIT__
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.5; }
     .wrap { max-width: 980px; margin: 0 auto; }
@@ -58,6 +66,36 @@ TEMPLATE = r"""
     .danger { border-color: #b00; color: #b00; }
     .danger:hover { background: #ffecec; }
     .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid #ddd; font-size: 12px; color: #444; }
+    :focus-visible { outline: 3px solid #2b6cb0; outline-offset: 2px; }
+    :root[data-theme="dark"] { color-scheme: dark; }
+    :root[data-theme="dark"] body { background: #17191d; color: #e8e9eb; }
+    :root[data-theme="dark"] .card { background: #21252c; border-color: #3a4150; }
+    :root[data-theme="dark"] input[type="text"], :root[data-theme="dark"] input[type="number"], :root[data-theme="dark"] select { background: #21252c; color: #e8e9eb; border-color: #3a4150; }
+    :root[data-theme="dark"] button { background: #2a2f38; color: #e8e9eb; border-color: #6b7280; }
+    :root[data-theme="dark"] button:hover { background: #353c47; }
+    :root[data-theme="dark"] .muted { color: #a7adb8; }
+    :root[data-theme="dark"] .flash { border-color: #3a4150; }
+    :root[data-theme="dark"] .flash.ok { background: #14301a; border-color: #2c5c37; }
+    :root[data-theme="dark"] .flash.ng { background: #3a1a1a; border-color: #6e3535; }
+    :root[data-theme="dark"] th, :root[data-theme="dark"] td { border-bottom-color: #333a45; }
+    :root[data-theme="dark"] th { background: #262b33; }
+    :root[data-theme="dark"] .pill { border-color: #3a4150; color: #c8cdd5; }
+    :root[data-theme="dark"] a { color: #8ab8ff; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; scroll-behavior: auto !important; }
+    }
+    html.mg-reduce-motion *, html.mg-reduce-motion *::before, html.mg-reduce-motion *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; scroll-behavior: auto !important; }
+    .mg-howto { border: 1px solid #ddd; background: #fff; border-radius: 12px; padding: 12px 16px; margin: 16px 0; }
+    .mg-howto h2 { font-size: 16px; margin: 0 0 8px; }
+    .mg-howto dl { margin: 0; display: grid; grid-template-columns: 3.5em 1fr; gap: 4px 10px; }
+    .mg-howto dt { font-weight: 700; }
+    .mg-howto dd { margin: 0; }
+    .mg-next { margin: 20px 0 8px; }
+    .mg-next-card { display: flex; gap: 12px; align-items: center; border: 1px solid #ddd; background: #fff; border-radius: 12px; padding: 12px 16px; text-decoration: none; color: inherit; }
+    .mg-next-icon { font-size: 34px; line-height: 1; }
+    .mg-footer { margin-top: 28px; border-top: 1px solid #eee; padding-top: 10px; }
+    :root[data-theme="dark"] .mg-howto, :root[data-theme="dark"] .mg-next-card { background: #21252c; border-color: #3a4150; }
+    :root[data-theme="dark"] .mg-footer { border-top-color: #333a45; }
   </style>
 </head>
 <body>
@@ -1026,6 +1064,193 @@ GAMES = [
 
 
 # ============================
+# 改善基盤データ（所要時間・難易度／遊び方／JSスコア系の振り分け）
+# ============================
+# minutes: 目安の所要時間（分）／ level: 難易度 1（かんたん）〜3（むずかしい）
+GAME_META = {
+    "roulette": (3, 1), "omikuji": (1, 1), "highlow": (2, 1), "number": (3, 2),
+    "reaction": (1, 2), "stopwatch": (1, 2), "janken": (1, 1), "slot": (2, 1),
+    "dice": (1, 1), "coinflip": (1, 1), "mathdrill": (2, 2), "memory": (2, 2),
+    "typing": (2, 2), "stroop": (2, 2), "concentration": (3, 1), "monty": (1, 1),
+    "quiz": (3, 2), "count": (2, 2), "sort": (1, 2), "geoquiz": (3, 2),
+    "escape-cocoa": (5, 2), "escape-science": (5, 2), "escape-cafe": (5, 2),
+    "hitblow": (5, 3), "shoefly": (1, 2), "fishing": (3, 2), "dodge": (2, 2),
+    "snowball": (2, 2), "zhgacha": (1, 1), "engacha": (1, 1), "eogacha": (1, 1),
+    "shindan-trio": (2, 1), "shindan-snack": (1, 1), "shindan-study": (2, 1),
+    "dotboard": (5, 1), "slidepuzzle": (3, 2), "touch25": (1, 2), "marubatsu": (2, 1),
+    "shiritori": (3, 2), "balloonpop": (1, 1), "flasksort": (5, 3), "cupshuffle": (2, 2),
+    "colorwall": (2, 2), "trio-card": (3, 2), "flat3d": (5, 3), "gomoku-tsume": (3, 3),
+    "iceweak": (2, 2), "saisen": (2, 2), "suzuatume": (1, 1), "tunnelface": (2, 2),
+    "bagpack": (5, 3), "wordmonster": (3, 2), "mojiotoshi": (3, 2), "mensetsu": (3, 2),
+    "suishitsu": (5, 3), "boomerang": (2, 2), "timing-tennis": (2, 2), "secret-name": (5, 3),
+    "current-shot": (3, 2), "tier-party": (3, 1), "shodo": (2, 1), "rousoku": (2, 2),
+    "shield-moji": (2, 2), "ramen-oil": (1, 1), "ikasama": (3, 2), "machigai-card": (3, 2),
+    "poyon-rhythm": (1, 2), "bubble-shot": (5, 2), "draw-poker": (5, 2), "ronpa": (5, 3),
+    "curling-tsume": (3, 3), "prism-mirror": (5, 3), "eyeball-sokoban": (5, 3),
+    "ushi-tomato": (2, 2), "oyatsu-kaba": (2, 2), "swipe-ushi": (1, 1), "kyushin-judge": (3, 2),
+    "kagiban": (3, 2), "block-survive": (2, 2), "meiga-naoshi": (3, 1), "fukuwarai": (3, 2),
+    "majyo-suiri": (5, 3), "hikigiwa-dungeon": (5, 3), "draft-meate": (5, 2),
+    "color-hamekomi": (5, 3), "paper-shoot": (2, 2), "antique-eye": (5, 2), "ivy-climb": (1, 2),
+    "flower-match": (3, 2), "spell-duel": (3, 2), "emoji-quiz": (3, 1), "pref-drop": (3, 2),
+    "wiki-derby": (3, 1), "ice-escape": (2, 2), "majority-gate": (3, 2), "micro-trio": (2, 2),
+    "era-gacha": (3, 1), "idle-craft": (2, 1), "kaiju-td": (3, 2), "last-minute": (2, 2),
+}
+
+# 遊び方（目的／操作／コツ）。各ゲームページ下部の共通セクションで表示する。
+GAME_HOWTO = {
+    "roulette": ("候補の中から公平に1つ（または複数）を抽選で決める。", "テーブルを作って候補と重みを登録し、「抽選」を押す。", "重みを付けると当たりやすさが変わる。ランチ決めや順番決めにも便利。"),
+    "omikuji": ("今日の運勢を引いてみる。", "「おみくじを引く」ボタンを押すだけ。", "大吉から大凶まで重み付き抽選。一言メッセージもチェック。"),
+    "highlow": ("次のカードが今のカードより大きいか小さいかを当て続ける。", "「大きい」「小さい」のボタンを押す。", "同じ数は引き分けで連勝継続。端の数字（1や13）は読みやすい。"),
+    "number": ("1〜100の秘密の数を、できるだけ少ない回数で当てる。", "数字を入力して「当てる」を押す。ヒント（大きい／小さい）が出る。", "真ん中から二分探索で絞ると早く当てられる。"),
+    "reaction": ("画面が緑になったら、できるだけ速くクリックする。", "スタートを押して待機し、緑になった瞬間に画面をクリック。", "緑になる前に押すとフライング。指を浮かせて待つと速くなる。"),
+    "stopwatch": ("10.00秒ぴったりを狙ってタイマーを止める。", "スタート→ストップのボタンを押す。", "心の中で「10秒」を数えるリズムを体に覚えさせると誤差が縮む。"),
+    "janken": ("CPUとのじゃんけんで連勝記録を伸ばす。", "グー・チョキ・パーのボタンを押す。", "あいこは連勝継続。相手の傾向を想像して読むのも楽しい。"),
+    "slot": ("コインを増やす。3つ揃えば大当たり。", "「回す」ボタンでスロットを回す。コインが尽きたらリセット。", "ペアでも配当あり。7️⃣の3つ揃いが最高配当。"),
+    "dice": ("サイコロ2個の合計でCPUと勝負し、ベスト合計を残す。", "「サイコロを振る」ボタンを押す。", "ゾロ目にはボーナス。運勝負なので気軽に連打でOK。"),
+    "coinflip": ("コインの表裏を当てて連勝を伸ばす。", "「表」か「裏」を選んで投げる。", "完全な運試し。連勝が止まるまで続けるのが醍醐味。"),
+    "mathdrill": ("四則演算10問を全問正解するまでの速さを競う。", "答えを入力して送信。正解すると次の問題へ。", "割り算は割り切れる問題だけ。焦らず正確に。"),
+    "memory": ("表示された数字列を覚えて入力し、何桁まで行けるか挑戦する。", "数字が消えたら、覚えた数字列を入力する。", "3〜4桁ずつ塊で覚えると伸びる。声に出すのも有効。"),
+    "typing": ("表示されたローマ字単語5語を速く正確にタイプする。", "キーボードでそのまま打ち込む。", "1文字ずつ確認せず、単語のまとまりで打つと速くなる。"),
+    "stroop": ("文字の「色」を見て答える。意味に惑わされないのが勝負。", "色のボタンを押して答える（全10問）。", "文字を読まず、色だけを見るよう意識するとミスが減る。"),
+    "concentration": ("裏向きカードから6ペアを、少ない手数で揃える。", "カードを2枚めくって絵文字が同じなら揃う。", "場所と絵をセットで覚える。端のカードから攻めると整理しやすい。"),
+    "monty": ("3つのドアの確率パズル。選んだあと、変えるか変えないかを選ぶ。", "ドアを選ぶ→ハズレが開く→最終選択を決める。", "変えた方が当たる確率が高い、という有名な結論を体感できる。"),
+    "quiz": ("雑学・一般常識の4択クイズ10問で正解数を競う。", "選択肢のボタンを押して答える。", "問題は20問以上からランダム出題。分からない問題は勘でもOK。"),
+    "count": ("左右の絵文字、数が多い方を当てる。", "左か右のボタンを押す。", "数えずに「密度」で判断すると速くて正確。連続正解を狙おう。"),
+    "sort": ("シャッフルされた1〜9の数字を小さい順に押す速さを競う。", "数字ボタンを1から順にクリックする。", "次の数字の位置を先読みしながら押すと速くなる。"),
+    "geoquiz": ("世界の国・首都・国旗の3択クイズ10問で正解数を競う。", "選択肢のボタンを押して答える。", "国旗問題は色と形の特徴を掴むと解きやすい。"),
+    "escape-cocoa": ("ココアの部屋を調べて鍵を見つけ、脱出する。", "気になる場所のボタンを押して調べる。アイテムは自動で使われる。", "紙きれなどのヒント文をよく読むこと。同じ場所を何度も調べると新しい発見がある。"),
+    "escape-science": ("理科室を調べて脱出の方法を見つける。", "気になる場所のボタンを押して調べる。", "黒板のヒントと実験道具の組み合わせが鍵。"),
+    "escape-cafe": ("喫茶店の倉庫を調べて鍵を探し、脱出する。", "気になる場所のボタンを押して調べる。", "棚や缶の中など、見落としやすい場所を丁寧に。"),
+    "hitblow": ("ヒット＆ブローを手がかりに、重複なし4桁の数字を当てる。", "4桁の数字を入力して判定を受ける。", "ヒット0・ブロー多めなら数字の組み合わせ自体は合っている。一桁ずつ確定させていこう。"),
+    "shoefly": ("パワーゲージを止めて、くつをできるだけ遠くへ飛ばす。", "ゲージが往復するので、狙いの強さでボタンを押す。", "最大付近で止めると遠くへ飛ぶが、止め損ねると弱くなる。"),
+    "fishing": ("ウキが沈む合図に反応して魚を釣り、全12種の図鑑を埋める。", "「つりをする」で待機し、合図が出たらすぐ「釣り上げる」。", "反応が速いほどレアな魚に出会いやすい。合図前のフライングに注意。"),
+    "dodge": ("四方から迫る敵を避け続け、生き残った秒数を伸ばす。", "矢印キーやボタンで移動する。", "端に追い詰められないよう、開けた場所をキープする。"),
+    "snowball": ("雪玉を転がして大きくしながら、岩を避けて距離を伸ばす。", "左右ボタン（キー）で雪玉を動かす。", "岩に当たると小さくなる。早めの進路変更が安全。"),
+    "zhgacha": ("ガチャで中国語の単語を集め、全110語コレクションを目指す。", "「ガチャを引く」ボタンを押す。", "ピンインと例文つき。引いた単語は声に出すと覚えやすい。"),
+    "engacha": ("ガチャで英単語を集め、全110語コレクションを目指す。", "「ガチャを引く」ボタンを押す。", "カタカナ読みと例文つき。知っている単語の再確認にも。"),
+    "eogacha": ("ガチャでエスペラントの単語を集め、全110語コレクションを目指す。", "「ガチャを引く」ボタンを押す。", "綴りどおりに読める言語。日本語訳と例文で意味を掴もう。"),
+    "shindan-trio": ("8つの質問で、ココア・モカ・チャイのどのタイプに近いかを診断する。", "質問に選択肢で答えていく。", "考えすぎず直感で答えると、それらしい結果になりやすい。"),
+    "shindan-snack": ("6つの質問で、今日のおすすめおやつを診断する。", "質問に選択肢で答えていく。", "気分と空腹度が結果を左右する。その日の気分で答えよう。"),
+    "shindan-study": ("8つの質問で自分の学習タイプを知る。", "質問に選択肢で答えていく。", "結果にはタイプに合った勉強のコツも付く。"),
+    "dotboard": ("16×16のキャンバスにドット絵を描いて楽しむ。", "色を選んでマスをクリック／ドラッグで塗る。PNG保存もできる。", "お題ボタンで題材を引くと描き出しやすい。「描けた！」で完成を記録。"),
+    "slidepuzzle": ("3×3の数字パネルを1〜8の順に揃える。手数が少ないほど良い。", "空きマスの隣のパネルをクリックしてスライドさせる。", "上の段から順に揃えると迷いにくい。"),
+    "touch25": ("1〜25の数字を順番に押す速さを競う。", "数字ボタンを1から順にタップしていく。", "全体を先に見渡して、次の数字の位置を先読みする。"),
+    "marubatsu": ("三目並べでCPUに勝つ。勝利数を記録する。", "先手・後手を選び、空きマスをクリックして○を置く。", "角→中央の順が強い。CPUはたまに本気を出さない。2人モードでは友達とも対戦できる。"),
+    "shiritori": ("内蔵単語リストの範囲でCPUとしりとりを続け、「ん」を避ける。", "次の単語を入力して送信する。", "相手が困る文字（る・ぱ等）で終わる単語が強い。"),
+    "balloonpop": ("30秒間、風船を割り続けて得点を伸ばす。爆弾は避ける。", "風船をタップ／クリックで割る。", "通常の風船は+1点、爆弾は−3点。爆弾の見分けが鍵。"),
+    "flasksort": ("色液体を移し替え、1本に1色だけが入るよう分ける。手数が少ないほど良い。", "フラスコを選んで、別のフラスコへ注ぐ。", "空きフラスコを作業スペースに残しておくと詰みにくい。"),
+    "cupshuffle": ("ボール入りカップのシャッフルを目で追い、当てる。", "シャッフル後、ボールがあると思うカップを選ぶ。", "カップそのものではなく、ボールの軌道を追うと当たりやすい。"),
+    "colorwall": ("流れてくる壁と同じ色にボールを変えて、すり抜け続ける。", "色ボタンを押してボールの色を切り替える。", "次の壁の色を早めに確認して、先回りで変えておく。"),
+    "trio-card": ("炎＞草＞水＞炎の三すくみで5回戦し、勝ち数を競う。", "手札3枚から出すカードを選ぶ。同じ属性なら数字の大きい方が勝ち。", "強い数字は相性の悪い相手に温存する読み合いが楽しい。2人モードもある。"),
+    "flat3d": ("平面図と立体図を切り替えながら迷路を進み、ゴールを目指す。歩数が少ないほど良い。", "移動ボタンで進み、「表示切替」で視点を変える。", "立体表示でだけ見える足場がある。詰まったら視点を変えてみる。"),
+    "gomoku-tsume": ("五目並べの詰め問題で、あと1手で五つ揃うマスを当てる。", "盤面を見て、打つマスを選ぶ。", "自分のリーチだけでなく、相手の止め手にもならないか確認。連続正解を狙おう。"),
+    "iceweak": ("一瞬光る氷の弱点を覚えてタップし、割った数を競う。", "弱点が光った場所を覚えてタップする。", "光る位置を指で追うのではなく、視線を盤面の中心に置くと拾いやすい。"),
+    "saisen": ("角度を決めてコインを投げ、賽銭箱の口に入れる。10投勝負。", "角度を調整して「投げる」を押す。", "口の中心を狙うより、少し手前を狙うと入りやすい。"),
+    "suzuatume": ("落ちてくる鈴をかごでキャッチし、30秒の得点を競う。石は避ける。", "かごを左右に動かす。", "金の鈴は高得点。石を取ると減点なので、無理に追わない。"),
+    "tunnelface": ("トンネルから一瞬顔を出すキャラの場所と順番を覚えて当てる。", "顔出しをよく見て、順番どおりに答える。", "場所と順番をセットで、声に出して覚えると正確になる。"),
+    "bagpack": ("形の違う道具を6×6のバッグに詰め、埋めた割合でCPUと勝負する。", "道具を選んで置く。回転ボタンで向きを変えられる。", "大きな道具から置くと隙間ができにくい。"),
+    "wordmonster": ("3つの言葉を組み合わせてモンスターを作り、CPUのモンスターと戦わせる。", "言葉を3つ選んで生成し、対戦する。", "言葉同士の相性でステータスが変わる。意外な組み合わせを試そう。"),
+    "mojiotoshi": ("落ちてくるひらがなを並べ、言葉を作って消す。消した言葉数を競う。", "ひらがなを左右に動かして落とす。", "短い言葉をどんどん消す方が詰みにくい。"),
+    "mensetsu": ("面接官の質問にふさわしい回答を選び、評価（S〜D）を上げる。", "吹き出しの回答候補から1つを選ぶ。", "誠実さと具体性のバランスが良い回答が高評価。満点は60点。"),
+    "suishitsu": ("水質パラメータを読み、設備と薬剤を使い分けて基準内に収める。全5ラウンド。", "各ラウンドで設備・薬剤の使い方を選ぶ。", "基準内に収めつつコストを抑えると高得点。オーバーシュートに注意。"),
+    "boomerang": ("戻ってくるブーメランの軌道で敵を倒し続ける。", "ブーメランを投げ、投げた後に自分が動くと軌道が曲がる。", "移動で軌道を曲げて、複数の敵を巻き込むのが楽しい。"),
+    "timing-tennis": ("ボールがラケットに来るタイミングで打ち返す。3回ミスで終了。", "ボールが近づいたらボタンを押して打つ。", "ぴったりだとパーフェクト返球で+2点。少し早めを意識すると安定する。"),
+    "secret-name": ("文字の一致ヒントで秘密の動物名を当てる。ただし「即死ネーム」を言うと即終了。", "名前を入力して判定を受ける（6回まで）。", "◎△×のヒントで文字を絞る。即死ネームの条件も推理のうち。"),
+    "current-shot": ("海流で流される弾を計算して、敵を撃ち落とす。", "狙いを定めて発射する。弾は海流の帯で横に流れる。", "流れの強さ分だけ逆側にずらして撃つのが基本。"),
+    "tier-party": ("お題の8項目をティア表に並べ、「みんなの感覚」との一致で得点する。", "各項目をS/A/B/Cのティアへ配置する。", "全ティア使用ボーナスがある。自分の感覚より平均的な感覚を想像すると当たる。"),
+    "shodo": ("お手本の漢字をなぞり、100点満点の採点を上げる。", "マウスや指でお手本をなぞる。", "被覆率となぞりのはみ出しの少なさが鍵。ゆっくり丁寧に。"),
+    "rousoku": ("ろうそくに息を吹きかけ、60秒で消した本数を競う。", "長押しで息を吹く。ゲージが空になったら離して息継ぎ。", "息継ぎのタイミングを早めに取ると、火が戻りにくい。"),
+    "shield-moji": ("漢字の輪郭を盾にして、落ちてくる玉を防ぐ。防いだ数を競う。", "盾（漢字）を左右に動かして玉を受ける。", "インク部分でしか防げない。空白の多い字は位置取りが大事。"),
+    "ramen-oil": ("丼の油の粒を寄せ集め、45秒で集めた数を競う。", "ドラッグ（箸）で油の粒を中央のゾーンへ集める。", "外側から大きく弧を描くように寄せると効率が良い。"),
+    "ikasama": ("ハイボールの割合を決めて客に出し、バレずに利益を上げる読み合い。", "ウイスキーの割合を選んで提供する。", "薄いほど儲かるが、客の許容ラインを下回るとストライク。3ストライクで閉店。"),
+    "machigai-card": ("トランプと説明文を見比べ、間違いの有無を見抜く。全10問。", "「間違いあり」「間違いなし」のボタンを押す。", "数字・色・マークの細部まで見る。違和感を信じるのが大事。"),
+    "poyon-rhythm": ("落ちてくるノートに合わせて左右2ボタンを押すリズムゲーム。40秒。", "ノートが判定ラインに重なった瞬間に、左右どちらかのボタンを押す。", "目で追うよりリズムに乗る方が当たる。"),
+    "bubble-shot": ("バブルを発射して同色3つ以上をつなげて消す。全3ステージ。", "狙いを定めて発射する。壁の反射も使える。", "天井側から落とすと連鎖で大きく消える。"),
+    "draw-poker": ("5枚の手札を1回だけ交換し、役でCPUと勝負する。全5ラウンド。", "残すカードを選んで交換し、勝負する。", "勝ち3点・引き分け1点。弱い手は思い切って交換する。"),
+    "ronpa": ("手がかりを集め、相手の言い分の矛盾をついて言い負かす推理ゲーム。全3問。", "手がかりを読み、つきつける証言を選ぶ。", "時刻や名前の細部が矛盾の元。全部の手がかりに目を通してから。"),
+    "curling-tsume": ("角度・強さ・曲げを決めて1投し、相手より中心に近づける。全3問。", "3つのパラメータを調整して投げる。", "強さが一番効く。中心までの距離感を掴むのが先決。"),
+    "prism-mirror": ("鏡を回して光を全部のクリスタルへ届ける。全3ステージ。", "鏡をクリックして45度ずつ回す。", "光の入口から順に辿ると詰まらない。手数が少ないほど高得点。"),
+    "eyeball-sokoban": ("倉庫番。ただし目玉の視線に入ると後ろへ下がれない。全3ステージ。", "倉庫番を移動させて箱をゴールへ運ぶ。", "箱を壁際に寄せすぎると詰む。視線の範囲を先に確認。"),
+    "ushi-tomato": ("猫でウシを驚かせて逃がし、トマトを食べさせる60秒アクション。", "猫を動かしてウシに近づき、驚かせて通り道を作る。", "追いかけてくる人から逃げ切ること。ウシの逃げる方向を読む。"),
+    "oyatsu-kaba": ("流れてくるおやつを集め、あふれる前に保存して得点化する60秒収集。", "おやつを選んで集め、保存ボタンで得点化する。", "満腹で鈍くなったらお茶でリフレッシュ。あふれ＝ロストに注意。"),
+    "swipe-ushi": ("連打で牛を加速させ、30秒で進んだ距離を競うジョーク系ゲーム。", "ボタンを連打（スワイプ）して加速する。", "速く連打するほど加速する。牧場から宇宙まで行けるかも。"),
+    "kyushin-judge": ("投球がストライクかボールかを判定する球審ゲーム。誤審3回で終了。", "「ストライク」「ボール」のボタンを押す。", "際どいコースほど迷う。ゾーンの四隅を意識して。"),
+    "kagiban": ("フォローリクエストを掟に沿って承認／拒否にさばく。3回ミスで終了。", "リクエストを見て承認か拒否を選ぶ。", "掟は5件ごとに増える。増えた掟を忘れるとミスする。"),
+    "block-survive": ("ブロック崩しの「ブロック側」を操作して生き残る逆転アクション。", "ブロックを動かしてボールとCPUパドルから逃げる。", "生き残り時間と、他のブロックが壊れた分も得点になる。"),
+    "meiga-naoshi": ("破れた名画風の絵の欠けた部分を描き足し、一致度で採点を受ける。", "お手本を見ながら、欠けた部分を描く。", "色と大まかな形が合っていれば点は伸びる。細部より全体の印象。"),
+    "fukuwarai": ("目撃証言を頼りに福笑いで顔を再現し、本物との近さで採点を受ける。", "顔のパーツを証言の範囲内に配置する。", "証言に反すると減点。範囲の中心を狙うのが無難。"),
+    "majyo-suiri": ("村人の発言の矛盾から「憑依」の持ち主を当てる推理。全3問。", "発言を読み比べ、憑依だと思う村人を選ぶ。", "憑依した村人はうそをつく。矛盾は1つとは限らない。"),
+    "hikigiwa-dungeon": ("すごろく×カードバトル。12回進む前に帰還すれば金を持ち帰れる。", "サイコロで進み、カードで戦う。帰還の判断も自分でする。", "全滅すると全ロスト。「まだいける」が一番危ない。"),
+    "draft-meate": ("スカウト報告をもとに候補を指名し、実際の活躍度で答え合わせ。全5ラウンド。", "候補の報告を比較して、指名する選手を選ぶ。", "報告には誤差がある。極端な数字は割り引いて考える。"),
+    "color-hamekomi": ("色と形が合う場所にピースをはめ込むパズル。全2ステージ。", "ピースを選んで回転させ、正しい場所にはめる。", "色だけでなく輪郭の形も見る。回転は45度単位ではないので慎重に。"),
+    "paper-shoot": ("風向きを見て強さを調整し、紙くずをゴミ箱へ入れる。10投勝負。", "強さスライダーを調整して「投げる」を押す。", "風で流される分を逆算する。中心に近いほど高得点。"),
+    "antique-eye": ("5品の説明文から本物を選ぶ目利きクイズ。全6問・制限時間つき。", "本物だと思う品を選ぶ（1問25秒）。", "素材・年代・産地の記述の食い違いが偽物のサイン。"),
+    "ivy-climb": ("長押しでツタを伸ばし、離して倒し、次の葉へ登る。", "ボタンを長押しして離すだけの1ボタン操作。", "伸ばしすぎても失敗にはならないが、短いと届かない。葉までの距離感が全て。"),
+    "flower-match": ("同じ花を3つ揃えて消すマッチ3。25手以内に30個消すと青いバラが咲く。", "隣り合う花を入れ替えて3つ揃える。", "下の方から消すと連鎖が起きやすい。青いバラで+150点。"),
+    "spell-duel": ("語のパーツ3つで呪文を作り、CPUの呪文と威力×相性で打ち合う。全5ラウンド。", "頭・核・締めの語を順に選ぶ。", "相性（火＞風＞土＞水＞火）は1.5倍／0.75倍。威力だけでなく属性も見る。2人モードもある。"),
+    "emoji-quiz": ("絵文字の列が表すことわざ・短文を3択で当てる。全8問。", "選択肢のボタンを押して答える。", "絵を1つずつ読み解くと、知っていることわざに辿り着く。"),
+    "pref-drop": ("都道府県ブロックを落とし、隣り合う県同士をくっつけて消す落ちものパズル。", "ブロックを左右に動かして落とす。", "対象は北海道〜関東の14都道県。隣接関係を思い出しながら。"),
+    "wiki-derby": ("Wikipedia記事5本から、本文が一番長いものを予想する。全5レース。", "1着だと思う記事に賭ける。", "文字数は目安データ。テーマの広い記事ほど長い傾向。"),
+    "ice-escape": ("店員側で、客の手からアイスを逃がし続ける反射ゲーム。", "アイスをクリックで隣のマスへ逃がす。", "手はアイスの現在位置を狙ってくる。先回りで動くこと。"),
+    "majority-gate": ("群衆の流れの記録から多数派のゲートを選ぶ。全10問・ミス3回で終了。", "記録（5回分の割合）を読んで、AかBのゲートを選ぶ。", "平均して多数派だった方が正解。1回の偏りに惑わされない。"),
+    "micro-trio": ("反射・連打・タイミングのマイクロゲーム3番勝負。勝ち数でエンディングが変わる。", "各マイクロゲームの指示に従って操作する。", "3種とも短い。最初の1勝で流れが決まりやすい。"),
+    "era-gacha": ("時代と能力をガチャで決め、人生の分かれ道を選んで進む。", "ガチャを回し、分かれ道では成功確率を見て選ぶ。", "確率は能力から計算される。平行人生でもう一周すると比較できる。"),
+    "idle-craft": ("行動を選ぶと自動で素材集めとクラフトが進む60秒放置。転生でスキルを引き継げる。", "行動を1つ選んで見守る。終わったら転生も選べる。", "選んだ行動の素材が速く集まる。レシピ完成を狙って行動を選ぼう。"),
+    "kaiju-td": ("1本道にタワーを置いて、ちび怪獣の波を迎え撃つタワーディフェンス。", "タワーを選んで進路脇に配置する。", "ウェーブは1つ・タワーは2種。射程と進路の重なりを最大化。"),
+    "last-minute": ("残り60秒で計算の解答列を見直し、間違いを直す。ただし正解を直すと壊れる。", "怪しい問題を選んで直す（トグル）。時間内に提出する。", "検算しやすい問題から。自信のないものだけ触るのが安全。"),
+}
+
+# /score エンドポイントへ fetch でスコアを送る JS ゲーム（39本）
+JS_SCORE_GAMES = {
+    "reaction", "stopwatch", "typing", "sort", "shoefly", "dodge", "snowball",
+    "touch25", "balloonpop", "cupshuffle", "colorwall", "iceweak", "saisen",
+    "suzuatume", "tunnelface", "mojiotoshi", "boomerang", "timing-tennis",
+    "current-shot", "shodo", "rousoku", "shield-moji", "ramen-oil", "poyon-rhythm",
+    "bubble-shot", "ushi-tomato", "oyatsu-kaba", "swipe-ushi", "block-survive",
+    "meiga-naoshi", "fukuwarai", "paper-shoot", "ivy-climb", "flower-match",
+    "pref-drop", "ice-escape", "micro-trio", "idle-craft", "kaiju-td",
+}
+# スコアは「小さいほど良い」JS ゲーム（ベスト＝最小）
+MIN_SCORE_GAMES = {"reaction", "stopwatch", "typing", "sort", "touch25"}
+# 結果シェア文コピーの対象（診断・占い系）
+SHARE_GAMES = {"omikuji", "shindan-trio", "shindan-snack", "shindan-study", "era-gacha"}
+
+
+def _game_by_slug(slug: str) -> Optional[dict]:
+    for g in GAMES:
+        if g["slug"] == slug:
+            return g
+    return None
+
+
+def _game_by_title(title: str) -> Optional[dict]:
+    for g in GAMES:
+        if g["title"] == title:
+            return g
+    return None
+
+
+def _next_in_category(slug: str) -> Optional[dict]:
+    """同じジャンルの次のゲーム（GAMES の登録順で循環）。"""
+    game = _game_by_slug(slug)
+    if game is None:
+        return None
+    same = [g for g in GAMES if g["category"] == game["category"]]
+    if len(same) < 2:
+        return None
+    idx = same.index(game)
+    return same[(idx + 1) % len(same)]
+
+
+def _today_pickup() -> dict:
+    """Asia/Tokyo の日付をシードに、今日の1本を決定的に選ぶ。"""
+    today = datetime.now(ZoneInfo("Asia/Tokyo")).strftime("%Y%m%d")
+    rng = random.Random(int(today))
+    return GAMES[rng.randrange(len(GAMES))]
+
+
+
+# ============================
 # HTML（ポータルトップ）
 # ============================
 PORTAL_TEMPLATE = r"""
@@ -1036,84 +1261,363 @@ PORTAL_TEMPLATE = r"""
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>自作ミニゲーム集｜ブラウザで遊べる無料ゲーム</title>
   <meta name="description" content="全部、作者が自分で作ったミニゲームだけを集めたポータルサイト。登録不要・無料でブラウザからそのまま遊べます。" />
+  <meta property="og:title" content="自作ミニゲーム集｜ブラウザで遊べる無料ゲーム" />
+  <meta property="og:description" content="全部、作者が自分で作ったミニゲームだけを集めたポータルサイト。登録不要・無料でブラウザからそのまま遊べます。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ abs_url }}" />
+  <meta name="twitter:card" content="summary" />
+  <script>
+  (function(){try{var s=JSON.parse(localStorage.getItem('mg_settings')||'{}');var t=s.theme||'auto';if(t==='auto'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);if(s.reduceMotion){document.documentElement.classList.add('mg-reduce-motion');}}catch(e){}})();
+  </script>
   <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.6; background: #fbfaf7; color: #222; }
+    :root {
+      --mg-bg: #fbfaf7; --mg-fg: #222222; --mg-card: #ffffff; --mg-border: #dddddd;
+      --mg-muted: #666666; --mg-btn-bg: #f7f7f7; --mg-btn-hover: #eeeeee; --mg-btn-border: #444444;
+      --mg-accent: #2b6cb0; --mg-line: #e5e5e5; color-scheme: light;
+    }
+    :root[data-theme="dark"] {
+      --mg-bg: #17191d; --mg-fg: #e8e9eb; --mg-card: #21252c; --mg-border: #3a4150;
+      --mg-muted: #a7adb8; --mg-btn-bg: #2a2f38; --mg-btn-hover: #353c47; --mg-btn-border: #6b7280;
+      --mg-accent: #7db3e8; --mg-line: #333a45; color-scheme: dark;
+    }
+    :root[data-theme="dark"] a { color: #8ab8ff; }
+    :focus-visible { outline: 3px solid var(--mg-accent); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; scroll-behavior: auto !important; }
+    }
+    html.mg-reduce-motion *, html.mg-reduce-motion *::before, html.mg-reduce-motion *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; scroll-behavior: auto !important; }
+    html { scroll-behavior: smooth; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.6; background: var(--mg-bg); color: var(--mg-fg); }
     .wrap { max-width: 980px; margin: 0 auto; }
     h1 { font-size: 26px; margin: 0 0 6px; }
-    .lead { color: #555; margin: 0 0 20px; }
+    .lead { color: var(--mg-muted); margin: 0 0 20px; }
     h2 { font-size: 18px; margin: 26px 0 10px; }
+    .headrow { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .mg-settings { font-size: 13px; }
+    .mg-settings summary { cursor: pointer; padding: 4px 8px; border: 1px solid var(--mg-border); border-radius: 8px; background: var(--mg-card); }
+    .mg-settings-body { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--mg-border); border-radius: 10px; background: var(--mg-card); padding: 10px 12px; margin-top: 6px; }
+    .mg-settings-body label { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    select, input[type="search"], input[type="text"] { background: var(--mg-card); color: var(--mg-fg); border: 1px solid var(--mg-border); border-radius: 8px; padding: 8px; }
+    .catsbar { background: var(--mg-bg); }
+    @media (max-width: 700px) {
+      .catsbar { position: sticky; top: 0; z-index: 30; padding: 6px 0 8px; border-bottom: 1px solid var(--mg-line); }
+      .catsbar h2 { margin-top: 6px; }
+    }
     .cats { display: flex; gap: 8px; flex-wrap: wrap; padding: 0; list-style: none; margin: 0; }
-    .cats li { border: 1px solid #ddd; background: #fff; border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+    .cats li { border: 1px solid var(--mg-border); background: var(--mg-card); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
     .cats li button { background: none; border: 0; font: inherit; color: inherit; cursor: pointer; padding: 0; }
-    .cats li.active { background: #222; border-color: #222; color: #fff; }
+    .cats li.active { background: var(--mg-fg); border-color: var(--mg-fg); color: var(--mg-bg); }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 14px 0 4px; }
+    .controls .spacer { flex: 1; }
+    button.tool { padding: 8px 12px; border: 1px solid var(--mg-btn-border); border-radius: 8px; background: var(--mg-btn-bg); color: var(--mg-fg); cursor: pointer; font-size: 14px; }
+    button.tool:hover { background: var(--mg-btn-hover); }
+    button.tool[aria-pressed="true"] { background: var(--mg-fg); color: var(--mg-bg); border-color: var(--mg-fg); }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; background: #fff; display: flex; flex-direction: column; gap: 8px; }
+    .card { position: relative; border: 1px solid var(--mg-border); border-radius: 12px; padding: 16px; background: var(--mg-card); display: flex; flex-direction: column; gap: 8px; }
     .icon { font-size: 40px; line-height: 1; }
-    .card h3 { margin: 0; font-size: 17px; }
-    .card p { margin: 0; color: #555; font-size: 14px; flex: 1; }
-    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid #ddd; font-size: 12px; color: #444; align-self: flex-start; }
-    .play { display: inline-block; text-align: center; padding: 9px 12px; border: 1px solid #444; border-radius: 8px; background: #f7f7f7; color: #222; text-decoration: none; font-weight: 600; }
-    .play:hover { background: #eee; }
-    .muted { color: #666; font-size: 13px; }
-    footer { margin-top: 36px; border-top: 1px solid #e5e5e5; padding-top: 12px; }
+    .card h3 { margin: 0; font-size: 17px; padding-right: 40px; }
+    .card p { margin: 0; color: var(--mg-muted); font-size: 14px; flex: 1; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--mg-border); font-size: 12px; color: var(--mg-muted); align-self: flex-start; }
+    .meta { font-size: 12px; color: var(--mg-muted); }
+    .play { display: inline-block; text-align: center; padding: 9px 12px; border: 1px solid var(--mg-btn-border); border-radius: 8px; background: var(--mg-btn-bg); color: var(--mg-fg); text-decoration: none; font-weight: 600; }
+    .play:hover { background: var(--mg-btn-hover); }
+    .fav-btn { position: absolute; top: 10px; right: 10px; border: 1px solid var(--mg-border); background: var(--mg-card); color: #d9a400; border-radius: 999px; width: 36px; height: 36px; font-size: 18px; line-height: 1; cursor: pointer; }
+    .fav-btn:hover { background: var(--mg-btn-hover); }
+    .new-badge { position: absolute; top: 12px; right: 54px; background: #d64545; color: #fff; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 8px; }
+    .pickup { border: 2px solid var(--mg-accent); border-radius: 14px; padding: 16px; background: var(--mg-card); margin: 18px 0 6px; }
+    .pickup .icon { font-size: 46px; }
+    .pickup h2 { margin: 0 0 8px; font-size: 16px; }
+    .pickup-inner { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+    .pickup-inner .grow { flex: 1; min-width: 220px; }
+    .pickup-inner h3 { margin: 0 0 4px; font-size: 19px; }
+    .pickup-inner p { margin: 0; color: var(--mg-muted); font-size: 14px; }
+    .muted { color: var(--mg-muted); font-size: 13px; }
+    footer { margin-top: 36px; border-top: 1px solid var(--mg-line); padding-top: 12px; }
+    footer ul { margin: 6px 0; padding-left: 18px; }
+    #mgToTop { position: fixed; right: 14px; bottom: 14px; z-index: 40; border: 1px solid var(--mg-btn-border); background: var(--mg-card); color: var(--mg-fg); border-radius: 999px; padding: 10px 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.25); display: none; }
+    #mgToTop.show { display: block; }
+    .backup-box { border: 1px solid var(--mg-border); border-radius: 12px; padding: 14px 16px; background: var(--mg-card); }
   </style>
 </head>
-<body>
+<body id="top">
 <div class="wrap">
-  <h1>🎮 自作ミニゲーム集</h1>
+  <div class="headrow">
+    <h1>🎮 自作ミニゲーム集</h1>
+    <details class="mg-settings">
+      <summary>⚙ 設定（テーマ・音・動き）</summary>
+      <div class="mg-settings-body">
+        <label>テーマ
+          <select id="mg-theme-sel">
+            <option value="auto">自動（端末に合わせる）</option>
+            <option value="light">ライト</option>
+            <option value="dark">ダーク</option>
+          </select>
+        </label>
+        <label>音量 <input type="range" id="mg-vol" min="0" max="100" step="5" /></label>
+        <label><input type="checkbox" id="mg-mute" /> 音を消す</label>
+        <label><input type="checkbox" id="mg-motion" /> 動きを減らす</label>
+      </div>
+    </details>
+  </div>
   <p class="lead">ここにあるのは、全部わたし（作者）が自分で作ったゲームだけです。登録不要・無料で、ブラウザからそのまま遊べます。少しずつ増やしていく予定です。</p>
 
-  <h2>ジャンル</h2>
-  <ul class="cats">
-    <li class="active"><button type="button" data-filter="all">すべて（{{ games|length }}）</button></li>
-    {% for name, count in categories %}
-      <li><button type="button" data-filter="{{ name }}">{{ name }}（{{ count }}）</button></li>
-    {% endfor %}
-  </ul>
-  <p class="muted">ジャンルを押すと、そのジャンルのゲームだけが下の一覧に表示されます。「すべて」を押すと全表示に戻ります。</p>
+  <section class="pickup" aria-label="今日の1本">
+    <h2>🌟 今日の1本</h2>
+    <div class="pickup-inner">
+      <div class="icon">{{ pickup.icon }}</div>
+      <div class="grow">
+        <h3>{{ pickup.title }}</h3>
+        <p>{{ pickup.description }}</p>
+        <p class="meta">ジャンル：{{ pickup.category }}／⏱ 約{{ pickup.minutes }}分／難易度：{{ '★' * pickup.level }}{{ '☆' * (3 - pickup.level) }}</p>
+      </div>
+      <a class="play" href="{{ url_for(pickup.endpoint) }}">▶ 遊ぶ</a>
+    </div>
+  </section>
+
+  <p class="muted" id="mgProgress">プレイ済みを確認中…</p>
+  <div class="controls">
+    <a class="play" href="{{ url_for('random_game') }}">🎲 おまかせで遊ぶ</a>
+    <input type="search" id="mgSearch" placeholder="ゲーム名で検索" aria-label="ゲーム名で検索" />
+    <label>並び替え
+      <select id="mgSort">
+        <option value="default">おすすめ順</option>
+        <option value="name">名前順</option>
+        <option value="new">新着順</option>
+      </select>
+    </label>
+    <button type="button" class="tool" id="mgFavToggle" aria-pressed="false">☆ お気に入りのみ</button>
+  </div>
+
+  <div class="catsbar">
+    <h2>ジャンル</h2>
+    <ul class="cats">
+      <li class="active"><button type="button" data-filter="all">すべて（{{ games|length }}）</button></li>
+      {% for name, count in categories %}
+        <li><button type="button" data-filter="{{ name }}">{{ name }}（{{ count }}）</button></li>
+      {% endfor %}
+    </ul>
+    <p class="muted">ジャンルを押すと、そのジャンルのゲームだけが下の一覧に表示されます。「すべて」を押すと全表示に戻ります。</p>
+  </div>
 
   <h2>ゲーム一覧</h2>
   <p class="muted" id="filterStatus">全 {{ games|length }} 本を表示中</p>
   <div class="grid">
     {% for game in games %}
-      <div class="card" data-category="{{ game.category }}">
+      <div class="card" data-category="{{ game.category }}" data-slug="{{ game.slug }}" data-title="{{ game.title }}" data-idx="{{ loop.index0 }}">
+        <button type="button" class="fav-btn" data-slug="{{ game.slug }}" aria-label="{{ game.title }}をお気に入りに追加">☆</button>
+        <span class="new-badge" hidden>NEW</span>
         <div class="icon">{{ game.icon }}</div>
         <h3>{{ game.title }}</h3>
         <span class="pill">{{ game.category }}</span>
+        <span class="meta">⏱ 約{{ game.minutes }}分／難易度：{{ '★' * game.level }}{{ '☆' * (3 - game.level) }}</span>
         <p>{{ game.description }}</p>
         <a class="play" href="{{ url_for(game.endpoint) }}">▶ 遊ぶ</a>
       </div>
     {% endfor %}
   </div>
+  <p style="text-align:center; margin-top:16px;">
+    <button type="button" class="tool" id="mgMore">もっと見る</button>
+    <span class="muted" id="mgMoreInfo"></span>
+  </p>
 
   <h2>これから</h2>
   <p class="muted">新しいゲームを作ったら、ここに追加していきます。いま遊べるのは上の {{ games|length }} 本です。</p>
 
+  <h2>バックアップ</h2>
+  <div class="backup-box">
+    <p class="muted" style="margin-top:0;">お気に入り・プレイ済み・設定・前回スコアなど、ブラウザに保存しているデータを JSON ファイルに書き出したり、ファイルから読み込んで復元したりできます。</p>
+    <div class="controls" style="margin:0;">
+      <button type="button" class="tool" id="mgExport">⬇ 書き出す</button>
+      <label class="tool" style="display:inline-block; padding:8px 12px; border:1px solid var(--mg-btn-border); border-radius:8px; background:var(--mg-btn-bg); cursor:pointer; font-size:14px;">⬆ 読み込む<input type="file" id="mgImport" accept=".json,application/json" hidden /></label>
+      <span class="muted" id="mgBackupStatus"></span>
+    </div>
+  </div>
+
   <footer class="muted">
-    ルーレット抽選で作ったテーブルや抽選結果はサーバーに保存されますが、サービスの再起動・再デプロイで消えることがあります。大事な抽選の結果はメモしておいてください。
+    <p><a href="#top">↑ トップへ戻る</a>／全 {{ games|length }} 本</p>
+    <p>ジャンル一覧：
+      {% for name, count in categories %}{{ name }}（{{ count }}）{% if not loop.last %}・{% endif %}{% endfor %}
+    </p>
+    <p>
+      <button type="button" class="tool" id="mgCopyUrl">🔗 URLをコピー</button>
+      <a href="https://twitter.com/intent/tweet?text={{ '自作ミニゲーム集｜ブラウザで遊べる無料ゲーム（全' ~ games|length ~ '本）'|urlencode }}&url={{ abs_url|urlencode }}" target="_blank" rel="noopener">Xでシェア</a>
+    </p>
+    <p>ルーレット抽選で作ったテーブルや抽選結果はサーバーに保存されますが、サービスの再起動・再デプロイで消えることがあります。大事な抽選の結果はメモしておいてください。</p>
   </footer>
 </div>
+<button type="button" id="mgToTop" aria-label="トップへ戻る">↑ トップ</button>
 <script>
   (function () {
+    function loadJSON(key, fallback) { try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
+    function saveJSON(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+    /* --- 設定 --- */
+    var settings = loadJSON('mg_settings', {});
+    if (typeof settings.volume !== 'number') settings.volume = 50;
+    function applyTheme() {
+      var t = settings.theme || 'auto';
+      if (t === 'auto') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    }
+    function applyMotion() { document.documentElement.classList.toggle('mg-reduce-motion', !!settings.reduceMotion); }
+    var themeSel = document.getElementById('mg-theme-sel');
+    themeSel.value = settings.theme || 'auto';
+    themeSel.addEventListener('change', function () { settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); });
+    var vol = document.getElementById('mg-vol');
+    vol.value = settings.volume;
+    vol.addEventListener('input', function () { settings.volume = Number(vol.value); saveJSON('mg_settings', settings); });
+    var mute = document.getElementById('mg-mute');
+    mute.checked = !!settings.muted;
+    mute.addEventListener('change', function () { settings.muted = mute.checked; saveJSON('mg_settings', settings); });
+    var motion = document.getElementById('mg-motion');
+    motion.checked = !!settings.reduceMotion;
+    motion.addEventListener('change', function () { settings.reduceMotion = motion.checked; saveJSON('mg_settings', settings); applyMotion(); });
+    applyTheme(); applyMotion();
+    /* --- 一覧の絞り込み・検索・並び替え・段階表示 --- */
     var buttons = document.querySelectorAll('.cats button[data-filter]');
-    var cards = document.querySelectorAll('.grid .card');
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.grid .card'));
     var status = document.getElementById('filterStatus');
+    var grid = document.querySelector('.grid');
+    var searchInput = document.getElementById('mgSearch');
+    var sortSel = document.getElementById('mgSort');
+    var favToggle = document.getElementById('mgFavToggle');
+    var moreBtn = document.getElementById('mgMore');
+    var moreInfo = document.getElementById('mgMoreInfo');
+    var progress = document.getElementById('mgProgress');
+    var PAGE = 24, shown = PAGE, curFilter = 'all', favOnly = false;
+    var favs = loadJSON('mg_favorites', []);
+    var played = loadJSON('mg_played', []);
+    function isFiltering() {
+      return curFilter !== 'all' || favOnly || searchInput.value.trim() !== '' || sortSel.value !== 'default';
+    }
+    function matched() {
+      var q = searchInput.value.trim();
+      return cards.filter(function (card) {
+        if (curFilter !== 'all' && card.getAttribute('data-category') !== curFilter) return false;
+        if (favOnly && favs.indexOf(card.getAttribute('data-slug')) < 0) return false;
+        if (q && card.getAttribute('data-title').indexOf(q) < 0 && card.textContent.indexOf(q) < 0) return false;
+        return true;
+      });
+    }
+    function applyView() {
+      var list = matched();
+      var filtering = isFiltering();
+      var visible = filtering ? list.length : Math.min(shown, list.length);
+      cards.forEach(function (card) { card.style.display = 'none'; });
+      list.forEach(function (card, i) { card.style.display = i < visible ? '' : 'none'; });
+      if (status) {
+        if (curFilter === 'all' && !favOnly && searchInput.value.trim() === '') {
+          status.textContent = '全 ' + list.length + ' 本中 ' + visible + ' 本を表示中';
+        } else {
+          status.textContent = '条件に合うゲーム ' + list.length + ' 本中 ' + visible + ' 本を表示中';
+        }
+      }
+      moreBtn.style.display = (!filtering && list.length > shown) ? '' : 'none';
+      moreInfo.textContent = (!filtering && list.length > shown) ? '（あと ' + (list.length - shown) + ' 本）' : '';
+    }
+    function applySort() {
+      var mode = sortSel.value;
+      var arr = cards.slice();
+      arr.sort(function (a, b) {
+        if (mode === 'name') return a.getAttribute('data-title').localeCompare(b.getAttribute('data-title'), 'ja');
+        if (mode === 'new') return Number(b.getAttribute('data-idx')) - Number(a.getAttribute('data-idx'));
+        return Number(a.getAttribute('data-idx')) - Number(b.getAttribute('data-idx'));
+      });
+      arr.forEach(function (card) { grid.appendChild(card); });
+    }
+    function refreshBadges() {
+      var playedCount = 0;
+      cards.forEach(function (card) {
+        var slug = card.getAttribute('data-slug');
+        var isPlayed = played.indexOf(slug) >= 0;
+        if (isPlayed) playedCount++;
+        var badge = card.querySelector('.new-badge');
+        if (badge) badge.hidden = isPlayed;
+        var star = card.querySelector('.fav-btn');
+        if (star) star.textContent = favs.indexOf(slug) >= 0 ? '★' : '☆';
+      });
+      if (progress) progress.textContent = playedCount + ' / ' + cards.length + ' 本プレイ済み（未プレイは NEW バッジ付き）';
+    }
     buttons.forEach(function (btn) {
       btn.addEventListener('click', function () {
-        var f = btn.getAttribute('data-filter');
+        curFilter = btn.getAttribute('data-filter');
         buttons.forEach(function (b) { b.parentElement.classList.toggle('active', b === btn); });
-        var shown = 0;
-        cards.forEach(function (card) {
-          var ok = (f === 'all' || card.getAttribute('data-category') === f);
-          card.style.display = ok ? '' : 'none';
-          if (ok) shown++;
-        });
-        if (status) {
-          status.textContent = (f === 'all')
-            ? '全 ' + shown + ' 本を表示中'
-            : '「' + f + '」のゲーム ' + shown + ' 本を表示中';
-        }
+        shown = PAGE;
+        applyView();
       });
+    });
+    searchInput.addEventListener('input', function () { shown = PAGE; applyView(); });
+    sortSel.addEventListener('change', function () { applySort(); shown = PAGE; applyView(); });
+    favToggle.addEventListener('click', function () {
+      favOnly = !favOnly;
+      favToggle.setAttribute('aria-pressed', favOnly ? 'true' : 'false');
+      shown = PAGE;
+      applyView();
+    });
+    moreBtn.addEventListener('click', function () { shown += PAGE; applyView(); });
+    grid.addEventListener('click', function (ev) {
+      var btn = ev.target.closest ? ev.target.closest('.fav-btn') : null;
+      if (!btn) return;
+      var slug = btn.getAttribute('data-slug');
+      var i = favs.indexOf(slug);
+      if (i >= 0) favs.splice(i, 1); else favs.push(slug);
+      saveJSON('mg_favorites', favs);
+      refreshBadges();
+      if (favOnly) applyView();
+    });
+    refreshBadges();
+    applyView();
+    /* --- バックアップ --- */
+    var backupStatus = document.getElementById('mgBackupStatus');
+    document.getElementById('mgExport').addEventListener('click', function () {
+      var data = {};
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf('mg_') === 0) data[k] = localStorage.getItem(k);
+      }
+      var blob = new Blob([JSON.stringify({ app: 'minigame', version: 1, data: data }, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'minigame-backup.json';
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+      backupStatus.textContent = '書き出しました（' + Object.keys(data).length + ' 件）';
+    });
+    document.getElementById('mgImport').addEventListener('change', function (ev) {
+      var file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var obj = JSON.parse(String(reader.result));
+          var data = obj && obj.data ? obj.data : obj;
+          var count = 0;
+          Object.keys(data).forEach(function (k) {
+            if (k.indexOf('mg_') === 0) { localStorage.setItem(k, typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k])); count++; }
+          });
+          backupStatus.textContent = '読み込みました（' + count + ' 件）。再読み込みします…';
+          setTimeout(function () { location.reload(); }, 600);
+        } catch (e) {
+          backupStatus.textContent = '読み込めませんでした（JSONファイルを確認してください）';
+        }
+      };
+      reader.readAsText(file);
+    });
+    /* --- シェア・トップへ戻る --- */
+    document.getElementById('mgCopyUrl').addEventListener('click', function () {
+      var btn = this;
+      function done() { btn.textContent = '✅ コピーしました'; setTimeout(function () { btn.textContent = '🔗 URLをコピー'; }, 2000); }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(location.href).then(done).catch(function () {});
+      else {
+        var ta = document.createElement('textarea'); ta.value = location.href; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+    var toTop = document.getElementById('mgToTop');
+    window.addEventListener('scroll', function () { toTop.classList.toggle('show', window.scrollY > 400); }, { passive: true });
+    toTop.addEventListener('click', function () {
+      var reduce = document.documentElement.classList.contains('mg-reduce-motion');
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
     });
   })();
 </script>
@@ -1337,11 +1841,31 @@ def index():
     categories = {}
     for game in GAMES:
         categories[game["category"]] = categories.get(game["category"], 0) + 1
+    enriched = []
+    for game in GAMES:
+        item = dict(game)
+        minutes, level = GAME_META.get(game["slug"], (3, 2))
+        item["minutes"] = minutes
+        item["level"] = level
+        enriched.append(item)
+    pickup = dict(_today_pickup())
+    p_minutes, p_level = GAME_META.get(pickup["slug"], (3, 2))
+    pickup["minutes"] = p_minutes
+    pickup["level"] = p_level
     return render_template_string(
         PORTAL_TEMPLATE,
-        games=GAMES,
+        games=enriched,
         categories=sorted(categories.items()),
+        pickup=pickup,
+        abs_url=request.url_root,
     )
+
+
+@app.route("/random", methods=["GET"])
+def random_game():
+    """おまかせ：ランダムなゲームページへ飛ばす。"""
+    game = random.choice(GAMES)
+    return redirect(url_for(game["endpoint"]))
 
 
 @app.route("/healthz", methods=["GET"])
@@ -1359,13 +1883,23 @@ def roulette():
     entries = list_entries(selected_id) if selected_table else []
     spins = list_spins(selected_id, limit=20) if selected_table else []
 
-    return render_template_string(
-        TEMPLATE,
+    rendered = render_template_string(
+        TEMPLATE.replace("__MG_THEME_INIT__", _MG_THEME_INIT),
         tables=tables,
         selected_table=selected_table,
         entries=entries,
         spins=spins,
     )
+    # ルーレットは独自レイアウトのため、共通の「遊び方」「次の一本」「フッター」と
+    # プレイ済み記録だけを末尾に足す（設定トグル類はポータル側で変更できる）。
+    roulette_game = _game_by_slug("roulette")
+    extra = (
+        _mg_howto_html(roulette_game)
+        + _mg_next_html(roulette_game)
+        + _mg_footer_html()
+        + """<script>(function(){try{var p=JSON.parse(localStorage.getItem('mg_played')||'[]');if(p.indexOf('roulette')<0){p.push('roulette');localStorage.setItem('mg_played',JSON.stringify(p));}}catch(e){}})();</script>"""
+    )
+    return rendered.replace("</body>", extra + "\n</body>", 1)
 
 
 @app.route("/games/roulette/tables/create", methods=["POST"])
@@ -1537,40 +2071,89 @@ def set_kv(key: str, value: str) -> None:
 
 
 _GAME_CSS = """
-    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.6; background: #fbfaf7; color: #222; }
+    :root {
+      --mg-bg: #fbfaf7; --mg-fg: #222; --mg-card: #ffffff; --mg-border: #dddddd;
+      --mg-muted: #666666; --mg-btn-bg: #f7f7f7; --mg-btn-hover: #eeeeee; --mg-btn-border: #444444;
+      --mg-ok-bg: #f3fff3; --mg-ok-border: #bfe8bf; --mg-ng-bg: #fff3f3; --mg-ng-border: #e8bfbf;
+      --mg-th-bg: #fafafa; --mg-line: #eeeeee; --mg-accent: #2b6cb0;
+      --mg-panel: #faf6ec; --mg-panel-border: #bbbbbb; --mg-panel-right: #eef5fa; --mg-panel-right-border: #9db8cc;
+      color-scheme: light;
+    }
+    :root[data-theme="dark"] {
+      --mg-bg: #17191d; --mg-fg: #e8e9eb; --mg-card: #21252c; --mg-border: #3a4150;
+      --mg-muted: #a7adb8; --mg-btn-bg: #2a2f38; --mg-btn-hover: #353c47; --mg-btn-border: #6b7280;
+      --mg-ok-bg: #17301b; --mg-ok-border: #2f5d33; --mg-ng-bg: #381d1d; --mg-ng-border: #6e3535;
+      --mg-th-bg: #262b33; --mg-line: #333a45; --mg-accent: #7db3e8;
+      --mg-panel: #2c2a20; --mg-panel-border: #55503c; --mg-panel-right: #1f2c38; --mg-panel-right-border: #3d5a74;
+      color-scheme: dark;
+    }
+    :root[data-theme="dark"] a { color: #8ab8ff; }
+    :root[data-theme="dark"] a:visited { color: #b49ae0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.6; background: var(--mg-bg); color: var(--mg-fg); }
     .wrap { max-width: 720px; margin: 0 auto; }
     h1 { font-size: 24px; margin: 0 0 6px; }
-    .howto { color: #555; margin: 0 0 16px; }
-    .card { border: 1px solid #ddd; border-radius: 12px; padding: 18px; background: #fff; margin-bottom: 16px; }
-    button { padding: 10px 16px; border: 1px solid #444; border-radius: 8px; background: #f7f7f7; cursor: pointer; font-size: 16px; }
-    button:hover { background: #eee; }
+    .howto { color: var(--mg-muted); margin: 0 0 16px; }
+    .card { border: 1px solid var(--mg-border); border-radius: 12px; padding: 18px; background: var(--mg-card); margin-bottom: 16px; }
+    button { padding: 10px 16px; border: 1px solid var(--mg-btn-border); border-radius: 8px; background: var(--mg-btn-bg); color: var(--mg-fg); cursor: pointer; font-size: 16px; }
+    button:hover { background: var(--mg-btn-hover); }
+    button:disabled { opacity: .55; cursor: default; }
     .big { font-size: 44px; text-align: center; margin: 10px 0; }
     .mid { font-size: 22px; text-align: center; margin: 8px 0; }
     .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: center; }
-    .muted { color: #666; font-size: 13px; }
-    .flash { padding: 10px 12px; border-radius: 10px; margin: 0 0 12px; border: 1px solid #ddd; }
-    .flash.ok { background: #f3fff3; border-color: #bfe8bf; }
-    .flash.ng { background: #fff3f3; border-color: #e8bfbf; }
+    .muted { color: var(--mg-muted); font-size: 13px; }
+    .flash { padding: 10px 12px; border-radius: 10px; margin: 0 0 12px; border: 1px solid var(--mg-border); }
+    .flash.ok { background: var(--mg-ok-bg); border-color: var(--mg-ok-border); }
+    .flash.ng { background: var(--mg-ng-bg); border-color: var(--mg-ng-border); }
     .result { font-size: 20px; text-align: center; margin: 10px 0; }
-    input[type="number"] { padding: 9px; border: 1px solid #ccc; border-radius: 8px; width: 120px; font-size: 16px; }
-    input[type="text"] { padding: 9px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+    input[type="number"] { padding: 9px; border: 1px solid var(--mg-border); border-radius: 8px; width: 120px; font-size: 16px; background: var(--mg-card); color: var(--mg-fg); }
+    input[type="text"] { padding: 9px; border: 1px solid var(--mg-border); border-radius: 8px; font-size: 16px; background: var(--mg-card); color: var(--mg-fg); }
+    select { background: var(--mg-card); color: var(--mg-fg); }
     table { width: 100%; border-collapse: collapse; }
-    th, td { border-bottom: 1px solid #eee; padding: 6px 8px; text-align: left; }
+    th, td { border-bottom: 1px solid var(--mg-line); padding: 6px 8px; text-align: left; }
     .colorword { font-size: 52px; text-align: center; font-weight: 700; margin: 12px 0; }
     .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .cards button { font-size: 30px; padding: 16px 0; }
-    .cards button.matched { background: #f3fff3; border-color: #bfe8bf; cursor: default; }
+    .cards button.matched { background: var(--mg-ok-bg); border-color: var(--mg-ok-border); cursor: default; }
     .emojis { font-size: 26px; line-height: 1.35; text-align: center; overflow-wrap: break-word; }
     .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .panel { border: 2px solid #bbb; border-radius: 12px; padding: 10px 8px 14px; background: #faf6ec; min-width: 0; }
-    .panel.right { background: #eef5fa; border-color: #9db8cc; }
+    .panel { border: 2px solid var(--mg-panel-border); border-radius: 12px; padding: 10px 8px 14px; background: var(--mg-panel); min-width: 0; }
+    .panel.right { background: var(--mg-panel-right); border-color: var(--mg-panel-right-border); }
     .panel h3 { text-align: center; margin: 0 0 6px; font-size: 16px; }
     .numgrid { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
     .numgrid button { width: 64px; height: 64px; font-size: 24px; }
-    .numgrid button.done { background: #bfe8bf; border-color: #7ab87a; }
+    .numgrid button.done { background: var(--mg-ok-bg); border-color: var(--mg-ok-border); }
     .doors { display: flex; gap: 12px; justify-content: center; }
     .doors button { font-size: 40px; padding: 18px 22px; }
     .doors button.labeled { font-size: 20px; }
+    /* --- 改善基盤の共通部品 --- */
+    :focus-visible { outline: 3px solid var(--mg-accent); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; scroll-behavior: auto !important; }
+    }
+    html.mg-reduce-motion *, html.mg-reduce-motion *::before, html.mg-reduce-motion *::after { animation-duration: .001s !important; animation-iteration-count: 1 !important; transition-duration: .001s !important; scroll-behavior: auto !important; }
+    .mg-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin: 0 0 8px; flex-wrap: wrap; }
+    .mg-header p { margin: 0; }
+    .mg-settings { font-size: 13px; }
+    .mg-settings summary { cursor: pointer; padding: 4px 8px; border: 1px solid var(--mg-border); border-radius: 8px; background: var(--mg-card); }
+    .mg-settings-body { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--mg-border); border-radius: 10px; background: var(--mg-card); padding: 10px 12px; margin-top: 6px; }
+    .mg-settings-body label { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .mg-howto { border: 1px dashed var(--mg-border); border-radius: 12px; padding: 12px 16px; margin: 0 0 16px; background: var(--mg-card); }
+    .mg-howto h2 { font-size: 16px; margin: 0 0 8px; }
+    .mg-howto dl { margin: 0; display: grid; grid-template-columns: 3.2em 1fr; gap: 4px 10px; }
+    .mg-howto dt { font-weight: 700; }
+    .mg-howto dd { margin: 0; }
+    .mg-next { margin: 20px 0 8px; }
+    .mg-next-card { display: flex; gap: 12px; align-items: center; border: 1px solid var(--mg-border); border-radius: 12px; padding: 12px 14px; background: var(--mg-card); text-decoration: none; color: inherit; }
+    .mg-next-card:hover { background: var(--mg-btn-hover); }
+    .mg-next-icon { font-size: 34px; line-height: 1; }
+    .mg-footer { margin-top: 22px; border-top: 1px solid var(--mg-line); padding-top: 10px; }
+    #mg-pause-btn { position: fixed; left: 12px; bottom: 12px; z-index: 60; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
+    #mg-pause-overlay { position: fixed; inset: 0; z-index: 65; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; }
+    #mg-pause-overlay[hidden] { display: none !important; }
+    .mg-pause-box { background: var(--mg-card); color: var(--mg-fg); border-radius: 14px; padding: 22px 26px; text-align: center; max-width: 88vw; }
+    #mg-diff { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 70; background: var(--mg-card); color: var(--mg-fg); border: 1px solid var(--mg-accent); border-radius: 999px; padding: 8px 14px; font-size: 14px; box-shadow: 0 2px 10px rgba(0,0,0,.25); max-width: 92vw; }
+    #mg-diff button { padding: 2px 8px; font-size: 13px; margin-left: 6px; }
+    .mg-share-btn { margin-top: 6px; }
 """
 
 _FLASH_BLOCK = """
@@ -1583,24 +2166,397 @@ _FLASH_BLOCK = """
   {% endwith %}
 """
 
+# テーマ・動き設定を描画前に反映する（ちらつき防止）
+_MG_THEME_INIT = r"""<script>
+(function(){try{var s=JSON.parse(localStorage.getItem('mg_settings')||'{}');var t=s.theme||'auto';if(t==='auto'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.setAttribute('data-theme',t);if(s.reduceMotion){document.documentElement.classList.add('mg-reduce-motion');}}catch(e){}})();
+</script>
+"""
+
+# 一時停止ゲート：タイマー系APIと performance.now / Date.now を「ゲーム内時間」に包む。
+# 停止中はコールバックを保留し、時刻も止める。ゲーム本体のスクリプトより前に読み込む。
+_MG_GATE_SCRIPT = r"""<script>
+(function(){
+  if (window.__mgGate) return; window.__mgGate = true;
+  var _st = window.setTimeout.bind(window), _si = window.setInterval.bind(window);
+  var _ct = window.clearTimeout.bind(window), _ci = window.clearInterval.bind(window);
+  var _raf = window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : null;
+  var _caf = window.cancelAnimationFrame ? window.cancelAnimationFrame.bind(window) : null;
+  var _pn = performance.now.bind(performance), _dn = Date.now.bind(Date);
+  var paused = false, pauseStart = 0, pausedTotal = 0;
+  function gnow(){ var t = _pn(); return t - pausedTotal - (paused ? (t - pauseStart) : 0); }
+  try { performance.now = function(){ return gnow(); }; } catch (e) {}
+  try { Date.now = function(){ var t = _pn(); return _dn() - pausedTotal - (paused ? (t - pauseStart) : 0); }; } catch (e) {}
+  var nextId = 1, timers = {};
+  function arm(t){
+    if (paused) { t.remain = Math.max(0, t.due - gnow()); return; }
+    var wait = Math.max(0, t.due - gnow());
+    t.handle = _st(function(){ fire(t); }, wait);
+  }
+  function fire(t){
+    if (t.kind === 'timeout') { delete timers[t.id]; t.fn.apply(null, t.args); return; }
+    t.due += t.period; if (t.due <= gnow()) t.due = gnow() + t.period;
+    arm(t); t.fn.apply(null, t.args);
+  }
+  function schedule(kind, fn, delay, args){
+    if (typeof fn !== 'function') { return kind === 'timeout' ? _st(fn, delay) : _si(fn, delay); }
+    delay = Math.max(0, delay | 0);
+    var id = nextId++;
+    var t = { id: id, kind: kind, fn: fn, args: args, period: delay, due: gnow() + delay, remain: delay, handle: null };
+    timers[id] = t; arm(t); return id;
+  }
+  window.setTimeout = function(fn, delay){ return schedule('timeout', fn, delay, Array.prototype.slice.call(arguments, 2)); };
+  window.setInterval = function(fn, delay){ return schedule('interval', fn, delay, Array.prototype.slice.call(arguments, 2)); };
+  function mgClear(id){
+    var t = timers[id];
+    if (t) { if (t.handle !== null) _ct(t.handle); delete timers[id]; }
+    else { _ct(id); _ci(id); }
+  }
+  window.clearTimeout = mgClear; window.clearInterval = mgClear;
+  var rafQ = [], rafIds = {}, nextRafId = 1;
+  if (_raf) {
+    window.requestAnimationFrame = function(cb){
+      var id = nextRafId++;
+      if (paused) { rafQ.push({ id: id, cb: cb }); rafIds[id] = true; return id; }
+      var realId = _raf(function(){ delete rafIds[id]; cb(gnow()); });
+      rafIds[id] = realId; return id;
+    };
+    window.cancelAnimationFrame = function(id){
+      if (rafIds[id] !== undefined && rafIds[id] !== true) _caf(rafIds[id]);
+      delete rafIds[id];
+      rafQ = rafQ.filter(function(q){ return q.id !== id; });
+    };
+  }
+  window.__mgSetPaused = function(p){
+    p = !!p; if (p === paused) return;
+    var k, t;
+    if (p) {
+      pauseStart = _pn(); paused = true;
+      for (k in timers) { t = timers[k]; if (t.handle !== null) { _ct(t.handle); t.handle = null; } t.remain = Math.max(0, t.due - gnow()); }
+    } else {
+      pausedTotal += _pn() - pauseStart; paused = false;
+      for (k in timers) { t = timers[k]; t.due = gnow() + t.remain; arm(t); }
+      var q = rafQ; rafQ = [];
+      q.forEach(function(item){ if (rafIds[item.id]) { delete rafIds[item.id]; _raf(function(){ item.cb(gnow()); }); } });
+    }
+    if (window.__mgOnPauseChange) window.__mgOnPauseChange(paused);
+  };
+  window.__mgIsPaused = function(){ return paused; };
+  document.addEventListener('keydown', function(ev){
+    if (!paused) return;
+    if (ev.key === 'Escape') { window.__mgSetPaused(false); return; }
+    ev.preventDefault(); ev.stopPropagation();
+  }, true);
+})();
+</script>
+"""
+
+_MG_PAUSE_HTML = """
+<button id="mg-pause-btn" type="button">⏸ 一時停止</button>
+<div id="mg-pause-overlay" hidden>
+  <div class="mg-pause-box">
+    <p class="mid">⏸ 一時停止中</p>
+    <p class="muted">タイマーと操作は止まっています。</p>
+    <div class="row">
+      <button id="mg-resume-btn" type="button">▶ つづける</button>
+      <button id="mg-restart-btn" type="button">↩ 最初から（確認あり）</button>
+    </div>
+  </div>
+</div>
+"""
+
+# ゲームページ共通スクリプト。__MG_CFG__ にページごとの設定 JSON が入る。
+_MG_COMMON_SCRIPT = r"""<script>
+(function(){
+  var CFG = __MG_CFG__;
+  function loadJSON(key, fallback){ try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
+  function saveJSON(key, val){ try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+  var settings = loadJSON('mg_settings', {});
+  if (typeof settings.volume !== 'number') settings.volume = 50;
+  function applyTheme(){
+    var t = settings.theme || 'auto';
+    if (t === 'auto') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  }
+  function applyMotion(){ document.documentElement.classList.toggle('mg-reduce-motion', !!settings.reduceMotion); }
+  var themeSel = document.getElementById('mg-theme-sel');
+  if (themeSel) {
+    themeSel.value = settings.theme || 'auto';
+    themeSel.addEventListener('change', function(){ settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); });
+  }
+  var vol = document.getElementById('mg-vol');
+  if (vol) {
+    vol.value = settings.volume;
+    vol.addEventListener('input', function(){ settings.volume = Number(vol.value); saveJSON('mg_settings', settings); });
+  }
+  var mute = document.getElementById('mg-mute');
+  if (mute) {
+    mute.checked = !!settings.muted;
+    mute.addEventListener('change', function(){ settings.muted = mute.checked; saveJSON('mg_settings', settings); });
+  }
+  var motion = document.getElementById('mg-motion');
+  if (motion) {
+    motion.checked = !!settings.reduceMotion;
+    motion.addEventListener('change', function(){ settings.reduceMotion = motion.checked; saveJSON('mg_settings', settings); applyMotion(); });
+  }
+  applyTheme(); applyMotion();
+  /* --- 効果音ヘルパー（共通設定の音量・ミュートに従う） --- */
+  var actx = null;
+  function ensureCtx(){
+    if (!actx) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) { try { actx = new AC(); } catch (e) {} } }
+    if (actx && actx.state === 'suspended') actx.resume();
+  }
+  document.addEventListener('pointerdown', ensureCtx, true);
+  window.MGSound = {
+    beep: function(freq, dur, type){
+      if (settings.muted) return;
+      var v = (typeof settings.volume === 'number' ? settings.volume : 50) / 100;
+      if (v <= 0) return;
+      ensureCtx(); if (!actx) return;
+      try {
+        var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime, d = dur || 0.12;
+        o.type = type || 'sine'; o.frequency.value = freq || 660;
+        g.gain.setValueAtTime(v * 0.15, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + d);
+        o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + d);
+      } catch (e) {}
+    },
+    ok: function(){ this.beep(660, 0.1); var self = this; setTimeout(function(){ self.beep(880, 0.12); }, 90); },
+    ng: function(){ this.beep(220, 0.15, 'square'); }
+  };
+  /* --- プレイ済み記録 --- */
+  if (CFG.slug) {
+    var played = loadJSON('mg_played', []);
+    if (played.indexOf(CFG.slug) < 0) { played.push(CFG.slug); saveJSON('mg_played', played); }
+  }
+  /* --- スコア差分表示（前回比・ベスト比） --- */
+  var diffBox = null;
+  function fmtDiff(d){ return (d > 0 ? '+' + d : '' + d); }
+  function showDiff(score, serverBest){
+    var last = loadJSON('mg_last', {});
+    var prev = last[CFG.slug];
+    var best = (typeof serverBest === 'number') ? serverBest : null;
+    if (best === null) best = (prev && typeof prev.best === 'number') ? prev.best : null;
+    if (best === null) best = score;
+    best = CFG.minScore ? Math.min(best, score) : Math.max(best, score);
+    var msg = 'スコア ' + score;
+    if (prev && typeof prev.last === 'number') msg += '（前回 ' + prev.last + '：差 ' + fmtDiff(score - prev.last) + '）';
+    msg += '／ベスト ' + best;
+    last[CFG.slug] = { last: score, best: best, t: Date.now() };
+    saveJSON('mg_last', last);
+    if (!diffBox) {
+      diffBox = document.createElement('div'); diffBox.id = 'mg-diff';
+      diffBox.innerHTML = '<span id="mg-diff-text"></span><button type="button" id="mg-diff-close" aria-label="閉じる">×</button>';
+      document.body.appendChild(diffBox);
+      diffBox.querySelector('#mg-diff-close').addEventListener('click', function(){ diffBox.style.display = 'none'; });
+    }
+    diffBox.style.display = '';
+    diffBox.querySelector('#mg-diff-text').textContent = msg;
+  }
+  if (CFG.jsScore && window.fetch) {
+    var _fetch = window.fetch.bind(window);
+    window.fetch = function(input, init){
+      var url = (typeof input === 'string') ? input : ((input && input.url) || '');
+      var score = null;
+      if (url.indexOf('/score') >= 0 && init && init.body && typeof FormData !== 'undefined' && init.body instanceof FormData) {
+        init.body.forEach(function(v){ if (score === null && v !== null && v !== '' && !isNaN(Number(v))) score = Number(v); });
+      }
+      var p = _fetch(input, init);
+      if (score !== null) {
+        p.then(function(r){
+          if (r && r.clone) r.clone().json().then(function(d){
+            if (d && d.ok) { showDiff(score, (typeof d.best === 'number') ? d.best : null); if (window.MGSound) MGSound.ok(); }
+          }).catch(function(){});
+        }).catch(function(){});
+      }
+      return p;
+    };
+  }
+  var finals = document.querySelectorAll('[data-mg-final]');
+  if (finals.length) {
+    var seen = loadJSON('mg_final_seen', {});
+    if (Object.keys(seen).length > 300) seen = {};
+    finals.forEach(function(el){
+      var sc = parseFloat(el.getAttribute('data-mg-final'));
+      if (isNaN(sc)) return;
+      var bstRaw = el.getAttribute('data-mg-final-best');
+      var bnum = (bstRaw === null || bstRaw === '') ? null : parseFloat(bstRaw);
+      var key = CFG.slug + ':' + sc + ':' + (bnum === null ? '' : bnum);
+      if (seen[key]) return;
+      seen[key] = 1; saveJSON('mg_final_seen', seen);
+      showDiff(sc, bnum);
+    });
+  }
+  /* --- 結果シェア文コピー（診断・占い系） --- */
+  if (CFG.share) {
+    var shareText = null;
+    var big = document.querySelector('.card .big');
+    var resEl = document.querySelector('.card .result');
+    if (big && big.textContent.trim()) {
+      shareText = big.textContent.trim();
+      if (resEl && resEl.textContent.trim() && resEl !== big) shareText += ' ' + resEl.textContent.trim();
+    }
+    if (!shareText && CFG.slug === 'era-gacha') {
+      var mid = document.querySelector('.card .mid');
+      if (mid && mid.textContent.indexOf('終わりました') >= 0) shareText = mid.textContent.trim();
+    }
+    if (shareText) {
+      var card = document.querySelector('.card');
+      if (card) {
+        var btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'mg-share-btn'; btn.textContent = '📋 結果をコピー';
+        btn.addEventListener('click', function(){
+          var text = '【' + CFG.title + '】' + shareText + ' ' + location.href;
+          function done(){ btn.textContent = '✅ コピーしました'; setTimeout(function(){ btn.textContent = '📋 結果をコピー'; }, 2000); }
+          function fallback(){
+            var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) {}
+            document.body.removeChild(ta);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback);
+          else fallback();
+        });
+        var wrap = document.createElement('p'); wrap.className = 'row'; wrap.appendChild(btn);
+        card.appendChild(wrap);
+      }
+    }
+  }
+  /* --- 一時停止 UI --- */
+  var pauseBtn = document.getElementById('mg-pause-btn');
+  if (pauseBtn && window.__mgSetPaused) {
+    var overlay = document.getElementById('mg-pause-overlay');
+    window.__mgOnPauseChange = function(p){
+      if (overlay) overlay.hidden = !p;
+      pauseBtn.textContent = p ? '▶ 再開する' : '⏸ 一時停止';
+    };
+    pauseBtn.addEventListener('click', function(){ window.__mgSetPaused(!window.__mgIsPaused()); });
+    var resumeBtn = document.getElementById('mg-resume-btn');
+    if (resumeBtn) resumeBtn.addEventListener('click', function(){ window.__mgSetPaused(false); });
+    var restartBtn = document.getElementById('mg-restart-btn');
+    if (restartBtn) restartBtn.addEventListener('click', function(){
+      if (window.confirm('最初からやり直しますか？（いまのプレイはリセットされます）')) { window.__mgSetPaused(false); location.reload(); }
+    });
+  }
+})();
+</script>
+"""
+
+
+def _mg_header_html() -> str:
+    return f"""
+<div class="mg-header">
+  <p><a href="{url_for('index')}">← ゲーム一覧へ戻る</a></p>
+  <details class="mg-settings">
+    <summary>⚙ 設定（テーマ・音・動き）</summary>
+    <div class="mg-settings-body">
+      <label>テーマ
+        <select id="mg-theme-sel">
+          <option value="auto">自動（端末に合わせる）</option>
+          <option value="light">ライト</option>
+          <option value="dark">ダーク</option>
+        </select>
+      </label>
+      <label>音量 <input type="range" id="mg-vol" min="0" max="100" step="5" /></label>
+      <label><input type="checkbox" id="mg-mute" /> 音を消す</label>
+      <label><input type="checkbox" id="mg-motion" /> 動きを減らす</label>
+    </div>
+  </details>
+</div>"""
+
+
+def _mg_howto_html(game: Optional[dict]) -> str:
+    if not game:
+        return ""
+    howto = GAME_HOWTO.get(game["slug"])
+    if not howto:
+        return ""
+    goal, control, tip = howto
+    return f"""
+<div class="mg-howto" id="mg-howto">
+  <h2>🎮 遊び方</h2>
+  <dl>
+    <dt>目的</dt><dd>{html.escape(goal)}</dd>
+    <dt>操作</dt><dd>{html.escape(control)}</dd>
+    <dt>コツ</dt><dd>{html.escape(tip)}</dd>
+  </dl>
+</div>"""
+
+
+def _inject_howto(body: str, howto_html: str) -> str:
+    """本文の「遊び方」説明文の直後（無ければ h1 の直後）に遊び方ボックスを差し込む。"""
+    if not howto_html:
+        return body
+    m = re.search(r'<p class="howto">.*?</p>', body, flags=re.S)
+    if m:
+        return body[:m.end()] + "\n" + howto_html + body[m.end():]
+    m = re.search(r"</h1>", body)
+    if m:
+        return body[:m.end()] + "\n" + howto_html + body[m.end():]
+    return howto_html + body
+
+
+def _mg_next_html(game: Optional[dict]) -> str:
+    if not game:
+        return ""
+    nxt = _next_in_category(game["slug"])
+    if not nxt:
+        return ""
+    return f"""
+<div class="mg-next">
+  <p class="muted">同じジャンル（{html.escape(game['category'])}）の次の一本</p>
+  <a class="mg-next-card" href="{url_for(nxt['endpoint'])}">
+    <span class="mg-next-icon">{nxt['icon']}</span>
+    <span><strong>{html.escape(nxt['title'])}</strong><br><span class="muted">{html.escape(nxt['description'])}</span></span>
+  </a>
+</div>"""
+
+
+def _mg_footer_html() -> str:
+    return f"""
+<footer class="mg-footer muted">
+  <p><a href="{url_for('index')}">← ゲーム一覧（トップ）へ戻る</a>／全 {len(GAMES)} 本の自作ミニゲーム集です。</p>
+  <p>記録はブラウザとサーバーに保存されますが、サービスの再起動・再デプロイでサーバー側の記録が消えることがあります。大事な結果はメモしておいてください。</p>
+</footer>"""
+
 
 def game_page(title: str, body: str) -> str:
     """共通の見た目でゲームページを描く（body は描画済みHTML）。"""
-    return f"""<!doctype html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{title}｜自作ミニゲーム集</title>
-  <style>{_GAME_CSS}</style>
-</head>
-<body>
-<div class="wrap">
-  <p style="margin:0 0 8px;"><a href="{url_for('index')}">← ゲーム一覧へ戻る</a></p>
-{body}
-</div>
-</body>
-</html>"""
+    game = _game_by_title(title)
+    slug = game["slug"] if game else ""
+    is_js = slug in JS_SCORE_GAMES
+    cfg = {
+        "slug": slug,
+        "title": title,
+        "jsScore": is_js,
+        "minScore": slug in MIN_SCORE_GAMES,
+        "share": slug in SHARE_GAMES,
+    }
+    parts = [
+        "<!doctype html>\n<html lang=\"ja\">\n<head>\n",
+        "  <meta charset=\"utf-8\" />\n",
+        "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n",
+        f"  <title>{title}｜自作ミニゲーム集</title>\n",
+    ]
+    if game:
+        parts.append(
+            f'  <meta property="og:title" content="{html.escape(title, quote=True)}｜自作ミニゲーム集" />\n'
+            f'  <meta property="og:description" content="{html.escape(game["description"], quote=True)}" />\n'
+            '  <meta property="og:type" content="website" />\n'
+        )
+    parts.append(_MG_THEME_INIT)
+    if is_js:
+        parts.append(_MG_GATE_SCRIPT)
+    parts.append(f"  <style>{_GAME_CSS}</style>\n</head>\n<body>\n<div class=\"wrap\">\n")
+    parts.append(_mg_header_html())
+    parts.append(_inject_howto(body, _mg_howto_html(game)))
+    if game:
+        parts.append(_mg_next_html(game))
+    parts.append(_mg_footer_html())
+    parts.append("\n</div>\n")
+    if is_js:
+        parts.append(_MG_PAUSE_HTML)
+    parts.append(_MG_COMMON_SCRIPT.replace("__MG_CFG__", json.dumps(cfg, ensure_ascii=False)))
+    parts.append("\n</body>\n</html>")
+    return "".join(parts)
 
 
 # ============================
@@ -2028,6 +2984,7 @@ JANKEN_TEMPLATE = r"""
       <button type="submit" name="hand" value="チョキ">✌️ チョキ</button>
       <button type="submit" name="hand" value="パー">✋ パー</button>
     </form>
+    <p class="row"><a href="{{ url_for('janken_2p') }}">👥 2人で遊ぶ（同じ端末で交代）</a></p>
   </div>
 """
 
@@ -6210,6 +7167,7 @@ MARUBATSU_TEMPLATE = r"""
         </form>
       </div>
     {% endif %}
+    <p class="row"><a href="{{ url_for('marubatsu_2p') }}">👥 2人で遊ぶ（同じ端末で交代）</a></p>
     {% if history %}
       <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（勝利数）</h3>
       <table>
@@ -7259,7 +8217,7 @@ TRIOCARD_TEMPLATE = r"""
       <p class="mid">前の対戦： あなた {{ last[0] }} {{ last[1] }} vs CPU {{ last[2] }} {{ last[3] }} → {{ last[4] }}</p>
     {% endif %}
     {% if over %}
-      <p class="result">対戦終了！ 5戦で {{ wins }} 勝でした。</p>
+      <p class="result" data-mg-final="{{ wins }}">対戦終了！ 5戦で {{ wins }} 勝でした。</p>
       <form method="post" action="{{ url_for('trio_card_reset') }}" class="row">
         <button type="submit">もう一度対戦する</button>
       </form>
@@ -7274,6 +8232,7 @@ TRIOCARD_TEMPLATE = r"""
         {% endfor %}
       </div>
     {% endif %}
+    <p class="row"><a href="{{ url_for('trio_card_2p') }}">👥 2人で遊ぶ（同じ端末で交代）</a></p>
     {% if history %}
       <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（勝ち数）</h3>
       <table>
@@ -9004,7 +9963,7 @@ MENSETSU_TEMPLATE = r"""
     {% endif %}
     {% if over %}
       <p class="big">評価: {{ grade }}</p>
-      <p class="result">合計 {{ points }} 点（満点 60 点）。{{ comment }}</p>
+      <p class="result" data-mg-final="{{ points }}">合計 {{ points }} 点（満点 60 点）。{{ comment }}</p>
       <form method="post" action="{{ url_for('mensetsu_reset') }}" class="row">
         <button type="submit">もう一度面接を受ける</button>
       </form>
@@ -9193,7 +10152,7 @@ SUISHITSU_TEMPLATE = r"""
     {% endif %}
     <p class="result">ラウンド {{ round_no }} / 5 ／ 合計得点: {{ total }} 点 ／ ベスト: {{ best if best is not none else '—' }}</p>
     {% if over %}
-      <p class="result">全ラウンド終了！ 合計 {{ total }} 点でした。</p>
+      <p class="result" data-mg-final="{{ total }}" data-mg-final-best="{{ best if best is not none else '' }}">全ラウンド終了！ 合計 {{ total }} 点でした。</p>
       <form method="post" action="{{ url_for('suishitsu_reset') }}" class="row">
         <button type="submit">もう一度処理する</button>
       </form>
@@ -10120,7 +11079,7 @@ TIERPARTY_TEMPLATE = r"""
     {% endif %}
     <p class="result">お題：{{ theme.title }}</p>
     {% if done %}
-      <p class="big">{{ score }} 点</p>
+      <p class="big" data-mg-final="{{ score }}">{{ score }} 点</p>
       <table>
         <tr><th>項目</th><th>あなた</th><th>みんなの感覚</th><th>得点</th></tr>
         {% for item, mine, cons, pts in rows %}
@@ -11155,7 +12114,7 @@ MACHIGAI_TEMPLATE = r"""
     {% endif %}
     <p class="result">問題 {{ round_no }} / 10 ／ 正解 {{ correct }} 問</p>
     {% if over %}
-      <p class="big">🎉 終了！ {{ correct }} 問正解</p>
+      <p class="big" data-mg-final="{{ correct }}">🎉 終了！ {{ correct }} 問正解</p>
       <form method="post" action="{{ url_for('machigai_card_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -11843,7 +12802,7 @@ DRAWPOKER_TEMPLATE = r"""
     {% endif %}
     <p class="result">ラウンド {{ round_no }} / 5 ／ 合計 {{ points }} 点</p>
     {% if over %}
-      <p class="big">🎉 全ラウンド終了！ {{ points }} 点</p>
+      <p class="big" data-mg-final="{{ points }}">🎉 全ラウンド終了！ {{ points }} 点</p>
       <form method="post" action="{{ url_for('draw_poker_reset') }}" class="row">
         <button type="submit">もう一度対戦</button>
       </form>
@@ -12091,7 +13050,7 @@ RONPA_TEMPLATE = r"""
     {% endif %}
     <p class="result">問題 {{ idx + 1 }} / {{ total }} ／ 合計 {{ points }} 点</p>
     {% if over %}
-      <p class="big">🎉 全問終了！ {{ points }} 点</p>
+      <p class="big" data-mg-final="{{ points }}">🎉 全問終了！ {{ points }} 点</p>
       <form method="post" action="{{ url_for('ronpa_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -12331,7 +13290,7 @@ CURLING_TEMPLATE = r"""
       {% endif %}
     </div>
     {% if over %}
-      <p class="mid">全3問が終わりました。合計 {{ points }} 点です。</p>
+      <p class="mid" data-mg-final="{{ points }}">全3問が終わりました。合計 {{ points }} 点です。</p>
       <form method="post" action="{{ url_for('curling_tsume_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -12529,7 +13488,7 @@ PRISM_TEMPLATE = r"""
       {% endfor %}
     </div>
     {% if over %}
-      <p class="mid">全ステージ終了。合計 {{ points }} 点です。</p>
+      <p class="mid" data-mg-final="{{ points }}">全ステージ終了。合計 {{ points }} 点です。</p>
       <form method="post" action="{{ url_for('prism_mirror_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -12774,7 +13733,7 @@ EYEBALL_TEMPLATE = r"""
       {% endfor %}
     </div>
     {% if over %}
-      <p class="mid">全ステージ終了。合計 {{ points }} 点です。</p>
+      <p class="mid" data-mg-final="{{ points }}">全ステージ終了。合計 {{ points }} 点です。</p>
       <form method="post" action="{{ url_for('eyeball_sokoban_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -13007,7 +13966,7 @@ KYUSHIN_TEMPLATE = r"""
       {% endif %}
     </div>
     {% if over %}
-      <p class="mid">試合終了！ {{ correct }} 球を正しく判定しました。</p>
+      <p class="mid" data-mg-final="{{ correct }}">試合終了！ {{ correct }} 球を正しく判定しました。</p>
       <form method="post" action="{{ url_for('kyushin_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -13164,7 +14123,7 @@ KAGIBAN_TEMPLATE = r"""
       </ul>
     </div>
     {% if over %}
-      <p class="mid">終了！ {{ done }} 件を正しくさばきました。</p>
+      <p class="mid" data-mg-final="{{ done }}">終了！ {{ done }} 件を正しくさばきました。</p>
       <form method="post" action="{{ url_for('kagiban_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -13376,7 +14335,7 @@ MAJYO_TEMPLATE = r"""
       <p class="result">{{ feedback }}</p>
     {% endif %}
     {% if over %}
-      <p class="mid">全ての問が終わりました。合計 {{ points }} 点です。</p>
+      <p class="mid" data-mg-final="{{ points }}">全ての問が終わりました。合計 {{ points }} 点です。</p>
       <form method="post" action="{{ url_for('majyo_suiri_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -13772,7 +14731,7 @@ DRAFT_TEMPLATE = r"""
     {% endif %}
     <p class="result">{{ round_no }} 巡目 / 5 ／ 合計活躍度: {{ total }} ／ ベスト: {{ best if best is not none else '—' }}</p>
     {% if over %}
-      <p class="mid">ドラフト終了！ 指名した5人の活躍度合計は {{ total }} でした。</p>
+      <p class="mid" data-mg-final="{{ total }}" data-mg-final-best="{{ best if best is not none else '' }}">ドラフト終了！ 指名した5人の活躍度合計は {{ total }} でした。</p>
       <form method="post" action="{{ url_for('draft_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -13958,7 +14917,7 @@ HAMEKOMI_TEMPLATE = r"""
       </form>
       <div style="min-width:160px;">
         {% if over %}
-          <p class="mid">全ステージ終了。合計 {{ points }} 点です。</p>
+          <p class="mid" data-mg-final="{{ points }}">全ステージ終了。合計 {{ points }} 点です。</p>
           <form method="post" action="{{ url_for('hamekomi_reset') }}"><button type="submit">もう一度挑戦</button></form>
         {% elif cleared %}
           <form method="post" action="{{ url_for('hamekomi_next') }}"><button type="submit">{{ '結果を見る' if last_stage else '次のステージへ' }}</button></form>
@@ -15469,7 +16428,7 @@ ANTIQUE_TEMPLATE = r"""
     {% endif %}
     <p class="result">{{ rnd }} 問目 ／ 正解: {{ correct }} ／ ベスト: {{ best if best is not none else '—' }}</p>
     {% if over %}
-      <p class="mid">店じまい！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
+      <p class="mid" data-mg-final="{{ correct * 10 }}" data-mg-final-best="{{ best if best is not none else '' }}">店じまい！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
       <form method="post" action="{{ url_for('antique_eye_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -16007,7 +16966,7 @@ SPELL_DUEL_TEMPLATE = r"""
       <p class="result">{{ last.verdict }}</p>
     {% endif %}
     {% if over %}
-      <p class="mid">対戦終了！ {{ wins }} 勝 {{ draws }} 分け、{{ score }} 点でした。</p>
+      <p class="mid" data-mg-final="{{ score }}">対戦終了！ {{ wins }} 勝 {{ draws }} 分け、{{ score }} 点でした。</p>
       <form method="post" action="{{ url_for('spell_duel_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -16023,6 +16982,7 @@ SPELL_DUEL_TEMPLATE = r"""
         {% endfor %}
       </div>
     {% endif %}
+    <p class="row"><a href="{{ url_for('spell_duel_2p') }}">👥 2人で遊ぶ（同じ端末で交代）</a></p>
     {% if history %}
       <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
       <table>
@@ -16140,6 +17100,655 @@ def spell_duel_reset():
 
 
 # ============================
+# 2人モード（同じ端末で交代）
+# 対戦ジャンルの主要4ゲームに「2人で遊ぶ」を追加する。手番交代時は
+# 受け渡し画面を挟み、相手の手（手札・選んだパーツ）は画面に出さない。
+# CPU対戦のセッションキーとは分けて *_2p / 接頭辞2 のキーで管理する。
+# ============================
+def _pass_screen(title: str, heading: str, message: str, form_action: str) -> str:
+    """受け渡し画面。相手の手に関する情報は一切含めない。"""
+    body = f"""
+  <h1>{heading}</h1>
+  __FLASH__
+  <div class="card">
+    <p class="big">📱 受け渡し</p>
+    <p class="result">{message}</p>
+    <form method="post" action="{form_action}" class="row">
+      <button type="submit">準備ができたら進む</button>
+    </form>
+  </div>
+"""
+    return game_page(title, body.replace("__FLASH__", _FLASH_BLOCK))
+
+
+# ---- じゃんけん 2人モード ----
+JANKEN_2P_TEMPLATE = r"""
+  <h1>✊ じゃんけん（2人対戦）</h1>
+  <p class="howto">同じ端末を2人で使って対戦します。プレイヤー1が手を決めると受け渡し画面を挟むので、相手に手は見えません。あいこは引き分けです。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result">プレイヤー1: {{ w1 }} 勝 ／ プレイヤー2: {{ w2 }} 勝 ／ 引き分け: {{ draws }}</p>
+    {% if stage == 'p1' %}
+      <p class="mid">プレイヤー1の番です。手を選んでください（相手には見せないでね）</p>
+      <form method="post" action="{{ url_for('janken_2p_p1') }}" class="row">
+        <button type="submit" name="hand" value="グー">✊ グー</button>
+        <button type="submit" name="hand" value="チョキ">✌️ チョキ</button>
+        <button type="submit" name="hand" value="パー">✋ パー</button>
+      </form>
+    {% elif stage == 'p2' %}
+      <p class="mid">プレイヤー2の番です。手を選んでください</p>
+      <form method="post" action="{{ url_for('janken_2p_p2') }}" class="row">
+        <button type="submit" name="hand" value="グー">✊ グー</button>
+        <button type="submit" name="hand" value="チョキ">✌️ チョキ</button>
+        <button type="submit" name="hand" value="パー">✋ パー</button>
+      </form>
+    {% elif stage == 'result' %}
+      <p class="big">{{ last.e1 }} vs {{ last.e2 }}</p>
+      <p class="result">プレイヤー1: {{ last.p1 }} ／ プレイヤー2: {{ last.p2 }} → {{ last.message }}</p>
+      <div class="row">
+        <form method="post" action="{{ url_for('janken_2p_again') }}"><button type="submit">もう一回</button></form>
+        <form method="post" action="{{ url_for('janken_2p_reset') }}"><button type="submit">対戦を終える</button></form>
+      </div>
+    {% endif %}
+    <p class="row"><a href="{{ url_for('janken') }}">← CPU対戦に戻る</a></p>
+  </div>
+"""
+
+
+def render_janken_2p(stage=None, last=None):
+    if stage is None:
+        stage = session.get("jk2_stage", "p1")
+    if stage == "pass":
+        return _pass_screen(
+            "じゃんけん", "じゃんけん（2人対戦）",
+            "プレイヤー1が手を決めました。端末をプレイヤー2に渡してください。",
+            url_for("janken_2p_pass"),
+        )
+    body = render_template_string(
+        JANKEN_2P_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        stage=stage,
+        last=last if last is not None else session.get("jk2_last"),
+        w1=int(session.get("jk2_w1", 0)),
+        w2=int(session.get("jk2_w2", 0)),
+        draws=int(session.get("jk2_draws", 0)),
+    )
+    return game_page("じゃんけん", body)
+
+
+@app.route("/games/janken/2p", methods=["GET"])
+def janken_2p():
+    return render_janken_2p()
+
+
+@app.route("/games/janken/2p/p1", methods=["POST"])
+def janken_2p_p1():
+    hand = request.form.get("hand", "")
+    if hand not in JANKEN_HANDS:
+        flash("手が不正です。", "ng")
+        return render_janken_2p(stage="p1")
+    session["jk2_p1"] = hand
+    session["jk2_stage"] = "pass"
+    return render_janken_2p(stage="pass")
+
+
+@app.route("/games/janken/2p/pass", methods=["POST"])
+def janken_2p_pass():
+    if "jk2_p1" not in session:
+        return render_janken_2p(stage="p1")
+    session["jk2_stage"] = "p2"
+    return render_janken_2p(stage="p2")
+
+
+@app.route("/games/janken/2p/p2", methods=["POST"])
+def janken_2p_p2():
+    hand = request.form.get("hand", "")
+    p1 = session.get("jk2_p1")
+    if hand not in JANKEN_HANDS or p1 not in JANKEN_HANDS:
+        return render_janken_2p(stage="p1")
+    result = judge_janken(p1, hand)
+    if result == "win":
+        session["jk2_w1"] = int(session.get("jk2_w1", 0)) + 1
+        message = "プレイヤー1の勝ち！"
+    elif result == "lose":
+        session["jk2_w2"] = int(session.get("jk2_w2", 0)) + 1
+        message = "プレイヤー2の勝ち！"
+    else:
+        session["jk2_draws"] = int(session.get("jk2_draws", 0)) + 1
+        message = "あいこ（引き分け）"
+    last = {
+        "p1": p1, "p2": hand,
+        "e1": JANKEN_EMOJI[p1], "e2": JANKEN_EMOJI[hand],
+        "message": message,
+    }
+    session["jk2_last"] = last
+    session.pop("jk2_p1", None)
+    session["jk2_stage"] = "result"
+    return render_janken_2p(stage="result", last=last)
+
+
+@app.route("/games/janken/2p/again", methods=["POST"])
+def janken_2p_again():
+    session["jk2_stage"] = "p1"
+    return render_janken_2p(stage="p1")
+
+
+@app.route("/games/janken/2p/reset", methods=["POST"])
+def janken_2p_reset():
+    for key in ("jk2_p1", "jk2_stage", "jk2_last", "jk2_w1", "jk2_w2", "jk2_draws"):
+        session.pop(key, None)
+    flash("2人対戦を終えました。", "ok")
+    return redirect(url_for("janken"))
+
+
+# ---- まるばつ 2人モード ----
+MARUBATSU_2P_TEMPLATE = r"""
+  <h1>⭕ まるばつ対戦（2人対戦）</h1>
+  <p class="howto">同じ端末を2人で使って三目並べ。プレイヤー1が ○（先手）、プレイヤー2が × です。手番ごとに受け渡し画面を挟みます。</p>
+  __FLASH__
+  <div class="card">
+    {% if stage == 'idle' %}
+      <p class="mid">2人対戦をはじめます。プレイヤー1（○）が先手です。</p>
+      <form method="post" action="{{ url_for('marubatsu_2p_start') }}" class="row">
+        <button type="submit">対戦をはじめる</button>
+      </form>
+    {% elif stage == 'play' %}
+      <p class="result">{{ player_label }}（{{ turn }}）の番です。置くマスを選んでください。</p>
+      <form method="post" action="{{ url_for('marubatsu_2p_move') }}">
+        <div style="display:grid; grid-template-columns: repeat(3, 76px); gap:8px; justify-content:center;">
+          {% for i in range(9) %}
+            {% if board[i] %}
+              <button type="button" disabled style="height:76px; font-size:34px;">{{ board[i] }}</button>
+            {% else %}
+              <button type="submit" name="index" value="{{ i }}" style="height:76px; font-size:34px;">&nbsp;</button>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </form>
+    {% elif stage == 'over' %}
+      <div style="display:grid; grid-template-columns: repeat(3, 76px); gap:8px; justify-content:center;">
+        {% for i in range(9) %}
+          <button type="button" disabled style="height:76px; font-size:34px;">{{ board[i] if board[i] else '　' }}</button>
+        {% endfor %}
+      </div>
+      <p class="big">{{ message }}</p>
+      <div class="row">
+        <form method="post" action="{{ url_for('marubatsu_2p_start') }}"><button type="submit">もう一局</button></form>
+        <form method="post" action="{{ url_for('marubatsu_2p_reset') }}"><button type="submit">対戦を終える</button></form>
+      </div>
+    {% endif %}
+    <p class="row"><a href="{{ url_for('marubatsu') }}">← CPU対戦に戻る</a></p>
+  </div>
+"""
+
+
+def _mb2_label(turn: str) -> str:
+    return "プレイヤー1" if turn == "○" else "プレイヤー2"
+
+
+def render_marubatsu_2p(stage=None, message=None):
+    if stage is None:
+        stage = session.get("mb2_stage", "idle")
+    if stage == "pass":
+        turn = session.get("mb2_turn", "○")
+        return _pass_screen(
+            "まるばつ対戦", "⭕ まるばつ対戦（2人対戦）",
+            f"{_mb2_label(turn)}（{turn}）の番です。端末を渡してください。",
+            url_for("marubatsu_2p_pass"),
+        )
+    board = list(session["mb2_board"]) if "mb2_board" in session else [""] * 9
+    turn = session.get("mb2_turn", "○")
+    body = render_template_string(
+        MARUBATSU_2P_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        stage=stage,
+        board=board,
+        turn=turn,
+        player_label=_mb2_label(turn),
+        message=message if message is not None else session.get("mb2_msg", ""),
+    )
+    return game_page("まるばつ対戦", body)
+
+
+@app.route("/games/marubatsu/2p", methods=["GET"])
+def marubatsu_2p():
+    return render_marubatsu_2p()
+
+
+@app.route("/games/marubatsu/2p/start", methods=["POST"])
+def marubatsu_2p_start():
+    session["mb2_board"] = [""] * 9
+    session["mb2_turn"] = "○"
+    session["mb2_stage"] = "pass"
+    session["mb2_msg"] = ""
+    return render_marubatsu_2p(stage="pass")
+
+
+@app.route("/games/marubatsu/2p/pass", methods=["POST"])
+def marubatsu_2p_pass():
+    if "mb2_board" not in session:
+        return render_marubatsu_2p(stage="idle")
+    session["mb2_stage"] = "play"
+    return render_marubatsu_2p(stage="play")
+
+
+@app.route("/games/marubatsu/2p/move", methods=["POST"])
+def marubatsu_2p_move():
+    if "mb2_board" not in session or session.get("mb2_stage") == "over":
+        return render_marubatsu_2p()
+    board = list(session["mb2_board"])
+    turn = session.get("mb2_turn", "○")
+    raw = request.form.get("index", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) < 9):
+        return render_marubatsu_2p(stage="play")
+    idx = int(raw)
+    if board[idx] != "":
+        return render_marubatsu_2p(stage="play")
+    board[idx] = turn
+    session["mb2_board"] = board
+    result = marubatsu_winner(board)
+    if result in ("○", "×"):
+        session["mb2_stage"] = "over"
+        session["mb2_msg"] = f"🎉 {_mb2_label(result)}（{result}）の勝ち！"
+        return render_marubatsu_2p(stage="over")
+    if result == "draw":
+        session["mb2_stage"] = "over"
+        session["mb2_msg"] = "引き分けです。"
+        return render_marubatsu_2p(stage="over")
+    session["mb2_turn"] = "×" if turn == "○" else "○"
+    session["mb2_stage"] = "pass"
+    return render_marubatsu_2p(stage="pass")
+
+
+@app.route("/games/marubatsu/2p/reset", methods=["POST"])
+def marubatsu_2p_reset():
+    for key in ("mb2_board", "mb2_turn", "mb2_stage", "mb2_msg"):
+        session.pop(key, None)
+    flash("2人対戦を終えました。", "ok")
+    return redirect(url_for("marubatsu"))
+
+
+# ---- 三すくみカード 2人モード ----
+TRIOCARD_2P_TEMPLATE = r"""
+  <h1>🃏 三すくみカード（2人対戦）</h1>
+  <p class="howto">同じ端末を2人で使って対戦します。炎＞草＞水＞炎 の三すくみ、同属性なら数字の大きい方が勝ち。相手の手札は見えません。全5回戦です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result">第 {{ round_no }} 戦 ／ プレイヤー1: {{ w1 }} 勝 ／ プレイヤー2: {{ w2 }} 勝</p>
+    {% if stage == 'p1' %}
+      <p class="mid">プレイヤー1の番です。出すカードを選んでください（相手には見せないでね）</p>
+      <div class="row">
+        {% for card in hand1 %}
+          <form method="post" action="{{ url_for('trio_card_2p_p1') }}">
+            <input type="hidden" name="card" value="{{ loop.index0 }}">
+            <button type="submit" style="font-size:20px; padding:16px 20px;">{% if card[0] == '炎' %}🔥{% elif card[0] == '草' %}🌿{% else %}💧{% endif %} {{ card[0] }} {{ card[1] }}</button>
+          </form>
+        {% endfor %}
+      </div>
+    {% elif stage == 'p2' %}
+      <p class="mid">プレイヤー2の番です。出すカードを選んでください</p>
+      <div class="row">
+        {% for card in hand2 %}
+          <form method="post" action="{{ url_for('trio_card_2p_p2') }}">
+            <input type="hidden" name="card" value="{{ loop.index0 }}">
+            <button type="submit" style="font-size:20px; padding:16px 20px;">{% if card[0] == '炎' %}🔥{% elif card[0] == '草' %}🌿{% else %}💧{% endif %} {{ card[0] }} {{ card[1] }}</button>
+          </form>
+        {% endfor %}
+      </div>
+    {% elif stage == 'round_result' %}
+      <p class="mid">プレイヤー1： {{ last.p1[0] }} {{ last.p1[1] }} vs プレイヤー2： {{ last.p2[0] }} {{ last.p2[1] }} → {{ last.verdict }}</p>
+      <form method="post" action="{{ url_for('trio_card_2p_next') }}" class="row">
+        <button type="submit">次の戦いへ</button>
+      </form>
+    {% elif stage == 'over' %}
+      <p class="big">対戦終了！ プレイヤー1: {{ w1 }} 勝 ／ プレイヤー2: {{ w2 }} 勝</p>
+      <p class="result">{{ final_message }}</p>
+      <div class="row">
+        <form method="post" action="{{ url_for('trio_card_2p_reset') }}"><button type="submit">もう一度対戦する</button></form>
+        <form method="post" action="{{ url_for('trio_card_2p_quit') }}"><button type="submit">対戦を終える</button></form>
+      </div>
+    {% endif %}
+    <p class="row"><a href="{{ url_for('trio_card') }}">← CPU対戦に戻る</a></p>
+  </div>
+"""
+
+
+def triocard_2p_new_game() -> None:
+    session["tc2_round"] = 1
+    session["tc2_w1"] = 0
+    session["tc2_w2"] = 0
+    session["tc2_hand1"] = [list(c) for c in triocard_new_hand()]
+    session["tc2_hand2"] = [list(c) for c in triocard_new_hand()]
+    session["tc2_play1"] = None
+    session["tc2_last"] = None
+    session["tc2_stage"] = "p1"
+
+
+def render_trio_card_2p(stage=None):
+    if "tc2_hand1" not in session:
+        triocard_2p_new_game()
+    if stage is None:
+        stage = session.get("tc2_stage", "p1")
+    if stage == "pass":
+        return _pass_screen(
+            "三すくみカード", "🃏 三すくみカード（2人対戦）",
+            "プレイヤー1がカードを決めました。端末をプレイヤー2に渡してください。",
+            url_for("trio_card_2p_pass"),
+        )
+    w1 = int(session.get("tc2_w1", 0))
+    w2 = int(session.get("tc2_w2", 0))
+    if w1 > w2:
+        final_message = "プレイヤー1の勝ち越しです！"
+    elif w2 > w1:
+        final_message = "プレイヤー2の勝ち越しです！"
+    else:
+        final_message = "互角の引き分けです。"
+    body = render_template_string(
+        TRIOCARD_2P_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        stage=stage,
+        hand1=[list(c) for c in session.get("tc2_hand1", [])],
+        hand2=[list(c) for c in session.get("tc2_hand2", [])],
+        round_no=int(session.get("tc2_round", 1)),
+        w1=w1, w2=w2,
+        last=session.get("tc2_last"),
+        final_message=final_message,
+    )
+    return game_page("三すくみカード", body)
+
+
+@app.route("/games/trio-card/2p", methods=["GET"])
+def trio_card_2p():
+    return render_trio_card_2p()
+
+
+@app.route("/games/trio-card/2p/p1", methods=["POST"])
+def trio_card_2p_p1():
+    if "tc2_hand1" not in session:
+        triocard_2p_new_game()
+    hand = [list(c) for c in session["tc2_hand1"]]
+    raw = request.form.get("card", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) < len(hand)):
+        return render_trio_card_2p(stage="p1")
+    session["tc2_play1"] = hand.pop(int(raw))
+    session["tc2_hand1"] = hand
+    session["tc2_stage"] = "pass"
+    return render_trio_card_2p(stage="pass")
+
+
+@app.route("/games/trio-card/2p/pass", methods=["POST"])
+def trio_card_2p_pass():
+    if session.get("tc2_play1") is None:
+        return render_trio_card_2p(stage="p1")
+    session["tc2_stage"] = "p2"
+    return render_trio_card_2p(stage="p2")
+
+
+@app.route("/games/trio-card/2p/p2", methods=["POST"])
+def trio_card_2p_p2():
+    if "tc2_hand2" not in session or session.get("tc2_play1") is None:
+        return render_trio_card_2p(stage="p1")
+    hand = [list(c) for c in session["tc2_hand2"]]
+    raw = request.form.get("card", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) < len(hand)):
+        return render_trio_card_2p(stage="p2")
+    p2 = hand.pop(int(raw))
+    session["tc2_hand2"] = hand
+    p1 = session["tc2_play1"]
+    verdict = triocard_judge(p1[0], int(p1[1]), p2[0], int(p2[1]))
+    if verdict == "win":
+        session["tc2_w1"] = int(session.get("tc2_w1", 0)) + 1
+        verdict_text = "プレイヤー1の勝ち！"
+    elif verdict == "lose":
+        session["tc2_w2"] = int(session.get("tc2_w2", 0)) + 1
+        verdict_text = "プレイヤー2の勝ち！"
+    else:
+        verdict_text = "引き分け"
+    session["tc2_last"] = {"p1": p1, "p2": p2, "verdict": verdict_text}
+    session["tc2_play1"] = None
+    round_no = int(session.get("tc2_round", 1))
+    if round_no >= 5:
+        session["tc2_stage"] = "over"
+    else:
+        session["tc2_stage"] = "round_result"
+    return render_trio_card_2p()
+
+
+@app.route("/games/trio-card/2p/next", methods=["POST"])
+def trio_card_2p_next():
+    if session.get("tc2_stage") != "round_result":
+        return render_trio_card_2p()
+    session["tc2_round"] = int(session.get("tc2_round", 1)) + 1
+    hand1 = [list(c) for c in session.get("tc2_hand1", [])]
+    hand2 = [list(c) for c in session.get("tc2_hand2", [])]
+    hand1.append(list(triocard_cpu_card()))
+    hand2.append(list(triocard_cpu_card()))
+    session["tc2_hand1"] = hand1
+    session["tc2_hand2"] = hand2
+    session["tc2_stage"] = "p1"
+    return render_trio_card_2p(stage="p1")
+
+
+@app.route("/games/trio-card/2p/reset", methods=["POST"])
+def trio_card_2p_reset():
+    triocard_2p_new_game()
+    flash("新しい2人対戦を始めました。", "ok")
+    return redirect(url_for("trio_card_2p"))
+
+
+@app.route("/games/trio-card/2p/quit", methods=["POST"])
+def trio_card_2p_quit():
+    for key in ("tc2_round", "tc2_w1", "tc2_w2", "tc2_hand1", "tc2_hand2", "tc2_play1", "tc2_last", "tc2_stage"):
+        session.pop(key, None)
+    flash("2人対戦を終えました。", "ok")
+    return redirect(url_for("trio_card"))
+
+
+# ---- 呪文くみたて読み合い 2人モード ----
+SPELL_DUEL_2P_TEMPLATE = r"""
+  <h1>🪄 呪文くみたて読み合い（2人対戦）</h1>
+  <p class="howto">同じ端末を2人で使って対戦します。語のパーツを3つ選んで呪文を組み立て、威力の合計と属性相性（火＞風＞土＞水＞火、勝ち1.5倍／負け0.75倍）で打ち合います。相手の選んだパーツは打ち合うまで見えません。全5ラウンド、勝ち20点・引き分け10点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result">{{ rnd }} ラウンド目 ／ プレイヤー1: {{ pts1 }} 点 ／ プレイヤー2: {{ pts2 }} 点</p>
+    {% if stage in ('p1', 'p2') %}
+      <p class="mid">{{ player_label }}の番です。いまの呪文： {{ picked_labels|join(' ') if picked_labels else '（まだ選んでいません）' }}</p>
+      <h3 style="font-size:15px; margin:10px 0 6px;">{{ slot_name }}を選んでください</h3>
+      <div class="row">
+        {% for opt in options %}
+          <form method="post" action="{{ url_for('spell_duel_2p_pick') }}">
+            <input type="hidden" name="idx" value="{{ loop.index0 }}">
+            <button type="submit">{{ opt.label }}{% if opt.element %}（{{ opt.element }}）{% endif %} 威力{{ opt.power }}</button>
+          </form>
+        {% endfor %}
+      </div>
+    {% elif stage == 'result' %}
+      <div class="split">
+        <div class="panel">
+          <h3>プレイヤー1</h3>
+          <p class="mid">{{ last.p1_name }}</p>
+          <p>属性: {{ last.p1_el or 'なし' }} ／ 威力 {{ last.p1_power }} × {{ last.p1_mult }} = {{ last.p1_eff }}</p>
+        </div>
+        <div class="panel right">
+          <h3>プレイヤー2</h3>
+          <p class="mid">{{ last.p2_name }}</p>
+          <p>属性: {{ last.p2_el or 'なし' }} ／ 威力 {{ last.p2_power }} × {{ last.p2_mult }} = {{ last.p2_eff }}</p>
+        </div>
+      </div>
+      <p class="result">{{ last.verdict }}</p>
+      <form method="post" action="{{ url_for('spell_duel_2p_next') }}" class="row">
+        <button type="submit">次のラウンドへ</button>
+      </form>
+    {% elif stage == 'over' %}
+      <div class="split">
+        <div class="panel">
+          <h3>プレイヤー1</h3>
+          <p class="mid">{{ last.p1_name }}</p>
+          <p>属性: {{ last.p1_el or 'なし' }} ／ 威力 {{ last.p1_power }} × {{ last.p1_mult }} = {{ last.p1_eff }}</p>
+        </div>
+        <div class="panel right">
+          <h3>プレイヤー2</h3>
+          <p class="mid">{{ last.p2_name }}</p>
+          <p>属性: {{ last.p2_el or 'なし' }} ／ 威力 {{ last.p2_power }} × {{ last.p2_mult }} = {{ last.p2_eff }}</p>
+        </div>
+      </div>
+      <p class="result">{{ last.verdict }}</p>
+      <p class="big">対戦終了！ プレイヤー1: {{ pts1 }} 点 ／ プレイヤー2: {{ pts2 }} 点</p>
+      <p class="result">{{ final_message }}</p>
+      <div class="row">
+        <form method="post" action="{{ url_for('spell_duel_2p_reset') }}"><button type="submit">もう一度対戦する</button></form>
+        <form method="post" action="{{ url_for('spell_duel_2p_quit') }}"><button type="submit">対戦を終える</button></form>
+      </div>
+    {% endif %}
+    <p class="row"><a href="{{ url_for('spell_duel') }}">← CPU対戦に戻る</a></p>
+  </div>
+"""
+
+
+def spell_duel_2p_new_game() -> None:
+    session["sd2_round"] = 1
+    session["sd2_pts1"] = 0
+    session["sd2_pts2"] = 0
+    session["sd2_picks1"] = []
+    session["sd2_picks2"] = []
+    session["sd2_last"] = None
+    session["sd2_stage"] = "p1"
+
+
+def render_spell_duel_2p(stage=None):
+    if "sd2_round" not in session:
+        spell_duel_2p_new_game()
+    if stage is None:
+        stage = session.get("sd2_stage", "p1")
+    if stage == "pass":
+        return _pass_screen(
+            "呪文くみたて読み合い", "🪄 呪文くみたて読み合い（2人対戦）",
+            "プレイヤー1の呪文ができました。端末をプレイヤー2に渡してください。",
+            url_for("spell_duel_2p_pass"),
+        )
+    picks = session.get("sd2_picks1" if stage == "p1" else "sd2_picks2", [])
+    slot = min(len(picks), len(SPELL_PARTS) - 1)
+    picked_parts = [SPELL_PARTS[i][picks[i]] for i in range(len(picks))]
+    pts1 = int(session.get("sd2_pts1", 0))
+    pts2 = int(session.get("sd2_pts2", 0))
+    if pts1 > pts2:
+        final_message = "プレイヤー1の勝ち！"
+    elif pts2 > pts1:
+        final_message = "プレイヤー2の勝ち！"
+    else:
+        final_message = "互角の引き分け！"
+    body = render_template_string(
+        SPELL_DUEL_2P_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        stage=stage,
+        rnd=int(session.get("sd2_round", 1)),
+        pts1=pts1, pts2=pts2,
+        player_label="プレイヤー1" if stage == "p1" else "プレイヤー2",
+        picked_labels=[p["label"] for p in picked_parts],
+        slot_name=SPELL_SLOT_NAMES[slot],
+        options=SPELL_PARTS[slot],
+        last=session.get("sd2_last"),
+        final_message=final_message,
+    )
+    return game_page("呪文くみたて読み合い", body)
+
+
+@app.route("/games/spell-duel/2p", methods=["GET"])
+def spell_duel_2p():
+    return render_spell_duel_2p()
+
+
+@app.route("/games/spell-duel/2p/pick", methods=["POST"])
+def spell_duel_2p_pick():
+    if "sd2_round" not in session:
+        spell_duel_2p_new_game()
+    stage = session.get("sd2_stage", "p1")
+    if stage not in ("p1", "p2"):
+        return render_spell_duel_2p()
+    key = "sd2_picks1" if stage == "p1" else "sd2_picks2"
+    picks = list(session.get(key, []))
+    slot = len(picks)
+    if slot >= len(SPELL_PARTS):
+        return render_spell_duel_2p()
+    try:
+        idx = int(request.form.get("idx", "-1"))
+    except ValueError:
+        idx = -1
+    if not (0 <= idx < len(SPELL_PARTS[slot])):
+        return render_spell_duel_2p()
+    picks.append(idx)
+    session[key] = picks
+    if len(picks) < len(SPELL_PARTS):
+        return render_spell_duel_2p()
+    if stage == "p1":
+        session["sd2_stage"] = "pass"
+        return render_spell_duel_2p(stage="pass")
+    # 両者の呪文がそろったので打ち合う
+    mine = [SPELL_PARTS[i][session["sd2_picks1"][i]] for i in range(len(SPELL_PARTS))]
+    theirs = [SPELL_PARTS[i][session["sd2_picks2"][i]] for i in range(len(SPELL_PARTS))]
+    m_mult = spell_multiplier(mine, theirs)
+    t_mult = spell_multiplier(theirs, mine)
+    m_eff = spell_total(mine) * m_mult
+    t_eff = spell_total(theirs) * t_mult
+    if m_eff > t_eff:
+        session["sd2_pts1"] = int(session.get("sd2_pts1", 0)) + 20
+        verdict = "🎉 プレイヤー1の勝ち！"
+    elif m_eff < t_eff:
+        session["sd2_pts2"] = int(session.get("sd2_pts2", 0)) + 20
+        verdict = "🎉 プレイヤー2の勝ち！"
+    else:
+        session["sd2_pts1"] = int(session.get("sd2_pts1", 0)) + 10
+        session["sd2_pts2"] = int(session.get("sd2_pts2", 0)) + 10
+        verdict = "🤝 引き分け"
+    session["sd2_last"] = {
+        "p1_name": "".join(p["label"] for p in mine),
+        "p2_name": "".join(p["label"] for p in theirs),
+        "p1_el": spell_element(mine),
+        "p2_el": spell_element(theirs),
+        "p1_power": spell_total(mine),
+        "p2_power": spell_total(theirs),
+        "p1_mult": m_mult,
+        "p2_mult": t_mult,
+        "p1_eff": int(m_eff) if m_eff == int(m_eff) else m_eff,
+        "p2_eff": int(t_eff) if t_eff == int(t_eff) else t_eff,
+        "verdict": verdict,
+    }
+    session["sd2_picks1"] = []
+    session["sd2_picks2"] = []
+    rnd = int(session.get("sd2_round", 1))
+    session["sd2_stage"] = "over" if rnd >= 5 else "result"
+    return render_spell_duel_2p()
+
+
+@app.route("/games/spell-duel/2p/pass", methods=["POST"])
+def spell_duel_2p_pass():
+    if session.get("sd2_stage") != "pass":
+        return render_spell_duel_2p()
+    session["sd2_stage"] = "p2"
+    return render_spell_duel_2p(stage="p2")
+
+
+@app.route("/games/spell-duel/2p/next", methods=["POST"])
+def spell_duel_2p_next():
+    if session.get("sd2_stage") != "result":
+        return render_spell_duel_2p()
+    session["sd2_round"] = int(session.get("sd2_round", 1)) + 1
+    session["sd2_stage"] = "p1"
+    return render_spell_duel_2p(stage="p1")
+
+
+@app.route("/games/spell-duel/2p/reset", methods=["POST"])
+def spell_duel_2p_reset():
+    spell_duel_2p_new_game()
+    flash("新しい2人対戦を始めました。", "ok")
+    return redirect(url_for("spell_duel_2p"))
+
+
+@app.route("/games/spell-duel/2p/quit", methods=["POST"])
+def spell_duel_2p_quit():
+    for key in ("sd2_round", "sd2_pts1", "sd2_pts2", "sd2_picks1", "sd2_picks2", "sd2_last", "sd2_stage"):
+        session.pop(key, None)
+    flash("2人対戦を終えました。", "ok")
+    return redirect(url_for("spell_duel"))
+
+
+# ============================
 # 絵文字列あてクイズ
 # 絵文字の列が表すことわざ・短文を3択で当てる（サーバー側セッション）。
 # 全8問、正解数×10を記録する。
@@ -16173,7 +17782,7 @@ EMOJI_QUIZ_TEMPLATE = r"""
     {% endif %}
     <p class="result">{{ idx + 1 }} 問目 ／ 正解: {{ correct }} ／ ベスト: {{ best if best is not none else '—' }}</p>
     {% if over %}
-      <p class="mid">終了！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
+      <p class="mid" data-mg-final="{{ correct * 10 }}" data-mg-final-best="{{ best if best is not none else '' }}">終了！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
       <form method="post" action="{{ url_for('emoji_quiz_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -16509,7 +18118,7 @@ WIKI_DERBY_TEMPLATE = r"""
       </div>
     {% endif %}
     {% if over %}
-      <p class="mid">全レース終了！ 合計 {{ total }} 点でした。</p>
+      <p class="mid" data-mg-final="{{ total }}" data-mg-final-best="{{ best if best is not none else '' }}">全レース終了！ 合計 {{ total }} 点でした。</p>
       <form method="post" action="{{ url_for('wiki_derby_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -16795,7 +18404,7 @@ MAJORITY_GATE_TEMPLATE = r"""
     {% endif %}
     <p class="result">{{ idx + 1 }} 問目 ／ 正解: {{ correct }} ／ ミス: {{ miss }} / 3 ／ ベスト: {{ best if best is not none else '—' }}</p>
     {% if over %}
-      <p class="mid">終了！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
+      <p class="mid" data-mg-final="{{ correct * 10 }}" data-mg-final-best="{{ best if best is not none else '' }}">終了！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
       <form method="post" action="{{ url_for('majority_gate_reset') }}" class="row">
         <button type="submit">もう一度挑戦</button>
       </form>
@@ -17191,7 +18800,7 @@ ERA_GACHA_TEMPLATE = r"""
         {% endfor %}
       </div>
     {% elif phase == 'done' %}
-      <p class="mid">人生1周が終わりました： {{ points }} 点</p>
+      <p class="mid" data-mg-final="{{ points }}">人生1周が終わりました： {{ points }} 点</p>
       {% if runs|length >= 2 %}
         <p class="result">2つの人生を並べてみました。どちらの人生も、それぞれの味があります。</p>
       {% else %}
@@ -17801,7 +19410,7 @@ LAST_MINUTE_TEMPLATE = r"""
       <p class="result">{{ message }}</p>
     {% endif %}
     {% if over %}
-      <p class="result">結果: 正答 {{ final_count }} / 10 問 ／ {{ final_score }} 点 ／ ベスト: {{ best if best is not none else '—' }}</p>
+      <p class="result" data-mg-final="{{ final_score }}" data-mg-final-best="{{ best if best is not none else '' }}">結果: 正答 {{ final_count }} / 10 問 ／ {{ final_score }} 点 ／ ベスト: {{ best if best is not none else '—' }}</p>
       <table>
         <tr><th>問題</th><th>あなたの答え</th><th>正解</th><th>判定</th></tr>
         {% for row in review %}
