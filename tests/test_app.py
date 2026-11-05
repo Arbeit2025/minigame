@@ -104,7 +104,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("85 本", body)
+        self.assertIn("100 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -415,8 +415,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("85 本", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -539,8 +539,8 @@ class FiveMoreGamesTest(MinigameTest):
         for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
                       "かわしサバイバー", "ゆき玉転がし"):
             self.assertIn(title, body)
-        self.assertIn("85 本", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
 
     # ---- hitblow ----
     def test_hitblow_page_ok(self):
@@ -674,8 +674,8 @@ class ZhGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/zhgacha", body)
         self.assertIn("中国語単語ガチャ", body)
-        self.assertIn("85 本", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
         self.assertEqual(len(self.mod.ZH_WORDS), 110)
 
     def test_zhgacha_page_ok(self):
@@ -733,8 +733,8 @@ class EnGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/engacha", body)
         self.assertIn("英単語ガチャ", body)
-        self.assertIn("85 本", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
         self.assertEqual(len(self.mod.EN_WORDS), 110)
 
     def test_en_words_data_valid(self):
@@ -886,8 +886,8 @@ class ShindanGamesTest(MinigameTest):
             self.assertIn(f"/games/{slug}", body)
         for title in ("三人娘タイプ診断", "今日のおやつ診断", "べんきょうタイプ診断"):
             self.assertIn(title, body)
-        self.assertIn("85 本", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
 
     # ---- 三人娘タイプ診断 ----
     def test_trio_page_ok(self):
@@ -1008,8 +1008,8 @@ class DotboardTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/dotboard", body)
         self.assertIn("ドット絵ボード", body)
-        self.assertIn("85 本", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
 
     def test_dotboard_page_ok(self):
         res = self.client.get("/games/dotboard")
@@ -1080,8 +1080,8 @@ class NewFiveGamesTest(MinigameTest):
         for title in ("スライドパズル", "1→25タッチ", "まるばつ対戦",
                       "しりとり対戦", "風船わり"):
             self.assertIn(title, body)
-        self.assertIn("85 本", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
+        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
 
     # ---- slidepuzzle ----
     def test_slidepuzzle_page_ok(self):
@@ -1371,8 +1371,8 @@ class SnsNov02GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
-        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("100 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -1732,8 +1732,8 @@ class SnsNov03GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
-        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("100 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -2025,8 +2025,8 @@ class SnsNov04GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 85)
-        self.assertIn("85 本", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("100 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -2348,6 +2348,237 @@ class SnsNov04GamesTest(MinigameTest):
             t = targets[s["part"]]
             v = t[0] if s["axis"] == "r" else t[1]
             self.assertTrue(s["min"] <= v <= s["max"], s["text"])
+
+class SnsNov05GamesTest(MinigameTest):
+    """2026-11-05 配信分（SNS10件＋ふりーむ5件）の追加ゲーム。"""
+
+    NEW_SLUGS = ("paper-shoot", "antique-eye", "ivy-climb", "flower-match",
+                 "spell-duel", "emoji-quiz", "pref-drop", "wiki-derby",
+                 "ice-escape", "majority-gate", "micro-trio", "era-gacha",
+                 "idle-craft", "kaiju-td", "last-minute")
+
+    def test_portal_lists_fifteen_new_games(self):
+        body = self.client.get("/").get_data(as_text=True)
+        for slug in self.NEW_SLUGS:
+            self.assertIn(f"/games/{slug}", body)
+        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("100 本", body)
+
+    def test_new_games_categories(self):
+        cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
+        expected = {
+            "paper-shoot": "アクション", "antique-eye": "クイズ・知識",
+            "ivy-climb": "アクション", "flower-match": "脳トレ",
+            "spell-duel": "対戦", "emoji-quiz": "クイズ・知識",
+            "pref-drop": "脳トレ", "wiki-derby": "抽選・占い",
+            "ice-escape": "アクション", "majority-gate": "脳トレ",
+            "micro-trio": "アクション", "era-gacha": "抽選・占い",
+            "idle-craft": "創作", "kaiju-td": "アクション",
+            "last-minute": "脳トレ",
+        }
+        for slug, cat in expected.items():
+            self.assertEqual(cats[slug], cat, slug)
+        allowed = {"アクション", "脳トレ", "抽選・占い", "クイズ・知識",
+                   "対戦", "脱出・謎解き", "カード・数字", "創作"}
+        self.assertTrue(set(cats.values()) <= allowed)
+
+    def check_js_score_game(self, slug, title, good, bad_values):
+        res = self.client.get(f"/games/{slug}")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(title, res.get_data(as_text=True))
+        res = self.client.post(f"/games/{slug}/score", data={"score": good})
+        self.assertEqual(res.get_json(), {"ok": True, "best": int(good)})
+        for bad in bad_values:
+            res = self.client.post(f"/games/{slug}/score", data={"score": bad})
+            self.assertEqual(res.status_code, 400, (slug, bad))
+
+    # ---- JS進行ゲーム（ページ＋スコア保存） ----
+    def test_paper_shoot_page_and_score(self):
+        self.check_js_score_game("paper-shoot", "紙くずゴミ箱シュート", "80",
+                                 ("-1", "abc", "101"))
+
+    def test_ivy_climb_page_and_score(self):
+        self.check_js_score_game("ivy-climb", "ツタのぼりワンタッチ", "25",
+                                 ("-1", "abc", "1001"))
+
+    def test_flower_match_page_and_score(self):
+        self.check_js_score_game("flower-match", "花あわせ青いバラ", "640",
+                                 ("-1", "abc", "10000"))
+
+    def test_pref_drop_page_and_score(self):
+        self.check_js_score_game("pref-drop", "都道府県くっつけ落ちもの", "300",
+                                 ("-1", "abc", "10000"))
+
+    def test_ice_escape_page_and_score(self):
+        self.check_js_score_game("ice-escape", "トルコアイス逃がし", "240",
+                                 ("-1", "abc", "36001"))
+
+    def test_micro_trio_page_and_score(self):
+        self.check_js_score_game("micro-trio", "3番勝負エンディング", "100",
+                                 ("-1", "abc", "121"))
+
+    def test_idle_craft_page_and_score(self):
+        self.check_js_score_game("idle-craft", "60秒放置クラフト＆転生", "1234",
+                                 ("-1", "abc", "100000"))
+
+    def test_kaiju_td_page_and_score(self):
+        self.check_js_score_game("kaiju-td", "ちび怪獣タワーディフェンス", "450",
+                                 ("-1", "abc", "10000"))
+
+    # ---- 深夜の骨董目利き ----
+    def test_antique_data_integrity(self):
+        self.assertEqual(len(self.mod.ANTIQUE_ROUNDS), 6)
+        for rnd in self.mod.ANTIQUE_ROUNDS:
+            self.assertEqual(len(rnd["items"]), 5)
+            self.assertEqual(sum(1 for it in rnd["items"] if it["real"]), 1)
+
+    def test_antique_flow_all_correct(self):
+        self.client.get("/games/antique-eye")
+        for _ in range(6):
+            with self.client.session_transaction() as sess:
+                pos = sess["ae_real_pos"]
+            self.client.post("/games/antique-eye/answer", data={"pos": str(pos)})
+        rows = self.query("SELECT score FROM scores WHERE game = 'antique-eye'")
+        self.assertEqual(rows, [(60,)])
+
+    def test_antique_timeout_counts_wrong(self):
+        self.client.get("/games/antique-eye")
+        with self.client.session_transaction() as sess:
+            pos = sess["ae_real_pos"]
+            sess["ae_qstart"] = sess["ae_qstart"] - 100
+        res = self.client.post("/games/antique-eye/answer", data={"pos": str(pos)})
+        self.assertIn("時間切れ", res.get_data(as_text=True))
+
+    # ---- 呪文くみたて読み合い ----
+    def test_spell_multiplier_cases(self):
+        m = self.mod
+        fire = [{"label": "炎の", "element": "火", "power": 12}]
+        wind = [{"label": "疾風の", "element": "風", "power": 13}]
+        water = [{"label": "氷の", "element": "水", "power": 11}]
+        plain = [{"label": "弾", "element": None, "power": 10}]
+        self.assertEqual(m.spell_multiplier(fire, wind), 1.5)
+        self.assertEqual(m.spell_multiplier(wind, fire), 0.75)
+        self.assertEqual(m.spell_multiplier(fire, water), 0.75)
+        self.assertEqual(m.spell_multiplier(water, fire), 1.5)
+        self.assertEqual(m.spell_multiplier(fire, fire), 1.0)
+        self.assertEqual(m.spell_multiplier(plain, fire), 1.0)
+        self.assertEqual(m.spell_total(fire + plain), 22)
+
+    def test_spell_flow_five_rounds(self):
+        self.client.get("/games/spell-duel")
+        for _ in range(5):
+            for _ in range(3):
+                self.client.post("/games/spell-duel/pick", data={"idx": "0"})
+        rows = self.query("SELECT score FROM scores WHERE game = 'spell-duel'")
+        self.assertEqual(len(rows), 1)
+        self.assertTrue(0 <= rows[0][0] <= 100)
+
+    # ---- 絵文字列あてクイズ ----
+    def test_emoji_quiz_data_integrity(self):
+        self.assertEqual(len(self.mod.EMOJI_QUIZ), 8)
+        for q in self.mod.EMOJI_QUIZ:
+            self.assertEqual(len(q["choices"]), 3)
+            self.assertIn(q["answer"], q["choices"])
+
+    def test_emoji_quiz_flow_all_correct(self):
+        self.client.get("/games/emoji-quiz")
+        for q in self.mod.EMOJI_QUIZ:
+            self.client.post("/games/emoji-quiz/answer",
+                             data={"choice": q["answer"]})
+        rows = self.query("SELECT score FROM scores WHERE game = 'emoji-quiz'")
+        self.assertEqual(rows, [(80,)])
+
+    # ---- 情報量ダービー予想 ----
+    def test_derby_points_cases(self):
+        dp = self.mod.derby_points
+        self.assertEqual([dp(r) for r in (1, 2, 3, 4, 5)], [50, 30, 20, 10, 0])
+
+    def test_derby_flow_best_bets(self):
+        chars = {a["title"]: a["chars"] for a in self.mod.WIKI_ARTICLES}
+        self.client.get("/games/wiki-derby")
+        for _ in range(5):
+            with self.client.session_transaction() as sess:
+                field = sess["wd_field"]
+            pick = max(field, key=lambda t: chars[t])
+            self.client.post("/games/wiki-derby/bet", data={"title": pick})
+        rows = self.query("SELECT score FROM scores WHERE game = 'wiki-derby'")
+        self.assertEqual(rows, [(250,)])
+
+    # ---- 多数派ゲート生き残り ----
+    def test_majority_side_cases(self):
+        ms = self.mod.majority_side
+        self.assertEqual(ms([60, 55, 70, 40, 65]), "A")
+        self.assertEqual(ms([30, 45, 20, 49, 40]), "B")
+
+    def test_majority_flow_all_correct(self):
+        self.client.get("/games/majority-gate")
+        for _ in range(10):
+            with self.client.session_transaction() as sess:
+                q = sess["mg_questions"][sess["mg_idx"]]
+            side = self.mod.majority_side(q["snaps"])
+            self.client.post("/games/majority-gate/answer", data={"side": side})
+        rows = self.query("SELECT score FROM scores WHERE game = 'majority-gate'")
+        self.assertEqual(rows, [(100,)])
+
+    # ---- 時代ガチャ人生1周 ----
+    def test_era_prob_bounds(self):
+        p = self.mod.era_success_prob
+        self.assertEqual(p(10, 1), 95)
+        self.assertEqual(p(1, 10), 5)
+        self.assertTrue(5 <= p(5, 5) <= 95)
+
+    def test_era_flow_two_lives(self):
+        self.client.get("/games/era-gacha")
+        self.client.post("/games/era-gacha/gacha")
+        for _ in range(6):
+            self.client.post("/games/era-gacha/choose", data={"opt": "0"})
+        rows = self.query("SELECT score FROM scores WHERE game = 'era-gacha'")
+        self.assertEqual(len(rows), 1)
+        self.client.post("/games/era-gacha/gacha")
+        for _ in range(6):
+            self.client.post("/games/era-gacha/choose", data={"opt": "1"})
+        rows = self.query("SELECT score FROM scores WHERE game = 'era-gacha'")
+        self.assertEqual(len(rows), 2)
+        body = self.client.get("/games/era-gacha").get_data(as_text=True)
+        self.assertIn("平行人生", body)
+
+    # ---- あと1分・見直し配分 ----
+    def test_lastminute_score_cases(self):
+        problems = [
+            {"q": "1 + 1", "shown": 2, "correct": 2, "is_correct": True},
+            {"q": "2 + 2", "shown": 5, "correct": 4, "is_correct": False},
+            {"q": "3 + 3", "shown": 6, "correct": 6, "is_correct": True},
+        ]
+        s = self.mod.lastminute_score
+        self.assertEqual(s(problems, [False, False, False]), 20)
+        self.assertEqual(s(problems, [False, True, False]), 30)
+        # 正解の問題を「直す」と壊れて不正解になる
+        self.assertEqual(s(problems, [True, True, False]), 20)
+
+    def test_lastminute_flow_fix_and_submit(self):
+        self.client.get("/games/last-minute")
+        with self.client.session_transaction() as sess:
+            problems = [dict(p) for p in sess["lm_problems"]]
+            problems[0]["is_correct"] = False
+            problems[0]["shown"] = problems[0]["correct"] + 1
+            sess["lm_problems"] = problems
+        self.client.post("/games/last-minute/fix", data={"idx": "0"})
+        res = self.client.post("/games/last-minute/submit")
+        self.assertIn("提出しました", res.get_data(as_text=True))
+        expected = self.mod.lastminute_score(
+            problems, [i == 0 for i in range(10)])
+        rows = self.query("SELECT score FROM scores WHERE game = 'last-minute'")
+        self.assertEqual(rows, [(expected,)])
+
+    def test_lastminute_expiry_finalizes(self):
+        self.client.get("/games/last-minute")
+        with self.client.session_transaction() as sess:
+            sess["lm_start"] = sess["lm_start"] - 120
+        res = self.client.get("/games/last-minute")
+        self.assertIn("時間切れ", res.get_data(as_text=True))
+        rows = self.query("SELECT score FROM scores WHERE game = 'last-minute'")
+        self.assertEqual(len(rows), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
