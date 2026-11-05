@@ -2580,5 +2580,180 @@ class SnsNov05GamesTest(MinigameTest):
         self.assertEqual(len(rows), 1)
 
 
+class PortalImprovementsTest(MinigameTest):
+    """サイト改善20件（ポータル共通基盤まわり）のテスト。"""
+
+    def get(self, path):
+        res = self.client.get(path)
+        self.assertEqual(res.status_code, 200, path)
+        return res.get_data(as_text=True)
+
+    def test_portal_improvement_parts(self):
+        body = self.get("/")
+        for marker in (
+            "今日の1本", 'id="mgSearch"', 'id="mgSort"', 'id="mgFavToggle"',
+            "おまかせで遊ぶ", 'id="mgMore"', 'id="mgProgress"', "バックアップ",
+            'id="mgExport"', 'id="mgImport"', 'id="mgToTop"', "Xでシェア",
+            'property="og:title"', "ジャンル一覧", "mg_settings",
+        ):
+            self.assertIn(marker, body)
+        self.assertEqual(body.count('class="fav-btn"'), 100)
+        self.assertEqual(body.count('class="new-badge"'), 100)
+        self.assertIn("⏱ 約", body)
+        self.assertIn("難易度：", body)
+
+    def test_portal_pickup_keeps_category_count(self):
+        body = self.get("/")
+        self.assertEqual(body.count('data-category="'), len(self.mod.GAMES))
+
+    def test_random_redirects_to_a_game(self):
+        res = self.client.get("/random")
+        self.assertEqual(res.status_code, 302)
+        location = res.headers.get("Location", "")
+        slugs = {g["slug"] for g in self.mod.GAMES}
+        self.assertTrue(location.startswith("/games/"))
+        self.assertIn(location.rsplit("/", 1)[-1], slugs)
+
+    def test_meta_and_howto_cover_all_games(self):
+        slugs = {g["slug"] for g in self.mod.GAMES}
+        self.assertEqual(set(self.mod.GAME_META), slugs)
+        self.assertEqual(set(self.mod.GAME_HOWTO), slugs)
+        for minutes, level in self.mod.GAME_META.values():
+            self.assertGreaterEqual(minutes, 1)
+            self.assertIn(level, (1, 2, 3))
+        for goal, control, tip in self.mod.GAME_HOWTO.values():
+            self.assertTrue(goal and control and tip)
+
+    def test_every_game_page_has_howto_and_next(self):
+        for game in self.mod.GAMES:
+            body = self.get(f"/games/{game['slug']}")
+            self.assertIn('id="mg-howto"', body, game["slug"])
+            self.assertIn("mg-next-card", body, game["slug"])
+            self.assertIn("同じジャンル", body, game["slug"])
+
+    def test_game_pages_have_settings_footer_ogp(self):
+        body = self.get("/games/janken")
+        self.assertIn('id="mg-theme-sel"', body)
+        self.assertIn('id="mg-vol"', body)
+        self.assertIn('id="mg-mute"', body)
+        self.assertIn("mg-footer", body)
+        self.assertIn('property="og:title"', body)
+
+    def test_dark_mode_css_present(self):
+        self.assertIn('[data-theme="dark"]', self.get("/"))
+        self.assertIn('[data-theme="dark"]', self.get("/games/janken"))
+        self.assertIn('[data-theme="dark"]', self.get("/games/roulette"))
+
+    def test_pause_ui_only_on_js_score_games(self):
+        body = self.get("/games/reaction")
+        self.assertIn('id="mg-pause-btn"', body)
+        self.assertIn("__mgSetPaused", body)
+        body = self.get("/games/janken")
+        self.assertNotIn('id="mg-pause-btn"', body)
+
+    def test_share_flag_only_on_shindan_games(self):
+        self.assertIn('"share": true', self.get("/games/omikuji"))
+        self.assertIn('"share": false', self.get("/games/janken"))
+
+    def test_data_mg_final_on_trio_card_finish(self):
+        self.client.get("/games/trio-card")
+        body = ""
+        for _ in range(5):
+            res = self.client.post("/games/trio-card/play", data={"card": "0"})
+            body = res.get_data(as_text=True)
+        self.assertIn('data-mg-final="', body)
+
+    def test_data_mg_final_on_last_minute_finish(self):
+        self.client.get("/games/last-minute")
+        with self.client.session_transaction() as sess:
+            sess["lm_start"] = sess["lm_start"] - 120
+        body = self.get("/games/last-minute")
+        self.assertIn('data-mg-final="', body)
+
+
+class TwoPlayerTest(MinigameTest):
+    """2人モード（同じ端末で交代）のテスト。"""
+
+    def get(self, path):
+        res = self.client.get(path)
+        self.assertEqual(res.status_code, 200, path)
+        return res.get_data(as_text=True)
+
+    def test_cpu_pages_link_to_2p(self):
+        for slug in ("janken", "marubatsu", "trio-card", "spell-duel"):
+            body = self.get(f"/games/{slug}")
+            self.assertIn(f"/games/{slug}/2p", body, slug)
+            self.assertIn("2人で遊ぶ", body, slug)
+
+    def test_janken_2p_flow(self):
+        body = self.get("/games/janken/2p")
+        self.assertIn("プレイヤー1の番です", body)
+        res = self.client.post("/games/janken/2p/p1", data={"hand": "グー"})
+        self.assertIn("受け渡し", res.get_data(as_text=True))
+        res = self.client.post("/games/janken/2p/pass")
+        self.assertIn("プレイヤー2の番です", res.get_data(as_text=True))
+        res = self.client.post("/games/janken/2p/p2", data={"hand": "チョキ"})
+        body = res.get_data(as_text=True)
+        self.assertIn("プレイヤー1の勝ち！", body)
+        self.assertIn("グー", body)
+        self.assertIn("チョキ", body)
+
+    def test_janken_2p_pass_screen_does_not_leak(self):
+        # 受け渡し画面は、プレイヤー1がどの手を選んでも同一でなければならない
+        bodies = []
+        for hand in ("グー", "パー"):
+            client = self.mod.app.test_client()
+            res = client.post("/games/janken/2p/p1", data={"hand": hand})
+            bodies.append(res.get_data(as_text=True))
+        self.assertEqual(bodies[0], bodies[1])
+        self.assertNotIn("✋", bodies[1])
+
+    def test_marubatsu_2p_p1_wins(self):
+        self.client.post("/games/marubatsu/2p/start")
+        body = ""
+        for idx in (0, 3, 1, 4, 2):  # P1:0, P2:3, P1:1, P2:4, P1:2 で P1 の勝ち
+            self.client.post("/games/marubatsu/2p/pass")
+            res = self.client.post(
+                "/games/marubatsu/2p/move", data={"index": str(idx)})
+            body = res.get_data(as_text=True)
+        self.assertIn("プレイヤー1（○）の勝ち", body)
+
+    def test_marubatsu_2p_pass_screen_between_turns(self):
+        res = self.client.post("/games/marubatsu/2p/start")
+        self.assertIn("受け渡し", res.get_data(as_text=True))
+
+    def test_trio_card_2p_full_match(self):
+        body = self.get("/games/trio-card/2p")
+        self.assertIn("プレイヤー1の番です", body)
+        for rnd in range(5):
+            res = self.client.post("/games/trio-card/2p/p1", data={"card": "0"})
+            self.assertIn("受け渡し", res.get_data(as_text=True))
+            self.client.post("/games/trio-card/2p/pass")
+            res = self.client.post("/games/trio-card/2p/p2", data={"card": "0"})
+            body = res.get_data(as_text=True)
+            if rnd < 4:
+                self.client.post("/games/trio-card/2p/next")
+        self.assertIn("対戦終了", body)
+
+    def test_spell_duel_2p_full_match(self):
+        self.get("/games/spell-duel/2p")
+        body = ""
+        for rnd in range(5):
+            for _ in range(3):
+                res = self.client.post(
+                    "/games/spell-duel/2p/pick", data={"idx": "0"})
+            self.assertIn("受け渡し", res.get_data(as_text=True))
+            self.client.post("/games/spell-duel/2p/pass")
+            for _ in range(3):
+                res = self.client.post(
+                    "/games/spell-duel/2p/pick", data={"idx": "1"})
+            body = res.get_data(as_text=True)
+            if rnd < 4:
+                self.client.post("/games/spell-duel/2p/next")
+        self.assertIn("対戦終了", body)
+        self.assertIn("プレイヤー1:", body)
+        self.assertIn("プレイヤー2:", body)
+
+
 if __name__ == "__main__":
     unittest.main()
