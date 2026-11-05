@@ -902,6 +902,126 @@ GAMES = [
         "description": "色と形がぴったり合う場所を探し、ピースを回転させてはめ込むパズル。全2ステージ、解けることを検証済みの構成です。",
         "endpoint": "color_hamekomi",
     },
+    {
+        "slug": "paper-shoot",
+        "title": "紙くずゴミ箱シュート",
+        "category": "アクション",
+        "icon": "🗑️",
+        "description": "風向きを見て強さスライダーを調整し、丸めた紙くずをゴミ箱へ投げ入れる10投勝負。入った近さで得点が変わります。",
+        "endpoint": "paper_shoot",
+    },
+    {
+        "slug": "antique-eye",
+        "title": "深夜の骨董目利き",
+        "category": "クイズ・知識",
+        "icon": "🏺",
+        "description": "深夜の骨董店で5品の説明文を読み、本物を1つ選ぶ目利きクイズ。全6問、1問25秒の制限時間つき。",
+        "endpoint": "antique_eye",
+    },
+    {
+        "slug": "ivy-climb",
+        "title": "ツタのぼりワンタッチ",
+        "category": "アクション",
+        "icon": "🌿",
+        "description": "ボタンを長押しするとツタが伸び、離すと倒れて次の葉へ。届かなかったら終わりの1ボタン・タイミングゲーム。",
+        "endpoint": "ivy_climb",
+    },
+    {
+        "slug": "flower-match",
+        "title": "花あわせ青いバラ",
+        "category": "脳トレ",
+        "icon": "🌹",
+        "description": "同じ花を3つ揃えて消すマッチ3の短縮版。25手以内に花を30個消すと青いバラが咲きます。",
+        "endpoint": "flower_match",
+    },
+    {
+        "slug": "spell-duel",
+        "title": "呪文くみたて読み合い",
+        "category": "対戦",
+        "icon": "🪄",
+        "description": "語のパーツを3つ選んで呪文を組み立て、CPUの詠唱と威力・属性の相性で打ち合う読み合い対戦。全5ラウンド。",
+        "endpoint": "spell_duel",
+    },
+    {
+        "slug": "emoji-quiz",
+        "title": "絵文字列あてクイズ",
+        "category": "クイズ・知識",
+        "icon": "💬",
+        "description": "絵文字の列が表すことわざ・短文を3択で当てる言葉遊びクイズ。全8問。",
+        "endpoint": "emoji_quiz",
+    },
+    {
+        "slug": "pref-drop",
+        "title": "都道府県くっつけ落ちもの",
+        "category": "脳トレ",
+        "icon": "🗾",
+        "description": "都道府県のブロックが落ちてきて、地図で隣り合う県同士だけがくっついて消える落ちものパズル。北海道〜関東の14都道県版。",
+        "endpoint": "pref_drop",
+    },
+    {
+        "slug": "wiki-derby",
+        "title": "情報量ダービー予想",
+        "category": "抽選・占い",
+        "icon": "🏇",
+        "description": "実在のWikipedia記事5本のうち、本文が一番長いものを競馬風に予想するゲーム。全5レース。",
+        "endpoint": "wiki_derby",
+    },
+    {
+        "slug": "ice-escape",
+        "title": "トルコアイス逃がし",
+        "category": "アクション",
+        "icon": "🍦",
+        "description": "店員側になって、伸びてくる客の手からアイスを逃がし続ける反射ゲーム。何秒逃げ切れるか。",
+        "endpoint": "ice_escape",
+    },
+    {
+        "slug": "majority-gate",
+        "title": "多数派ゲート生き残り",
+        "category": "脳トレ",
+        "icon": "🚪",
+        "description": "群衆の流れの記録を読んで、多数派のゲートを選んで入る全10問の生存ゲーム。ミス3回で終了。",
+        "endpoint": "majority_gate",
+    },
+    {
+        "slug": "micro-trio",
+        "title": "3番勝負エンディング",
+        "category": "アクション",
+        "icon": "🏆",
+        "description": "反射・連打・タイミングの短いマイクロゲーム3番勝負。勝ち数でエンディングの文が分岐します。",
+        "endpoint": "micro_trio",
+    },
+    {
+        "slug": "era-gacha",
+        "title": "時代ガチャ人生1周",
+        "category": "抽選・占い",
+        "icon": "🕰️",
+        "description": "時代と能力をガチャで決め、確率表示つきの分かれ道を選んで進む人生1周。選び直した平行人生とも並べて比べられます。",
+        "endpoint": "era_gacha",
+    },
+    {
+        "slug": "idle-craft",
+        "title": "60秒放置クラフト＆転生",
+        "category": "創作",
+        "icon": "🔨",
+        "description": "行動を1つ選ぶと素材集めとクラフトが自動で進む60秒放置。終わったらスキルを1つ引き継いで転生できます。",
+        "endpoint": "idle_craft",
+    },
+    {
+        "slug": "kaiju-td",
+        "title": "ちび怪獣タワーディフェンス",
+        "category": "アクション",
+        "icon": "🦖",
+        "description": "1本道の進路の脇にタワーを置いて、ちび怪獣の波（1ウェーブ）を迎え撃つ2Dタワーディフェンス。",
+        "endpoint": "kaiju_td",
+    },
+    {
+        "slug": "last-minute",
+        "title": "あと1分・見直し配分",
+        "category": "脳トレ",
+        "icon": "📝",
+        "description": "残り60秒で計算問題の解答列を見直し、怪しい問題を選んで直す時間配分ゲーム。もともと正解の問題を直すと壊れてしまう。",
+        "endpoint": "last_minute",
+    },
 ]
 
 
@@ -15131,6 +15251,2700 @@ def fukuwarai_score():
         return {"ok": False, "error": "invalid score"}, 400
     record_score("fukuwarai", int(raw))
     return {"ok": True, "best": best_score("fukuwarai", "max")}
+
+# ============================
+# 紙くずゴミ箱シュート
+# 風向きを見て強さスライダーを調整し、紙くずをゴミ箱へ投げる
+# （クライアント JS）。10投の合計点を記録する（0〜100）。
+# ============================
+PAPER_SHOOT_TEMPLATE = r"""
+  <h1>🗑️ 紙くずゴミ箱シュート</h1>
+  <p class="howto">丸めた紙くずをゴミ箱へ投げ入れよう。風向き（← →）と強さスライダーを調整して「投げる」。10投勝負で、ゴミ箱に近いほど高得点（1投最大10点）。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
+    <p class="result" id="status">1 投目 ／ 合計 0 点</p>
+    <div id="field" style="position:relative; height:240px; border:1px solid #ddd; border-radius:10px; background:#f4f8ff; overflow:hidden;">
+      <div id="bin" style="position:absolute; bottom:6px; font-size:44px; line-height:1;">🗑️</div>
+      <div id="paper" style="position:absolute; left:16px; bottom:10px; font-size:26px; line-height:1;">🧻</div>
+      <div style="position:absolute; left:0; right:0; bottom:0; height:6px; background:#cfe3c0;"></div>
+    </div>
+    <p class="mid" id="wind">風: → 0</p>
+    <div class="row" style="margin:10px 0;">
+      <label>強さ <input type="range" id="power" min="10" max="100" value="55" style="width:220px;"></label>
+      <span id="powerVal">55</span>
+    </div>
+    <div class="row">
+      <button type="button" id="throwBtn">🌀 投げる</button>
+      <button type="button" id="retryBtn">↩ 最初から</button>
+    </div>
+    <p class="result" id="message">風と強さを決めて投げてください</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（合計点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var field = document.getElementById("field");
+  var bin = document.getElementById("bin");
+  var paper = document.getElementById("paper");
+  var windEl = document.getElementById("wind");
+  var status = document.getElementById("status");
+  var message = document.getElementById("message");
+  var power = document.getElementById("power");
+  var powerVal = document.getElementById("powerVal");
+  var throwBtn = document.getElementById("throwBtn");
+  var throws = 0, total = 0, wind = 0, binX = 0, flying = false, posted = false;
+  function newThrow(){
+    var w = field.clientWidth;
+    binX = 120 + Math.random() * (w - 190);
+    bin.style.left = binX + "px";
+    wind = Math.round(Math.random() * 6) - 3;
+    windEl.textContent = "風: " + (wind < 0 ? "←".repeat(-wind) : wind > 0 ? "→".repeat(wind) : "なし") + "（" + wind + "）";
+    paper.style.left = "16px";
+    paper.style.bottom = "10px";
+    status.textContent = (throws + 1) + " 投目 ／ 合計 " + total + " 点";
+  }
+  power.addEventListener("input", function(){ powerVal.textContent = power.value; });
+  document.getElementById("retryBtn").addEventListener("click", function(){
+    throws = 0; total = 0; posted = false; throwBtn.disabled = false;
+    message.textContent = "最初からやり直します";
+    newThrow();
+  });
+  throwBtn.addEventListener("click", function(){
+    if (flying || throws >= 10) { return; }
+    flying = true;
+    var w = field.clientWidth;
+    var x = 16, y = 10;
+    var vx = (parseInt(power.value, 10) / 100) * (w - 80) / 28;
+    var vy = 9.5;
+    var timer = setInterval(function(){
+      vy -= 0.55;
+      x += vx + wind * 0.35;
+      y += vy;
+      if (y <= 8) {
+        y = 8;
+        clearInterval(timer);
+        flying = false;
+        var center = binX + 22;
+        var dist = Math.abs(x + 10 - center);
+        var pts = 0;
+        if (dist <= 24) { pts = 10; }
+        else { pts = Math.max(0, 8 - Math.floor((dist - 24) / 30)); }
+        total += pts;
+        throws++;
+        if (throws >= 10) {
+          status.textContent = "10 投目 ／ 合計 " + total + " 点";
+          message.textContent = pts >= 10 ? "🎉 ナイスイン！ 合計 " + total + " 点でした" : "終了！ 合計 " + total + " 点でした";
+          throwBtn.disabled = true;
+          if (!posted) {
+            posted = true;
+            var form = new FormData();
+            form.append("score", String(total));
+            fetch("{{ url_for('paper_shoot_score') }}", {method: "POST", body: form})
+              .then(function(r){ return r.json(); })
+              .then(function(d){
+                if (d && d.ok) {
+                  document.getElementById("bestline").textContent = "ベスト: " + d.best;
+                }
+              })
+              .catch(function(){});
+          }
+        } else {
+          message.textContent = pts >= 10 ? "🎉 入った！ +" + pts + " 点" : "あと少し… +" + pts + " 点";
+          newThrow();
+        }
+      }
+      paper.style.left = x + "px";
+      paper.style.bottom = y + "px";
+    }, 30);
+  });
+  newThrow();
+})();
+</script>
+"""
+
+
+@app.route("/games/paper-shoot", methods=["GET"])
+def paper_shoot():
+    body = render_template_string(
+        PAPER_SHOOT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("paper-shoot", "max"),
+        history=recent_scores("paper-shoot", 10),
+    )
+    return game_page("紙くずゴミ箱シュート", body)
+
+
+@app.route("/games/paper-shoot/score", methods=["POST"])
+def paper_shoot_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("paper-shoot", int(raw))
+    return {"ok": True, "best": best_score("paper-shoot", "max")}
+
+
+# ============================
+# 深夜の骨董目利き
+# 5品の説明文から本物を1つ選ぶ目利きクイズ（サーバー側セッション）。
+# 全6問、1問25秒の制限時間つき（超過は不正解）。正解数×10を記録。
+# ============================
+ANTIQUE_ROUNDS = [
+    {
+        "theme": "古伊万里の壺",
+        "items": [
+            {"name": "染付花文壺", "desc": "江戸中期の作。胴の呉須の発色が均一で、箱書きの筆跡と落款が一致する。", "real": True},
+            {"name": "色絵牡丹壺", "desc": "色絵は鮮やかだが、絵付けの線が機械的に均一で、底の削り跡が新しすぎる。", "real": False},
+            {"name": "白磁小壺", "desc": "釉薬の貫入は見事だが、銘の字体が当時の様式と微妙に異なる。", "real": False},
+            {"name": "染付山水壺", "desc": "山水の筆致は良いが、高台の土見せが窯の特徴と合わない。", "real": False},
+            {"name": "瑠璃釉壺", "desc": "瑠璃の発色は深いが、口縁の金継ぎ跡が接着剤の新しいもので隠されている。", "real": False},
+        ],
+    },
+    {
+        "theme": "江戸期の掛け軸",
+        "items": [
+            {"name": "雪景山水図", "desc": "絹地の経年変化が自然で、表具の裂地も時代に合う。落款・印章ともに本人のもの。", "real": True},
+            {"name": "花鳥図", "desc": "彩色は美しいが、印章の朱の色が近代の化学顔料のもの。", "real": False},
+            {"name": "書「心」一字", "desc": "筆の運びは力強いが、紙の繊維に近代のパルプが混ざっている。", "real": False},
+            {"name": "鯉の滝登り図", "desc": "構図は見事だが、本紙と表具の時代が50年ほどずれている。", "real": False},
+            {"name": "月夜の兎図", "desc": "兎の毛描きは繊細だが、落款の位置が作者の通例と逆になっている。", "real": False},
+        ],
+    },
+    {
+        "theme": "茶碗",
+        "items": [
+            {"name": "井戸茶碗", "desc": "高麗茶碗の写しを名乗るが、枇杷色の肌に人工的な汚しが見える。", "real": False},
+            {"name": "志野茶碗", "desc": "長石釉の縮れと火色が自然で、箱の共書きも窯元の筆。茶人の伝来メモが添う。", "real": True},
+            {"name": "黒楽茶碗", "desc": "手捏ねの跡は本物らしいが、内側の茶渋が塗料で作られている。", "real": False},
+            {"name": "絵唐津茶碗", "desc": "鉄絵の筆致は良いが、見込みのひびが後から描き足されたもの。", "real": False},
+            {"name": "粉引茶碗", "desc": "粉引の化粧土は厚いが、高台の削りが現代のロクロの均一さ。", "real": False},
+        ],
+    },
+    {
+        "theme": "日本刀の短刀",
+        "items": [
+            {"name": "銘「兼」短刀", "desc": "茎の鑢目と銘の鏨跡が素朴で、地鉄の肌も時代相応。登録証の寸法と一致する。", "real": True},
+            {"name": "無銘短刀", "desc": "刃文は華やかだが、映りが均一すぎて電解研磨の痕跡がある。", "real": False},
+            {"name": "銘「宗」短刀", "desc": "銘は似せてあるが、鏨の入り方が当該刀工の癖と逆。", "real": False},
+            {"name": "拵え付き短刀", "desc": "金具は立派だが、鞘の漆が現代のウレタン塗装。", "real": False},
+            {"name": "朱銘短刀", "desc": "朱銘は格式高いが、朱の成分が新しい顔料と分析メモにある。", "real": False},
+        ],
+    },
+    {
+        "theme": "金屏風",
+        "items": [
+            {"name": "四季花鳥図屏風", "desc": "金箔の継ぎ目が不揃いで経年の剥落も自然。裏の鳥の子和紙に時代の漉きムラがある。", "real": True},
+            {"name": "松鶴図屏風", "desc": "鶴の描写は見事だが、金箔の厚さが全帖で均一すぎる。", "real": False},
+            {"name": "源氏絵屏風", "desc": "構図は古典的だが、顔料の青が合成ウルトラマリンの色味。", "real": False},
+            {"name": "波濤図屏風", "desc": "波の勢いはあるが、蝶番の金具が近代の量産品に差し替えられている。", "real": False},
+            {"name": "秋草図屏風", "desc": "秋草の配置は良いが、落款の印肉がベタッと新しすぎる。", "real": False},
+        ],
+    },
+    {
+        "theme": "懐中時計",
+        "items": [
+            {"name": "銀側懐中時計", "desc": "文字盤のエナメルに細かな飛びがあるが当時の製法どおり。機械の刻印と年代が一致。", "real": True},
+            {"name": "金側懐中時計", "desc": "ケースは豪華だが、内部の機械が後年の別物に載せ替えられている。", "real": False},
+            {"name": "鉄道時計", "desc": "精度をうたうが、裏蓋の刻印の書体が当時のものと異なる。", "real": False},
+            {"name": "琺瑯懐中時計", "desc": "琺瑯絵は繊細だが、ヒビの補修に現代の樹脂が使われている。", "real": False},
+            {"name": "スケルトン時計", "desc": "透かしの彫刻は見事だが、ネジの頭の形状が近代規格。", "real": False},
+        ],
+    },
+]
+
+ANTIQUE_TIME_LIMIT = 25
+
+ANTIQUE_TEMPLATE = r"""
+  <h1>🏺 深夜の骨董目利き</h1>
+  <p class="howto">深夜の骨董店。並んだ5品の説明文をよく読んで、本物を1つ選んでください。全6問、1問 {{ limit }} 秒の制限時間つき（超過は不正解）。正解数 × 10 点を記録します。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">{{ rnd }} 問目 ／ 正解: {{ correct }} ／ ベスト: {{ best if best is not none else '—' }}</p>
+    {% if over %}
+      <p class="mid">店じまい！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
+      <form method="post" action="{{ url_for('antique_eye_reset') }}" class="row">
+        <button type="submit">もう一度挑戦</button>
+      </form>
+    {% else %}
+      <h3 style="font-size:16px; margin:0 0 8px;">テーマ： {{ theme }}</h3>
+      {% for i in order %}
+        {% set it = items[i] %}
+        <form method="post" action="{{ url_for('antique_eye_answer') }}" style="margin-bottom:8px;">
+          <input type="hidden" name="pos" value="{{ loop.index0 }}">
+          <button type="submit" style="width:100%; text-align:left; font-size:14px;">
+            <strong>{{ it.name }}</strong><br>{{ it.desc }}
+          </button>
+        </form>
+      {% endfor %}
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def antique_eye_new_game():
+    rnd = ANTIQUE_ROUNDS[0]
+    order = list(range(len(rnd["items"])))
+    random.shuffle(order)
+    session["ae_round"] = 0
+    session["ae_order"] = order
+    session["ae_real_pos"] = order.index(
+        next(i for i, it in enumerate(rnd["items"]) if it["real"]))
+    session["ae_correct"] = 0
+    session["ae_qstart"] = time.time()
+    session["ae_over"] = False
+
+
+def antique_eye_setup_round(idx):
+    rnd = ANTIQUE_ROUNDS[idx]
+    order = list(range(len(rnd["items"])))
+    random.shuffle(order)
+    session["ae_round"] = idx
+    session["ae_order"] = order
+    session["ae_real_pos"] = order.index(
+        next(i for i, it in enumerate(rnd["items"]) if it["real"]))
+    session["ae_qstart"] = time.time()
+
+
+def render_antique_eye(message=None):
+    if "ae_round" not in session:
+        antique_eye_new_game()
+    idx = int(session.get("ae_round", 0))
+    rnd = ANTIQUE_ROUNDS[min(idx, len(ANTIQUE_ROUNDS) - 1)]
+    body = render_template_string(
+        ANTIQUE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        rnd=idx + 1,
+        theme=rnd["theme"],
+        items=rnd["items"],
+        order=session.get("ae_order", list(range(len(rnd["items"])))),
+        correct=int(session.get("ae_correct", 0)),
+        over=bool(session.get("ae_over", False)),
+        limit=ANTIQUE_TIME_LIMIT,
+        best=best_score("antique-eye", "max"),
+        history=recent_scores("antique-eye", 10),
+        message=message,
+    )
+    return game_page("深夜の骨董目利き", body)
+
+
+@app.route("/games/antique-eye", methods=["GET"])
+def antique_eye():
+    return render_antique_eye()
+
+
+@app.route("/games/antique-eye/answer", methods=["POST"])
+def antique_eye_answer():
+    if "ae_round" not in session:
+        antique_eye_new_game()
+    if session.get("ae_over"):
+        return render_antique_eye()
+    idx = int(session.get("ae_round", 0))
+    rnd = ANTIQUE_ROUNDS[idx]
+    timed_out = (time.time() - float(session.get("ae_qstart", 0))) > ANTIQUE_TIME_LIMIT
+    try:
+        pos = int(request.form.get("pos", "-1"))
+    except ValueError:
+        pos = -1
+    real_item = next(it for it in rnd["items"] if it["real"])
+    if not timed_out and pos == int(session.get("ae_real_pos", -1)):
+        session["ae_correct"] = int(session.get("ae_correct", 0)) + 1
+        msg = f"⭕ お目が高い！ 本物は「{real_item['name']}」でした。"
+    elif timed_out:
+        msg = f"⌛ 時間切れ… 本物は「{real_item['name']}」でした。"
+    else:
+        msg = f"❌ 残念。本物は「{real_item['name']}」でした。"
+    if idx + 1 >= len(ANTIQUE_ROUNDS):
+        session["ae_over"] = True
+        record_score("antique-eye", int(session.get("ae_correct", 0)) * 10)
+        return render_antique_eye(message=msg + " 全問終了です。")
+    antique_eye_setup_round(idx + 1)
+    return render_antique_eye(message=msg)
+
+
+@app.route("/games/antique-eye/reset", methods=["POST"])
+def antique_eye_reset():
+    antique_eye_new_game()
+    flash("最初から挑戦します。", "ok")
+    return redirect(url_for("antique_eye"))
+
+
+# ============================
+# ツタのぼりワンタッチ
+# ボタンを長押しするとツタが伸び、離すと倒れて次の葉へ移る
+# （クライアント JS）。届かなかったら終了。登れた葉の数を記録。
+# ============================
+IVY_CLIMB_TEMPLATE = r"""
+  <h1>🌿 ツタのぼりワンタッチ</h1>
+  <p class="howto">ボタンを長押しするとツタがぐんぐん伸びます。離すとツタが倒れて、ツタの先が次の葉に届いていれば登れます。届かなかったら終わり。何枚登れるか挑戦！</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
+    <div id="stage" style="position:relative; height:340px; border:1px solid #ddd; border-radius:10px; background:linear-gradient(#eaf7ff, #f7ffee); overflow:hidden;">
+      <div id="leafNow" style="position:absolute; font-size:34px; line-height:1;">🍃</div>
+      <div id="leafNext" style="position:absolute; font-size:34px; line-height:1;">🍃</div>
+      <div id="vine" style="position:absolute; background:#4a9e4a; border-radius:3px;"></div>
+      <div id="climber" style="position:absolute; font-size:26px; line-height:1;">🐛</div>
+    </div>
+    <p class="result" id="status">登れた葉: 0 枚</p>
+    <div class="row">
+      <button type="button" id="holdBtn" style="font-size:20px; padding:16px 28px;">🌱 長押しでツタを伸ばす</button>
+      <button type="button" id="retryBtn">↩ 最初から</button>
+    </div>
+    <p class="result" id="message">長押しして、離すタイミングをはかってください</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（登れた葉）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 枚</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var stage = document.getElementById("stage");
+  var leafNow = document.getElementById("leafNow");
+  var leafNext = document.getElementById("leafNext");
+  var vine = document.getElementById("vine");
+  var climber = document.getElementById("climber");
+  var status = document.getElementById("status");
+  var message = document.getElementById("message");
+  var holdBtn = document.getElementById("holdBtn");
+  var leaves = 0, gap = 120, growing = false, vineLen = 0, timer = null, over = false, posted = false;
+  var baseX = 40, nextX = 220;
+  function layout(){
+    leafNow.style.left = baseX + "px";
+    leafNow.style.bottom = "16px";
+    leafNext.style.left = nextX + "px";
+    leafNext.style.bottom = (16 + gap) + "px";
+    climber.style.left = (baseX + 4) + "px";
+    climber.style.bottom = "44px";
+    vine.style.left = (baseX + 15) + "px";
+    vine.style.bottom = "44px";
+    vine.style.width = "6px";
+    vine.style.height = "0px";
+    vine.style.transform = "";
+  }
+  function newGap(){
+    gap = 90 + Math.floor(Math.random() * 80);
+    nextX = 60 + Math.floor(Math.random() * 220);
+    vineLen = 0;
+    layout();
+    status.textContent = "登れた葉: " + leaves + " 枚";
+  }
+  function startGrow(e){
+    if (e) { e.preventDefault(); }
+    if (growing || over) { return; }
+    growing = true;
+    timer = setInterval(function(){
+      vineLen += 3;
+      vine.style.height = vineLen + "px";
+      if (vineLen >= 230) { stopGrow(); }
+    }, 16);
+  }
+  function stopGrow(){
+    if (!growing) { return; }
+    growing = false;
+    clearInterval(timer);
+    var reach = Math.sqrt(Math.pow(nextX - baseX, 2) + Math.pow(gap, 2));
+    if (vineLen >= reach - 14) {
+      leaves++;
+      baseX = nextX;
+      message.textContent = "🍃 届いた！ " + leaves + " 枚目に登れました";
+      newGap();
+    } else {
+      over = true;
+      vine.style.transform = "rotate(58deg)";
+      vine.style.transformOrigin = "bottom left";
+      message.textContent = "💦 届かなかった… " + leaves + " 枚で終了です";
+      holdBtn.disabled = true;
+      if (!posted) {
+        posted = true;
+        var form = new FormData();
+        form.append("score", String(leaves));
+        fetch("{{ url_for('ivy_climb_score') }}", {method: "POST", body: form})
+          .then(function(r){ return r.json(); })
+          .then(function(d){
+            if (d && d.ok) {
+              document.getElementById("bestline").textContent = "ベスト: " + d.best;
+            }
+          })
+          .catch(function(){});
+      }
+    }
+  }
+  holdBtn.addEventListener("pointerdown", startGrow);
+  holdBtn.addEventListener("pointerup", stopGrow);
+  holdBtn.addEventListener("pointerleave", stopGrow);
+  document.getElementById("retryBtn").addEventListener("click", function(){
+    leaves = 0; over = false; posted = false; baseX = 40;
+    holdBtn.disabled = false;
+    message.textContent = "最初から登り直します";
+    newGap();
+  });
+  newGap();
+})();
+</script>
+"""
+
+
+@app.route("/games/ivy-climb", methods=["GET"])
+def ivy_climb():
+    body = render_template_string(
+        IVY_CLIMB_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("ivy-climb", "max"),
+        history=recent_scores("ivy-climb", 10),
+    )
+    return game_page("ツタのぼりワンタッチ", body)
+
+
+@app.route("/games/ivy-climb/score", methods=["POST"])
+def ivy_climb_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 1000):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("ivy-climb", int(raw))
+    return {"ok": True, "best": best_score("ivy-climb", "max")}
+
+
+# ============================
+# 花あわせ青いバラ
+# 同じ花を3つ揃えて消すマッチ3の短縮版（クライアント JS）。
+# 6×6盤・25手。消した花×10点、花30個で青いバラ開花ボーナス+150。
+# ============================
+FLOWER_MATCH_TEMPLATE = r"""
+  <h1>🌹 花あわせ青いバラ</h1>
+  <p class="howto">隣り合う花を入れ替えて、同じ花を3つ以上揃えると消えます。全25手。消した花1つで10点、花を30個消すと青いバラが咲いてボーナス150点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
+    <p class="result" id="status">残り 25 手 ／ 0 点 ／ 消した花 0 個</p>
+    <div id="board" style="display:grid; grid-template-columns: repeat(6, 52px); gap:4px; justify-content:center;"></div>
+    <p class="result" id="message">花を2つ選んで入れ替えてください</p>
+    <div class="row">
+      <button type="button" id="retryBtn">↩ 最初から</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var FLOWERS = ["🌸", "🌼", "🌷", "🌻", "🌺"];
+  var N = 6, GOAL = 30;
+  var boardEl = document.getElementById("board");
+  var status = document.getElementById("status");
+  var message = document.getElementById("message");
+  var grid = [], moves = 25, score = 0, cleared = 0, selected = null, busy = false, bloomed = false, posted = false;
+  function randFlower(){ return FLOWERS[Math.floor(Math.random() * FLOWERS.length)]; }
+  function newBoard(){
+    grid = [];
+    for (var r = 0; r < N; r++) {
+      var row = [];
+      for (var c = 0; c < N; c++) {
+        var f;
+        do { f = randFlower(); }
+        while ((c >= 2 && row[c-1] === f && row[c-2] === f) ||
+               (r >= 2 && grid[r-1][c] === f && grid[r-2][c] === f));
+        row.push(f);
+      }
+      grid.push(row);
+    }
+  }
+  function render(){
+    boardEl.innerHTML = "";
+    for (var r = 0; r < N; r++) {
+      for (var c = 0; c < N; c++) {
+        (function(rr, cc){
+          var b = document.createElement("button");
+          b.type = "button";
+          b.textContent = grid[rr][cc];
+          b.style.cssText = "font-size:26px; padding:8px 0;" +
+            (selected && selected[0] === rr && selected[1] === cc ? " background:#ffe9a8;" : "");
+          b.addEventListener("click", function(){ onTap(rr, cc); });
+          boardEl.appendChild(b);
+        })(r, c);
+      }
+    }
+    status.textContent = "残り " + moves + " 手 ／ " + score + " 点 ／ 消した花 " + cleared + " 個" +
+      (bloomed ? " ／ 💙 青いバラ開花！" : "");
+  }
+  function findMatches(){
+    var hit = {};
+    var r, c, k;
+    for (r = 0; r < N; r++) {
+      for (c = 0; c + 2 < N; c++) {
+        if (grid[r][c] && grid[r][c] === grid[r][c+1] && grid[r][c] === grid[r][c+2]) {
+          for (k = 0; k < 3; k++) { hit[r + "," + (c+k)] = true; }
+        }
+      }
+    }
+    for (c = 0; c < N; c++) {
+      for (r = 0; r + 2 < N; r++) {
+        if (grid[r][c] && grid[r][c] === grid[r+1][c] && grid[r][c] === grid[r+2][c]) {
+          for (k = 0; k < 3; k++) { hit[(r+k) + "," + c] = true; }
+        }
+      }
+    }
+    return Object.keys(hit).map(function(s){
+      var p = s.split(","); return [parseInt(p[0], 10), parseInt(p[1], 10)];
+    });
+  }
+  function collapse(){
+    for (var c = 0; c < N; c++) {
+      var stack = [];
+      for (var r = N - 1; r >= 0; r--) {
+        if (grid[r][c]) { stack.push(grid[r][c]); }
+      }
+      for (var r2 = N - 1; r2 >= 0; r2--) {
+        grid[r2][c] = stack.length ? stack.shift() : randFlower();
+      }
+    }
+  }
+  function resolve(){
+    var m = findMatches();
+    if (!m.length) {
+      busy = false;
+      render();
+      if (moves <= 0) { finish(); }
+      return;
+    }
+    m.forEach(function(cell){ grid[cell[0]][cell[1]] = null; });
+    cleared += m.length;
+    score += m.length * 10;
+    if (!bloomed && cleared >= GOAL) {
+      bloomed = true;
+      score += 150;
+      message.textContent = "💙 青いバラが咲きました！ ボーナス +150 点";
+    } else {
+      message.textContent = m.length + " 個消えました（連鎖あり）";
+    }
+    render();
+    setTimeout(function(){
+      collapse();
+      render();
+      setTimeout(resolve, 180);
+    }, 220);
+  }
+  function finish(){
+    if (posted) { return; }
+    posted = true;
+    message.textContent = "🌹 終了！ " + score + " 点でした" + (bloomed ? "（青いバラ開花）" : "");
+    var form = new FormData();
+    form.append("score", String(score));
+    fetch("{{ url_for('flower_match_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          document.getElementById("bestline").textContent = "ベスト: " + d.best;
+        }
+      })
+      .catch(function(){});
+  }
+  function swap(a, b){
+    var t = grid[a[0]][a[1]];
+    grid[a[0]][a[1]] = grid[b[0]][b[1]];
+    grid[b[0]][b[1]] = t;
+  }
+  function onTap(r, c){
+    if (busy || moves <= 0) { return; }
+    if (!selected) {
+      selected = [r, c];
+      render();
+      return;
+    }
+    var d = Math.abs(selected[0] - r) + Math.abs(selected[1] - c);
+    if (d !== 1) {
+      selected = [r, c];
+      render();
+      return;
+    }
+    var a = selected;
+    selected = null;
+    busy = true;
+    swap(a, [r, c]);
+    if (!findMatches().length) {
+      swap(a, [r, c]);
+      busy = false;
+      message.textContent = "揃いませんでした。別の組み合わせをどうぞ";
+      render();
+      return;
+    }
+    moves--;
+    render();
+    setTimeout(resolve, 150);
+  }
+  document.getElementById("retryBtn").addEventListener("click", function(){
+    moves = 25; score = 0; cleared = 0; selected = null; busy = false; bloomed = false; posted = false;
+    newBoard();
+    message.textContent = "最初からやり直します";
+    render();
+  });
+  newBoard();
+  render();
+})();
+</script>
+"""
+
+
+@app.route("/games/flower-match", methods=["GET"])
+def flower_match():
+    body = render_template_string(
+        FLOWER_MATCH_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("flower-match", "max"),
+        history=recent_scores("flower-match", 10),
+    )
+    return game_page("花あわせ青いバラ", body)
+
+
+@app.route("/games/flower-match/score", methods=["POST"])
+def flower_match_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 9999):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("flower-match", int(raw))
+    return {"ok": True, "best": best_score("flower-match", "max")}
+
+
+# ============================
+# 呪文くみたて読み合い
+# 語のパーツを3つ選んで呪文を組み立て、CPUの詠唱と威力・属性相性で
+# 打ち合う対戦（サーバー側セッション）。全5ラウンド、
+# 勝ち20点・引き分け10点で記録する。
+# ============================
+SPELL_BEATS = {"火": "風", "風": "土", "土": "水", "水": "火"}
+SPELL_PARTS = [
+    [  # 頭の語（属性つき）
+        {"label": "炎の", "element": "火", "power": 12},
+        {"label": "氷の", "element": "水", "power": 11},
+        {"label": "疾風の", "element": "風", "power": 13},
+        {"label": "大地の", "element": "土", "power": 12},
+    ],
+    [  # 核の語
+        {"label": "弾", "element": None, "power": 10},
+        {"label": "剣", "element": None, "power": 14},
+        {"label": "嵐", "element": None, "power": 18},
+        {"label": "壁", "element": None, "power": 8},
+    ],
+    [  # 締めの語
+        {"label": "改", "element": None, "power": 3},
+        {"label": "・真", "element": None, "power": 6},
+        {"label": "バースト", "element": None, "power": 9},
+    ],
+]
+SPELL_SLOT_NAMES = ["頭の語", "核の語", "締めの語"]
+
+
+def spell_total(parts):
+    return sum(int(p["power"]) for p in parts)
+
+
+def spell_element(parts):
+    for p in parts:
+        if p.get("element"):
+            return p["element"]
+    return None
+
+
+def spell_multiplier(mine, cpu):
+    """属性相性の倍率。勝ち1.5／負け0.75／同じ・なし1.0。"""
+    me, ce = spell_element(mine), spell_element(cpu)
+    if not me or not ce or me == ce:
+        return 1.0
+    if SPELL_BEATS.get(me) == ce:
+        return 1.5
+    if SPELL_BEATS.get(ce) == me:
+        return 0.75
+    return 1.0
+
+
+def spell_make_cpu(rng):
+    return [rng.choice(options) for options in SPELL_PARTS]
+
+
+SPELL_DUEL_TEMPLATE = r"""
+  <h1>🪄 呪文くみたて読み合い</h1>
+  <p class="howto">語のパーツを3つ選んで呪文を組み立て、CPUの呪文と打ち合います。威力の合計に属性相性（火＞風＞土＞水＞火、勝ち1.5倍／負け0.75倍）がかかります。全5ラウンド、勝ち20点・引き分け10点です。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">{{ rnd }} ラウンド目 ／ 勝ち: {{ wins }} ／ 引き分け: {{ draws }} ／ ベスト: {{ best if best is not none else '—' }}</p>
+    {% if last %}
+      <div class="split">
+        <div class="panel">
+          <h3>あなた</h3>
+          <p class="mid">{{ last.mine_name }}</p>
+          <p>属性: {{ last.mine_el or 'なし' }} ／ 威力 {{ last.mine_power }} × {{ last.mine_mult }} = {{ last.mine_eff }}</p>
+        </div>
+        <div class="panel right">
+          <h3>CPU</h3>
+          <p class="mid">{{ last.cpu_name }}</p>
+          <p>属性: {{ last.cpu_el or 'なし' }} ／ 威力 {{ last.cpu_power }} × {{ last.cpu_mult }} = {{ last.cpu_eff }}</p>
+        </div>
+      </div>
+      <p class="result">{{ last.verdict }}</p>
+    {% endif %}
+    {% if over %}
+      <p class="mid">対戦終了！ {{ wins }} 勝 {{ draws }} 分け、{{ score }} 点でした。</p>
+      <form method="post" action="{{ url_for('spell_duel_reset') }}" class="row">
+        <button type="submit">もう一度挑戦</button>
+      </form>
+    {% else %}
+      <p class="mid">いまの呪文： {{ picked_labels|join(' ') if picked_labels else '（まだ選んでいません）' }}</p>
+      <h3 style="font-size:15px; margin:10px 0 6px;">{{ slot_name }}を選んでください</h3>
+      <div class="row">
+        {% for opt in options %}
+          <form method="post" action="{{ url_for('spell_duel_pick') }}">
+            <input type="hidden" name="idx" value="{{ loop.index0 }}">
+            <button type="submit">{{ opt.label }}{% if opt.element %}（{{ opt.element }}）{% endif %} 威力{{ opt.power }}</button>
+          </form>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def spell_duel_new_game():
+    session["sd_round"] = 1
+    session["sd_wins"] = 0
+    session["sd_draws"] = 0
+    session["sd_picks"] = []
+    session["sd_last"] = None
+    session["sd_over"] = False
+
+
+def render_spell_duel(message=None):
+    if "sd_round" not in session:
+        spell_duel_new_game()
+    picks = session.get("sd_picks", [])
+    slot = min(len(picks), len(SPELL_PARTS) - 1)
+    picked_parts = [SPELL_PARTS[i][picks[i]] for i in range(len(picks))]
+    score = int(session.get("sd_wins", 0)) * 20 + int(session.get("sd_draws", 0)) * 10
+    body = render_template_string(
+        SPELL_DUEL_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        rnd=int(session.get("sd_round", 1)),
+        wins=int(session.get("sd_wins", 0)),
+        draws=int(session.get("sd_draws", 0)),
+        score=score,
+        over=bool(session.get("sd_over", False)),
+        last=session.get("sd_last"),
+        picked_labels=[p["label"] for p in picked_parts],
+        slot_name=SPELL_SLOT_NAMES[slot],
+        options=SPELL_PARTS[slot],
+        best=best_score("spell-duel", "max"),
+        history=recent_scores("spell-duel", 10),
+        message=message,
+    )
+    return game_page("呪文くみたて読み合い", body)
+
+
+@app.route("/games/spell-duel", methods=["GET"])
+def spell_duel():
+    return render_spell_duel()
+
+
+@app.route("/games/spell-duel/pick", methods=["POST"])
+def spell_duel_pick():
+    if "sd_round" not in session:
+        spell_duel_new_game()
+    if session.get("sd_over"):
+        return render_spell_duel()
+    picks = list(session.get("sd_picks", []))
+    slot = len(picks)
+    if slot >= len(SPELL_PARTS):
+        return render_spell_duel()
+    try:
+        idx = int(request.form.get("idx", "-1"))
+    except ValueError:
+        idx = -1
+    if not (0 <= idx < len(SPELL_PARTS[slot])):
+        return render_spell_duel()
+    picks.append(idx)
+    session["sd_picks"] = picks
+    if len(picks) < len(SPELL_PARTS):
+        return render_spell_duel()
+    mine = [SPELL_PARTS[i][picks[i]] for i in range(len(SPELL_PARTS))]
+    cpu = spell_make_cpu(random)
+    m_mult = spell_multiplier(mine, cpu)
+    c_mult = spell_multiplier(cpu, mine)
+    m_eff = spell_total(mine) * m_mult
+    c_eff = spell_total(cpu) * c_mult
+    if m_eff > c_eff:
+        session["sd_wins"] = int(session.get("sd_wins", 0)) + 1
+        verdict = "🎉 あなたの勝ち！"
+    elif m_eff < c_eff:
+        verdict = "💦 CPUの勝ち…"
+    else:
+        session["sd_draws"] = int(session.get("sd_draws", 0)) + 1
+        verdict = "🤝 引き分け"
+    session["sd_last"] = {
+        "mine_name": "".join(p["label"] for p in mine),
+        "cpu_name": "".join(p["label"] for p in cpu),
+        "mine_el": spell_element(mine),
+        "cpu_el": spell_element(cpu),
+        "mine_power": spell_total(mine),
+        "cpu_power": spell_total(cpu),
+        "mine_mult": m_mult,
+        "cpu_mult": c_mult,
+        "mine_eff": int(m_eff) if m_eff == int(m_eff) else m_eff,
+        "cpu_eff": int(c_eff) if c_eff == int(c_eff) else c_eff,
+        "verdict": verdict,
+    }
+    session["sd_picks"] = []
+    rnd = int(session.get("sd_round", 1))
+    if rnd >= 5:
+        session["sd_over"] = True
+        record_score("spell-duel",
+                     int(session.get("sd_wins", 0)) * 20 + int(session.get("sd_draws", 0)) * 10)
+        return render_spell_duel(message="全ラウンド終了です。")
+    session["sd_round"] = rnd + 1
+    return render_spell_duel()
+
+
+@app.route("/games/spell-duel/reset", methods=["POST"])
+def spell_duel_reset():
+    spell_duel_new_game()
+    flash("最初から挑戦します。", "ok")
+    return redirect(url_for("spell_duel"))
+
+
+# ============================
+# 絵文字列あてクイズ
+# 絵文字の列が表すことわざ・短文を3択で当てる（サーバー側セッション）。
+# 全8問、正解数×10を記録する。
+# ============================
+EMOJI_QUIZ = [
+    {"emoji": "🐸 💦", "answer": "蛙の面に水",
+     "choices": ["蛙の面に水", "猿も木から落ちる", "石の上にも三年"]},
+    {"emoji": "🐒 🌲 ⬇️", "answer": "猿も木から落ちる",
+     "choices": ["木の葉隠れ", "猿も木から落ちる", "花より団子"]},
+    {"emoji": "🐕 🚶 💥", "answer": "犬も歩けば棒に当たる",
+     "choices": ["犬も歩けば棒に当たる", "猫に小判", "馬の耳に念仏"]},
+    {"emoji": "🌸 🍡", "answer": "花より団子",
+     "choices": ["花吹雪", "お花見日和", "花より団子"]},
+    {"emoji": "🐴 👂 📿", "answer": "馬の耳に念仏",
+     "choices": ["馬の耳に念仏", "馬耳東風", "人間万事塞翁が馬"]},
+    {"emoji": "🐱 🪙", "answer": "猫に小判",
+     "choices": ["猫の手も借りたい", "猫に小判", "猫をかぶる"]},
+    {"emoji": "🪨 🐦 🐦", "answer": "一石二鳥",
+     "choices": ["一石二鳥", "石橋を叩いて渡る", "焼け石に水"]},
+    {"emoji": "👹 ✨ 🪄", "answer": "鬼に金棒",
+     "choices": ["鬼の目にも涙", "鬼に金棒", "鬼が出るか蛇が出るか"]},
+]
+
+EMOJI_QUIZ_TEMPLATE = r"""
+  <h1>💬 絵文字列あてクイズ</h1>
+  <p class="howto">絵文字の列が表す、ことわざや短文を3択で当ててください。全8問、正解数 × 10 点を記録します。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">{{ idx + 1 }} 問目 ／ 正解: {{ correct }} ／ ベスト: {{ best if best is not none else '—' }}</p>
+    {% if over %}
+      <p class="mid">終了！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
+      <form method="post" action="{{ url_for('emoji_quiz_reset') }}" class="row">
+        <button type="submit">もう一度挑戦</button>
+      </form>
+    {% else %}
+      <p class="emojis">{{ q.emoji }}</p>
+      <div class="row">
+        {% for ch in choices %}
+          <form method="post" action="{{ url_for('emoji_quiz_answer') }}">
+            <input type="hidden" name="choice" value="{{ ch }}">
+            <button type="submit">{{ ch }}</button>
+          </form>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def emoji_quiz_new_game():
+    orders = []
+    for q in EMOJI_QUIZ:
+        order = list(range(len(q["choices"])))
+        random.shuffle(order)
+        orders.append(order)
+    session["eq_idx"] = 0
+    session["eq_correct"] = 0
+    session["eq_orders"] = orders
+    session["eq_over"] = False
+
+
+def render_emoji_quiz(message=None):
+    if "eq_idx" not in session:
+        emoji_quiz_new_game()
+    idx = int(session.get("eq_idx", 0))
+    q = EMOJI_QUIZ[min(idx, len(EMOJI_QUIZ) - 1)]
+    order = session.get("eq_orders", [list(range(3)) for _ in EMOJI_QUIZ])[min(idx, len(EMOJI_QUIZ) - 1)]
+    body = render_template_string(
+        EMOJI_QUIZ_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        idx=idx,
+        q=q,
+        choices=[q["choices"][i] for i in order],
+        correct=int(session.get("eq_correct", 0)),
+        over=bool(session.get("eq_over", False)),
+        best=best_score("emoji-quiz", "max"),
+        history=recent_scores("emoji-quiz", 10),
+        message=message,
+    )
+    return game_page("絵文字列あてクイズ", body)
+
+
+@app.route("/games/emoji-quiz", methods=["GET"])
+def emoji_quiz():
+    return render_emoji_quiz()
+
+
+@app.route("/games/emoji-quiz/answer", methods=["POST"])
+def emoji_quiz_answer():
+    if "eq_idx" not in session:
+        emoji_quiz_new_game()
+    if session.get("eq_over"):
+        return render_emoji_quiz()
+    idx = int(session.get("eq_idx", 0))
+    q = EMOJI_QUIZ[idx]
+    choice = (request.form.get("choice") or "").strip()
+    if choice == q["answer"]:
+        session["eq_correct"] = int(session.get("eq_correct", 0)) + 1
+        msg = f"⭕ 正解！ 「{q['answer']}」でした。"
+    else:
+        msg = f"❌ 残念。正解は「{q['answer']}」でした。"
+    if idx + 1 >= len(EMOJI_QUIZ):
+        session["eq_over"] = True
+        record_score("emoji-quiz", int(session.get("eq_correct", 0)) * 10)
+        return render_emoji_quiz(message=msg + " 全問終了です。")
+    session["eq_idx"] = idx + 1
+    return render_emoji_quiz(message=msg)
+
+
+@app.route("/games/emoji-quiz/reset", methods=["POST"])
+def emoji_quiz_reset():
+    emoji_quiz_new_game()
+    flash("最初から挑戦します。", "ok")
+    return redirect(url_for("emoji_quiz"))
+
+
+# ============================
+# 都道府県くっつけ落ちもの
+# 都道府県のブロックが落ちてきて、地図で隣り合う県同士だけが
+# くっついて消える落ちものパズル（クライアント JS）。
+# 盤面6列×9段、対象は北海道〜関東の14都道県。消した組×20点。
+# ============================
+PREF_DROP_TEMPLATE = r"""
+  <h1>🗾 都道府県くっつけ落ちもの</h1>
+  <p class="howto">都道府県のブロックが1つずつ出てきます。落とす列を押して落下。落とした県と上下左右で接した県が「地図で隣り合う県」なら、くっついて両方消えます（1組20点）。列が天井まで積み上がると終わりです。対象：北海道〜関東の14都道県。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
+    <p class="result" id="status">0 点</p>
+    <p class="mid">つぎのブロック: <span id="nextBlock" style="font-size:20px;"></span></p>
+    <div id="cols" class="row" style="margin-bottom:6px;"></div>
+    <div id="board" style="display:grid; grid-template-columns: repeat(6, 58px); gap:3px; justify-content:center;"></div>
+    <p class="result" id="message">列のボタンを押して落としてください</p>
+    <div class="row">
+      <button type="button" id="retryBtn">↩ 最初から</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var PREFS = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
+               "茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県"];
+  var ADJ = {
+    "北海道": ["青森県"],
+    "青森県": ["北海道","岩手県","秋田県"],
+    "岩手県": ["青森県","宮城県","秋田県"],
+    "宮城県": ["岩手県","秋田県","山形県","福島県"],
+    "秋田県": ["青森県","岩手県","宮城県","山形県"],
+    "山形県": ["秋田県","宮城県","福島県"],
+    "福島県": ["宮城県","山形県","茨城県","栃木県","群馬県"],
+    "茨城県": ["福島県","栃木県","埼玉県","千葉県"],
+    "栃木県": ["福島県","茨城県","群馬県","埼玉県"],
+    "群馬県": ["福島県","栃木県","埼玉県"],
+    "埼玉県": ["茨城県","栃木県","群馬県","千葉県","東京都","神奈川県"],
+    "千葉県": ["茨城県","埼玉県","東京都"],
+    "東京都": ["埼玉県","千葉県","神奈川県"],
+    "神奈川県": ["埼玉県","東京都"]
+  };
+  var COLS = 6, ROWS = 9;
+  var boardEl = document.getElementById("board");
+  var colsEl = document.getElementById("cols");
+  var status = document.getElementById("status");
+  var message = document.getElementById("message");
+  var nextEl = document.getElementById("nextBlock");
+  var grid = [], score = 0, current = null, over = false, posted = false;
+  function emptyGrid(){
+    grid = [];
+    for (var r = 0; r < ROWS; r++) { grid.push([null,null,null,null,null,null]); }
+  }
+  function spawn(){
+    current = PREFS[Math.floor(Math.random() * PREFS.length)];
+    nextEl.textContent = current;
+  }
+  function render(){
+    boardEl.innerHTML = "";
+    for (var r = 0; r < ROWS; r++) {
+      for (var c = 0; c < COLS; c++) {
+        var d = document.createElement("div");
+        var v = grid[r][c];
+        d.textContent = v ? v.replace("県","").replace("都","").replace("道","") : "";
+        d.style.cssText = "height:34px; border:1px solid #e2e2e2; border-radius:6px; text-align:center; line-height:34px; font-size:14px;" +
+          (v ? " background:#e8f4e0; font-weight:600;" : " background:#fafafa;");
+        boardEl.appendChild(d);
+      }
+    }
+    status.textContent = score + " 点";
+  }
+  function renderCols(){
+    colsEl.innerHTML = "";
+    for (var c = 0; c < COLS; c++) {
+      (function(cc){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = "▼ " + (cc + 1) + "列目";
+        b.addEventListener("click", function(){ drop(cc); });
+        colsEl.appendChild(b);
+      })(c);
+    }
+  }
+  function gravity(){
+    for (var c = 0; c < COLS; c++) {
+      var stack = [];
+      for (var r = ROWS - 1; r >= 0; r--) {
+        if (grid[r][c]) { stack.push(grid[r][c]); }
+      }
+      for (var r2 = ROWS - 1; r2 >= 0; r2--) {
+        grid[r2][c] = stack.length ? stack.shift() : null;
+      }
+    }
+  }
+  function drop(c){
+    if (over || !current) { return; }
+    var r = ROWS - 1;
+    while (r >= 0 && grid[r][c]) { r--; }
+    if (r < 0) {
+      message.textContent = "その列はいっぱいです";
+      return;
+    }
+    grid[r][c] = current;
+    var placed = current;
+    var dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+    var toClear = [];
+    dirs.forEach(function(d){
+      var nr = r + d[0], nc = c + d[1];
+      if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && grid[nr][nc]) {
+        if ((ADJ[placed] || []).indexOf(grid[nr][nc]) >= 0) {
+          toClear.push([nr, nc]);
+        }
+      }
+    });
+    if (toClear.length) {
+      toClear.forEach(function(cell){ grid[cell[0]][cell[1]] = null; });
+      grid[r][c] = null;
+      var pairs = toClear.length;
+      score += pairs * 20;
+      gravity();
+      message.textContent = "🗾 " + placed + " が隣の県とくっついて消えた！ +" + (pairs * 20) + " 点";
+    } else {
+      message.textContent = placed + " を置きました";
+    }
+    if (r === 0 && grid[0][c]) {
+      gameOver();
+    }
+    spawn();
+    render();
+  }
+  function gameOver(){
+    over = true;
+    message.textContent = "🏔️ 天井まで積み上がりました。終了！ " + score + " 点でした";
+    if (!posted) {
+      posted = true;
+      var form = new FormData();
+      form.append("score", String(score));
+      fetch("{{ url_for('pref_drop_score') }}", {method: "POST", body: form})
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d && d.ok) {
+            document.getElementById("bestline").textContent = "ベスト: " + d.best;
+          }
+        })
+        .catch(function(){});
+    }
+  }
+  document.getElementById("retryBtn").addEventListener("click", function(){
+    score = 0; over = false; posted = false;
+    emptyGrid();
+    spawn();
+    message.textContent = "最初からやり直します";
+    render();
+  });
+  emptyGrid();
+  renderCols();
+  spawn();
+  render();
+})();
+</script>
+"""
+
+
+@app.route("/games/pref-drop", methods=["GET"])
+def pref_drop():
+    body = render_template_string(
+        PREF_DROP_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("pref-drop", "max"),
+        history=recent_scores("pref-drop", 10),
+    )
+    return game_page("都道府県くっつけ落ちもの", body)
+
+
+@app.route("/games/pref-drop/score", methods=["POST"])
+def pref_drop_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 9999):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("pref-drop", int(raw))
+    return {"ok": True, "best": best_score("pref-drop", "max")}
+
+
+# ============================
+# 情報量ダービー予想
+# 実在のWikipedia記事5本から本文が一番長いものを予想する
+# （サーバー側セッション）。文字数は固定データの目安で外部接続なし。
+# 全5レース、順位で 50/30/20/10/0 点。
+# ============================
+WIKI_ARTICLES = [
+    {"title": "第二次世界大戦", "chars": 150000},
+    {"title": "日本", "chars": 120000},
+    {"title": "東京", "chars": 90000},
+    {"title": "ビートルズ", "chars": 85000},
+    {"title": "源氏物語", "chars": 80000},
+    {"title": "オリンピック", "chars": 75000},
+    {"title": "宇宙", "chars": 70000},
+    {"title": "恐竜", "chars": 60000},
+    {"title": "将棋", "chars": 55000},
+    {"title": "富士山", "chars": 45000},
+    {"title": "猫", "chars": 40000},
+    {"title": "ラーメン", "chars": 35000},
+]
+
+
+def derby_points(rank):
+    """予想した記事の実際の順位（1始まり）に対する得点。"""
+    table = {1: 50, 2: 30, 3: 20, 4: 10, 5: 0}
+    return table.get(int(rank), 0)
+
+
+def derby_ranking(field):
+    """field（タイトル列）を本文の長い順に並べたリストを返す。"""
+    chars = {a["title"]: a["chars"] for a in WIKI_ARTICLES}
+    return sorted(field, key=lambda t: -chars[t])
+
+
+WIKI_DERBY_TEMPLATE = r"""
+  <h1>🏇 情報量ダービー予想</h1>
+  <p class="howto">実在の Wikipedia 記事5本が「本文の長さ」でレースします。一番長いと思う記事に投票してください。的中順位で 50／30／20／10／0 点、全5レースの合計を記録します（文字数は目安の固定データです）。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">{{ race }} レース目 ／ 合計: {{ total }} 点 ／ ベスト: {{ best if best is not none else '—' }}</p>
+    {% if last %}
+      <div class="panel" style="margin-bottom:12px;">
+        <h3>🏁 結果発表</h3>
+        <ol style="margin:6px 0; text-align:left;">
+          {% for t in last.ranking %}
+            <li>{{ t }}{% if t == last.pick %} ← あなたの予想（+{{ last.points }} 点）{% endif %}</li>
+          {% endfor %}
+        </ol>
+      </div>
+    {% endif %}
+    {% if over %}
+      <p class="mid">全レース終了！ 合計 {{ total }} 点でした。</p>
+      <form method="post" action="{{ url_for('wiki_derby_reset') }}" class="row">
+        <button type="submit">もう一度挑戦</button>
+      </form>
+    {% else %}
+      <h3 style="font-size:15px; margin:10px 0 6px;">一番本文が長いのは？</h3>
+      <div class="row">
+        {% for t in field %}
+          <form method="post" action="{{ url_for('wiki_derby_bet') }}">
+            <input type="hidden" name="title" value="{{ t }}">
+            <button type="submit">🐴 {{ t }}</button>
+          </form>
+        {% endfor %}
+      </div>
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（合計点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def wiki_derby_new_race():
+    field = random.sample([a["title"] for a in WIKI_ARTICLES], 5)
+    session["wd_field"] = field
+
+
+def wiki_derby_new_game():
+    session["wd_race"] = 1
+    session["wd_total"] = 0
+    session["wd_last"] = None
+    session["wd_over"] = False
+    wiki_derby_new_race()
+
+
+def render_wiki_derby(message=None):
+    if "wd_race" not in session:
+        wiki_derby_new_game()
+    body = render_template_string(
+        WIKI_DERBY_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        race=int(session.get("wd_race", 1)),
+        total=int(session.get("wd_total", 0)),
+        field=session.get("wd_field", []),
+        last=session.get("wd_last"),
+        over=bool(session.get("wd_over", False)),
+        best=best_score("wiki-derby", "max"),
+        history=recent_scores("wiki-derby", 10),
+        message=message,
+    )
+    return game_page("情報量ダービー予想", body)
+
+
+@app.route("/games/wiki-derby", methods=["GET"])
+def wiki_derby():
+    return render_wiki_derby()
+
+
+@app.route("/games/wiki-derby/bet", methods=["POST"])
+def wiki_derby_bet():
+    if "wd_race" not in session:
+        wiki_derby_new_game()
+    if session.get("wd_over"):
+        return render_wiki_derby()
+    field = session.get("wd_field", [])
+    pick = (request.form.get("title") or "").strip()
+    if pick not in field:
+        return render_wiki_derby()
+    ranking = derby_ranking(field)
+    rank = ranking.index(pick) + 1
+    pts = derby_points(rank)
+    session["wd_total"] = int(session.get("wd_total", 0)) + pts
+    session["wd_last"] = {"ranking": ranking, "pick": pick, "points": pts}
+    race = int(session.get("wd_race", 1))
+    msg = f"「{pick}」は {rank} 位でした（+{pts} 点）。"
+    if race >= 5:
+        session["wd_over"] = True
+        record_score("wiki-derby", int(session.get("wd_total", 0)))
+        return render_wiki_derby(message=msg + " 全レース終了です。")
+    session["wd_race"] = race + 1
+    wiki_derby_new_race()
+    return render_wiki_derby(message=msg)
+
+
+@app.route("/games/wiki-derby/reset", methods=["POST"])
+def wiki_derby_reset():
+    wiki_derby_new_game()
+    flash("最初から挑戦します。", "ok")
+    return redirect(url_for("wiki_derby"))
+
+
+# ============================
+# トルコアイス逃がし
+# 客の手が伸びてくる前に、アイスを隣のマスへ逃がし続ける反射
+# ゲーム（クライアント JS）。逃げ切れた秒数×10を記録する。
+# ============================
+ICE_ESCAPE_TEMPLATE = r"""
+  <h1>🍦 トルコ アイス逃がし</h1>
+  <p class="howto">あなたはトルコアイスの店員。お客さんの手（✋）がアイスのマスを狙ってきます。警告が出たら、隣のマス（上下左右・斜め）を押してアイスを逃がしてください。つかまったら終わり。逃げ切れた秒数 × 10 点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
+    <p class="result" id="status">0.0 秒</p>
+    <div id="board" style="display:grid; grid-template-columns: repeat(3, 84px); gap:6px; justify-content:center;"></div>
+    <p class="result" id="message">「はじめる」を押してください</p>
+    <div class="row">
+      <button type="button" id="startBtn">▶ はじめる</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var boardEl = document.getElementById("board");
+  var status = document.getElementById("status");
+  var message = document.getElementById("message");
+  var startBtn = document.getElementById("startBtn");
+  var pos = 4, target = -1, running = false, startAt = 0, warnTimer = null, tickTimer = null, dodges = 0, posted = false;
+  var cells = [];
+  function render(){
+    for (var i = 0; i < 9; i++) {
+      var b = cells[i];
+      b.textContent = i === pos ? "🍦" : (i === target ? "✋" : "");
+      b.style.background = i === target ? "#ffd9d9" : (i === pos ? "#fff6d8" : "#f7f7f7");
+    }
+  }
+  function warnMs(){
+    return Math.max(380, 780 - dodges * 30);
+  }
+  function scheduleGrab(){
+    target = pos;
+    render();
+    message.textContent = "✋ 手が来る！ 隣のマスへ逃げて！";
+    warnTimer = setTimeout(function(){
+      if (pos === target) {
+        gameOver();
+        return;
+      }
+      dodges++;
+      target = -1;
+      render();
+      message.textContent = "💨 逃げ切った！ その調子";
+      warnTimer = setTimeout(scheduleGrab, 500 + Math.random() * 500);
+    }, warnMs());
+  }
+  function gameOver(){
+    running = false;
+    clearTimeout(warnTimer);
+    clearInterval(tickTimer);
+    var sec = (Date.now() - startAt) / 1000;
+    var score = Math.floor(sec * 10);
+    message.textContent = "✋ つかまった！ " + sec.toFixed(1) + " 秒逃げ切り、" + score + " 点でした";
+    startBtn.disabled = false;
+    if (!posted) {
+      posted = true;
+      var form = new FormData();
+      form.append("score", String(score));
+      fetch("{{ url_for('ice_escape_score') }}", {method: "POST", body: form})
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d && d.ok) {
+            document.getElementById("bestline").textContent = "ベスト: " + d.best;
+          }
+        })
+        .catch(function(){});
+    }
+    render();
+  }
+  for (var i = 0; i < 9; i++) {
+    (function(idx){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.style.cssText = "height:84px; font-size:36px; padding:0;";
+      b.addEventListener("click", function(){
+        if (!running) { return; }
+        var r = Math.floor(pos / 3), c = pos % 3;
+        var nr = Math.floor(idx / 3), nc = idx % 3;
+        if (Math.abs(nr - r) <= 1 && Math.abs(nc - c) <= 1 && idx !== pos) {
+          pos = idx;
+          render();
+        }
+      });
+      boardEl.appendChild(b);
+      cells.push(b);
+    })(i);
+  }
+  startBtn.addEventListener("click", function(){
+    if (running) { return; }
+    running = true;
+    posted = false;
+    pos = 4; target = -1; dodges = 0;
+    startAt = Date.now();
+    startBtn.disabled = true;
+    message.textContent = "お客さんが狙っています…";
+    render();
+    tickTimer = setInterval(function(){
+      status.textContent = ((Date.now() - startAt) / 1000).toFixed(1) + " 秒";
+    }, 100);
+    warnTimer = setTimeout(scheduleGrab, 900);
+  });
+  render();
+})();
+</script>
+"""
+
+
+@app.route("/games/ice-escape", methods=["GET"])
+def ice_escape():
+    body = render_template_string(
+        ICE_ESCAPE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("ice-escape", "max"),
+        history=recent_scores("ice-escape", 10),
+    )
+    return game_page("トルコアイス逃がし", body)
+
+
+@app.route("/games/ice-escape/score", methods=["POST"])
+def ice_escape_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 36000):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("ice-escape", int(raw))
+    return {"ok": True, "best": best_score("ice-escape", "max")}
+
+
+# ============================
+# 多数派ゲート生き残り
+# 群衆の流れ（複数回の割合記録）の平均を読んで、多数派のゲートを
+# 選ぶ生存ゲーム（サーバー側セッション）。全10問、ミス3回で終了。
+# 正解数×10を記録する。
+# ============================
+MAJORITY_TOPICS = [
+    ("猫派", "犬派"),
+    ("パン派", "ごはん派"),
+    ("海派", "山派"),
+    ("朝型", "夜型"),
+    ("きのこ派", "たけのこ派"),
+    ("夏派", "冬派"),
+    ("映画館派", "家で見る派"),
+    ("現金派", "キャッシュレス派"),
+    ("インドア派", "アウトドア派"),
+    ("甘党", "辛党"),
+]
+
+
+def majority_side(snapshots):
+    """snapshots（A側の割合の列）の平均が50超なら 'A'、未満なら 'B'。"""
+    avg = sum(snapshots) / len(snapshots)
+    return "A" if avg > 50 else "B"
+
+
+def majority_make_questions(rng):
+    questions = []
+    for a_name, b_name in MAJORITY_TOPICS:
+        true_pct = rng.choice([34, 38, 42, 58, 62, 66])
+        snaps = []
+        for _ in range(5):
+            v = true_pct + rng.randint(-11, 11)
+            v = max(15, min(85, v))
+            snaps.append(v)
+        if sum(snaps) / len(snaps) == 50:
+            snaps[0] += 1
+        questions.append({"a": a_name, "b": b_name, "snaps": snaps})
+    return questions
+
+
+MAJORITY_GATE_TEMPLATE = r"""
+  <h1>🚪 多数派ゲート生き残り</h1>
+  <p class="howto">お題ごとに、群衆が A／B どちらのゲートへ流れたかの記録（割合％）が5回分あります。平均して多数派だった方のゲートを選んでください。全10問、ミス3回で終了。正解数 × 10 点です。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    <p class="result">{{ idx + 1 }} 問目 ／ 正解: {{ correct }} ／ ミス: {{ miss }} / 3 ／ ベスト: {{ best if best is not none else '—' }}</p>
+    {% if over %}
+      <p class="mid">終了！ {{ correct }} 問正解、{{ correct * 10 }} 点でした。</p>
+      <form method="post" action="{{ url_for('majority_gate_reset') }}" class="row">
+        <button type="submit">もう一度挑戦</button>
+      </form>
+    {% else %}
+      <h3 style="font-size:16px; margin:0 0 8px;">お題： {{ q.a }} vs {{ q.b }}</h3>
+      <table style="margin-bottom:12px;">
+        <tr><th>記録</th><th>A： {{ q.a }}</th><th>B： {{ q.b }}</th></tr>
+        {% for s in q.snaps %}
+          <tr><td>{{ loop.index }} 回目</td><td>{{ s }}%</td><td>{{ 100 - s }}%</td></tr>
+        {% endfor %}
+      </table>
+      <div class="row">
+        <form method="post" action="{{ url_for('majority_gate_answer') }}">
+          <input type="hidden" name="side" value="A">
+          <button type="submit" style="font-size:18px;">🚪 A： {{ q.a }}</button>
+        </form>
+        <form method="post" action="{{ url_for('majority_gate_answer') }}">
+          <input type="hidden" name="side" value="B">
+          <button type="submit" style="font-size:18px;">🚪 B： {{ q.b }}</button>
+        </form>
+      </div>
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def majority_gate_new_game():
+    session["mg_questions"] = majority_make_questions(random)
+    session["mg_idx"] = 0
+    session["mg_correct"] = 0
+    session["mg_miss"] = 0
+    session["mg_over"] = False
+
+
+def render_majority_gate(message=None):
+    if "mg_questions" not in session:
+        majority_gate_new_game()
+    questions = session.get("mg_questions", [])
+    idx = int(session.get("mg_idx", 0))
+    q = questions[min(idx, len(questions) - 1)] if questions else {"a": "", "b": "", "snaps": []}
+    body = render_template_string(
+        MAJORITY_GATE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        idx=idx,
+        q=q,
+        correct=int(session.get("mg_correct", 0)),
+        miss=int(session.get("mg_miss", 0)),
+        over=bool(session.get("mg_over", False)),
+        best=best_score("majority-gate", "max"),
+        history=recent_scores("majority-gate", 10),
+        message=message,
+    )
+    return game_page("多数派ゲート生き残り", body)
+
+
+@app.route("/games/majority-gate", methods=["GET"])
+def majority_gate():
+    return render_majority_gate()
+
+
+@app.route("/games/majority-gate/answer", methods=["POST"])
+def majority_gate_answer():
+    if "mg_questions" not in session:
+        majority_gate_new_game()
+    if session.get("mg_over"):
+        return render_majority_gate()
+    questions = session.get("mg_questions", [])
+    idx = int(session.get("mg_idx", 0))
+    q = questions[idx]
+    side = (request.form.get("side") or "").strip()
+    if side not in ("A", "B"):
+        return render_majority_gate()
+    answer = majority_side(q["snaps"])
+    if side == answer:
+        session["mg_correct"] = int(session.get("mg_correct", 0)) + 1
+        msg = f"⭕ 多数派は {answer}（{q['a'] if answer == 'A' else q['b']}）でした！"
+    else:
+        session["mg_miss"] = int(session.get("mg_miss", 0)) + 1
+        msg = f"❌ 多数派は {answer}（{q['a'] if answer == 'A' else q['b']}）でした…"
+    if int(session.get("mg_miss", 0)) >= 3 or idx + 1 >= len(questions):
+        session["mg_over"] = True
+        record_score("majority-gate", int(session.get("mg_correct", 0)) * 10)
+        return render_majority_gate(message=msg + " 終了です。")
+    session["mg_idx"] = idx + 1
+    return render_majority_gate(message=msg)
+
+
+@app.route("/games/majority-gate/reset", methods=["POST"])
+def majority_gate_reset():
+    majority_gate_new_game()
+    flash("最初から挑戦します。", "ok")
+    return redirect(url_for("majority_gate"))
+
+
+# ============================
+# 3番勝負エンディング
+# 反射・連打・タイミングの短いマイクロゲーム3本勝負
+# （クライアント JS）。勝ち数でエンディング文が分岐する。
+# スコアは 勝ち×30＋各ステージの出来ボーナス（最大120）。
+# ============================
+MICRO_TRIO_TEMPLATE = r"""
+  <h1>🏆 3番勝負エンディング</h1>
+  <p class="howto">短いマイクロゲーム3番勝負！ ①反射：緑になったらすぐ押す（450ms以内で勝ち）②連打：3秒で15回押す ③タイミング：動くバーを真ん中のゾーンで止める。勝ち数でエンディングが変わります。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
+    <p class="result" id="stageLabel">第1戦：反射</p>
+    <div id="arena" style="border:1px solid #ddd; border-radius:10px; padding:18px; text-align:center; background:#fafafa;">
+      <div id="reflexBox" style="height:120px; border-radius:10px; background:#e8b4b4; font-size:22px; line-height:120px;">待って…</div>
+      <div id="mashArea" style="display:none;">
+        <p class="big" id="mashCount">0 回</p>
+        <button type="button" id="mashBtn" style="font-size:22px; padding:18px 30px;">👆 連打！</button>
+      </div>
+      <div id="timingArea" style="display:none;">
+        <div style="position:relative; height:34px; background:#eee; border-radius:8px; margin:16px 6px;">
+          <div style="position:absolute; left:45%; width:10%; top:0; bottom:0; background:#bfe8bf; border-radius:4px;"></div>
+          <div id="timingBar" style="position:absolute; top:0; bottom:0; width:8px; background:#d33; border-radius:4px; left:0%;"></div>
+        </div>
+        <button type="button" id="timingBtn" style="font-size:18px;">⏸ 止める</button>
+      </div>
+    </div>
+    <p class="result" id="message">「はじめる」を押してください</p>
+    <div class="row">
+      <button type="button" id="startBtn">▶ はじめる</button>
+      <button type="button" id="reflexBtn" style="display:none;">⚡ 押す</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var stageLabel = document.getElementById("stageLabel");
+  var message = document.getElementById("message");
+  var startBtn = document.getElementById("startBtn");
+  var reflexBox = document.getElementById("reflexBox");
+  var reflexBtn = document.getElementById("reflexBtn");
+  var mashArea = document.getElementById("mashArea");
+  var mashCount = document.getElementById("mashCount");
+  var mashBtn = document.getElementById("mashBtn");
+  var timingArea = document.getElementById("timingArea");
+  var timingBar = document.getElementById("timingBar");
+  var timingBtn = document.getElementById("timingBtn");
+  var wins = 0, bonus = 0, playing = false, posted = false;
+  var reflexState = "idle", reflexStart = 0, reflexTimer = null;
+  var mashN = 0, mashTimer = null;
+  var timingPos = 0, timingDir = 1, timingTimer = null;
+  function showOnly(which){
+    reflexBox.style.display = which === "reflex" ? "" : "none";
+    reflexBtn.style.display = which === "reflex" ? "" : "none";
+    mashArea.style.display = which === "mash" ? "" : "none";
+    timingArea.style.display = which === "timing" ? "" : "none";
+  }
+  function startReflex(){
+    stageLabel.textContent = "第1戦：反射";
+    showOnly("reflex");
+    reflexBox.style.background = "#e8b4b4";
+    reflexBox.textContent = "待って…";
+    reflexState = "wait";
+    message.textContent = "緑になったら「押す」！ 早く押しすぎると負けです";
+    reflexTimer = setTimeout(function(){
+      reflexState = "go";
+      reflexStart = Date.now();
+      reflexBox.style.background = "#9ed69e";
+      reflexBox.textContent = "今！";
+    }, 1000 + Math.random() * 2000);
+  }
+  reflexBtn.addEventListener("click", function(){
+    if (reflexState === "wait") {
+      clearTimeout(reflexTimer);
+      reflexState = "done";
+      message.textContent = "💦 フライング… 第1戦は負け";
+      setTimeout(startMash, 900);
+    } else if (reflexState === "go") {
+      reflexState = "done";
+      var ms = Date.now() - reflexStart;
+      if (ms <= 450) {
+        wins++;
+        bonus += Math.max(0, 10 - Math.floor(ms / 50));
+        message.textContent = "⚡ " + ms + "ms！ 第1戦は勝ち";
+      } else {
+        message.textContent = "🐢 " + ms + "ms… 第1戦は負け";
+      }
+      setTimeout(startMash, 900);
+    }
+  });
+  function startMash(){
+    stageLabel.textContent = "第2戦：連打";
+    showOnly("mash");
+    mashN = 0;
+    mashCount.textContent = "0 回";
+    message.textContent = "3秒間で15回押せ！";
+    mashTimer = setTimeout(function(){
+      mashBtn.disabled = true;
+      if (mashN >= 15) {
+        wins++;
+        bonus += Math.min(10, mashN - 15);
+        message.textContent = "👆 " + mashN + " 回！ 第2戦は勝ち";
+      } else {
+        message.textContent = "👆 " + mashN + " 回… 第2戦は負け";
+      }
+      setTimeout(startTiming, 900);
+    }, 3000);
+  }
+  mashBtn.addEventListener("click", function(){
+    mashN++;
+    mashCount.textContent = mashN + " 回";
+  });
+  function startTiming(){
+    stageLabel.textContent = "第3戦：タイミング";
+    showOnly("timing");
+    mashBtn.disabled = false;
+    timingPos = 0; timingDir = 1;
+    message.textContent = "バーが真ん中の緑ゾーンに入ったら「止める」！";
+    timingTimer = setInterval(function(){
+      timingPos += timingDir * 2.2;
+      if (timingPos >= 96) { timingPos = 96; timingDir = -1; }
+      if (timingPos <= 0) { timingPos = 0; timingDir = 1; }
+      timingBar.style.left = timingPos + "%";
+    }, 20);
+  }
+  timingBtn.addEventListener("click", function(){
+    if (!timingTimer) { return; }
+    clearInterval(timingTimer);
+    timingTimer = null;
+    var center = timingPos + 0.7;
+    if (center >= 45 && center <= 55) {
+      wins++;
+      bonus += Math.max(0, 10 - Math.floor(Math.abs(center - 50)));
+      message.textContent = "🎯 ゾーン内！ 第3戦は勝ち";
+    } else {
+      message.textContent = "💦 ゾーンの外でした… 第3戦は負け";
+    }
+    setTimeout(finish, 900);
+  });
+  function finish(){
+    playing = false;
+    var score = wins * 30 + bonus;
+    var ending;
+    if (wins >= 3) { ending = "🏆 完全勝利エンディング：3戦全勝、伝説の勝負師になりました。"; }
+    else if (wins === 2) { ending = "🎉 勝利エンディング：勝ち越しで勝負を制しました。"; }
+    else if (wins === 1) { ending = "🙂 惜敗エンディング：あと一歩のところで敗れました。"; }
+    else { ending = "💤 残念エンディング：全敗…次はきっと勝てます。"; }
+    stageLabel.textContent = "エンディング";
+    showOnly("none");
+    message.textContent = ending + "（" + wins + " 勝 ／ " + score + " 点）";
+    startBtn.disabled = false;
+    if (!posted) {
+      posted = true;
+      var form = new FormData();
+      form.append("score", String(score));
+      fetch("{{ url_for('micro_trio_score') }}", {method: "POST", body: form})
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d && d.ok) {
+            document.getElementById("bestline").textContent = "ベスト: " + d.best;
+          }
+        })
+        .catch(function(){});
+    }
+  }
+  startBtn.addEventListener("click", function(){
+    if (playing) { return; }
+    playing = true;
+    posted = false;
+    wins = 0; bonus = 0;
+    startBtn.disabled = true;
+    startReflex();
+  });
+  showOnly("none");
+})();
+</script>
+"""
+
+
+@app.route("/games/micro-trio", methods=["GET"])
+def micro_trio():
+    body = render_template_string(
+        MICRO_TRIO_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("micro-trio", "max"),
+        history=recent_scores("micro-trio", 10),
+    )
+    return game_page("3番勝負エンディング", body)
+
+
+@app.route("/games/micro-trio/score", methods=["POST"])
+def micro_trio_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 120):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("micro-trio", int(raw))
+    return {"ok": True, "best": best_score("micro-trio", "max")}
+
+
+# ============================
+# 時代ガチャ人生1周
+# 時代と能力をガチャで決め、確率表示つきの分かれ道を6つ選んで進む
+# 人生ゲーム（サーバー側セッション）。1周ごとに得点を記録し、
+# 2周目（平行人生）の結果と並べて比べられる。
+# ============================
+ERA_ERAS = ["昭和", "平成", "令和"]
+ERA_STATS = ["体力", "知力", "運"]
+ERA_CHOICES = [
+    {"scene": "進路の分かれ道", "options": [
+        {"label": "勉強に打ち込む", "stat": "知力", "difficulty": 4, "success": 20, "fail": 4,
+         "text_s": "努力が実り、良い進路をつかんだ。", "text_f": "思うようにいかず回り道をした。"},
+        {"label": "体を鍛える", "stat": "体力", "difficulty": 3, "success": 16, "fail": 5,
+         "text_s": "健康な体が一生の財産になった。", "text_f": "無理をして少し体を壊した。"},
+    ]},
+    {"scene": "初めての仕事", "options": [
+        {"label": "大きな仕事に手を挙げる", "stat": "運", "difficulty": 6, "success": 24, "fail": 2,
+         "text_s": "大抜てきが当たった！", "text_f": "荷が重く、苦い経験になった。"},
+        {"label": "堅実に実績を積む", "stat": "知力", "difficulty": 2, "success": 14, "fail": 6,
+         "text_s": "着実に信頼を得た。", "text_f": "地味だが経験は積めた。"},
+    ]},
+    {"scene": "趣味との出会い", "options": [
+        {"label": "大会に出てみる", "stat": "体力", "difficulty": 5, "success": 20, "fail": 3,
+         "text_s": "入賞して自信がついた。", "text_f": "結果は出なかったが楽しめた。"},
+        {"label": "仲間と楽しむ", "stat": "運", "difficulty": 2, "success": 13, "fail": 6,
+         "text_s": "一生の仲間ができた。", "text_f": "穏やかな時間が流れた。"},
+    ]},
+    {"scene": "大きな買い物", "options": [
+        {"label": "思い切って買う", "stat": "運", "difficulty": 5, "success": 18, "fail": 2,
+         "text_s": "値上がりして得をした。", "text_f": "少し後悔が残った。"},
+        {"label": "貯金を続ける", "stat": "知力", "difficulty": 1, "success": 12, "fail": 7,
+         "text_s": "備えが安心につながった。", "text_f": "堅実に過ごせた。"},
+    ]},
+    {"scene": "転機の誘い", "options": [
+        {"label": "新しい世界へ飛び込む", "stat": "運", "difficulty": 7, "success": 26, "fail": 1,
+         "text_s": "人生が大きく開けた！", "text_f": "環境に慣れるまで苦労した。"},
+        {"label": "今の場所で深める", "stat": "知力", "difficulty": 3, "success": 16, "fail": 5,
+         "text_s": "専門性が高く評価された。", "text_f": "穏やかに熟成した時間だった。"},
+    ]},
+    {"scene": "晩年の楽しみ", "options": [
+        {"label": "若い世代に教える", "stat": "知力", "difficulty": 2, "success": 15, "fail": 6,
+         "text_s": "感謝され、充実した日々に。", "text_f": "のんびりと過ごせた。"},
+        {"label": "旅に出る", "stat": "体力", "difficulty": 4, "success": 18, "fail": 4,
+         "text_s": "各地で素敵な出会いがあった。", "text_f": "近場でのんびり楽しめた。"},
+    ]},
+]
+
+
+def era_success_prob(stat_value, difficulty):
+    """成功確率（％）。能力が高いほど・難易度が低いほど高い。5〜95に丸める。"""
+    prob = 40 + int(stat_value) * 7 - int(difficulty) * 6
+    return max(5, min(95, prob))
+
+
+ERA_GACHA_TEMPLATE = r"""
+  <h1>🕰️ 時代ガチャ人生1周</h1>
+  <p class="howto">時代（昭和・平成・令和）と能力（体力・知力・運）をガチャで決め、人生の分かれ道を6つ選んで進みます。各選択には能力から計算した成功確率が表示され、成功すると得点が大きく入ります。1周終わると得点を記録。「平行人生」でもう一周すると、2つの人生を並べて比べられます。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    {% if runs %}
+      <div class="panel" style="margin-bottom:12px;">
+        <h3>📖 これまでの人生</h3>
+        <ul style="margin:6px 0; text-align:left;">
+          {% for r in runs %}
+            <li>{{ '平行人生' if loop.index > 1 else '1周目' }}： {{ r.era }}の時代 ／ {{ r.points }} 点（成功 {{ r.successes }} 回）</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+    {% if phase == 'start' %}
+      <p class="mid">ガチャを回して人生を始めよう</p>
+      <form method="post" action="{{ url_for('era_gacha_gacha') }}" class="row">
+        <button type="submit" style="font-size:18px;">🎰 ガチャを回す</button>
+      </form>
+    {% elif phase == 'choices' %}
+      <p class="result">{{ era }}の時代 ／ 体力 {{ stats['体力'] }}・知力 {{ stats['知力'] }}・運 {{ stats['運'] }} ／ いま {{ points }} 点</p>
+      <h3 style="font-size:16px; margin:0 0 8px;">{{ idx + 1 }} つ目： {{ choice.scene }}</h3>
+      <div class="row">
+        {% for opt in choice.options %}
+          <form method="post" action="{{ url_for('era_gacha_choose') }}">
+            <input type="hidden" name="opt" value="{{ loop.index0 }}">
+            <button type="submit">{{ opt.label }}<br><span class="muted">成功確率 {{ probs[loop.index0] }}%（{{ opt.stat }}勝負）</span></button>
+          </form>
+        {% endfor %}
+      </div>
+    {% elif phase == 'done' %}
+      <p class="mid">人生1周が終わりました： {{ points }} 点</p>
+      {% if runs|length >= 2 %}
+        <p class="result">2つの人生を並べてみました。どちらの人生も、それぞれの味があります。</p>
+      {% else %}
+        <form method="post" action="{{ url_for('era_gacha_gacha') }}" class="row">
+          <button type="submit">🌌 平行人生を生きる（もう一周）</button>
+        </form>
+      {% endif %}
+      <form method="post" action="{{ url_for('era_gacha_reset') }}" class="row" style="margin-top:8px;">
+        <button type="submit">↩ 記録を消して最初から</button>
+      </form>
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（人生の得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def era_gacha_new_game():
+    session["eg_phase"] = "start"
+    session["eg_runs"] = []
+    session["eg_era"] = None
+    session["eg_stats"] = None
+    session["eg_idx"] = 0
+    session["eg_points"] = 0
+    session["eg_successes"] = 0
+
+
+def render_era_gacha(message=None):
+    if "eg_phase" not in session:
+        era_gacha_new_game()
+    phase = session.get("eg_phase", "start")
+    idx = int(session.get("eg_idx", 0))
+    choice = ERA_CHOICES[min(idx, len(ERA_CHOICES) - 1)] if phase == "choices" else None
+    probs = []
+    if choice and session.get("eg_stats"):
+        stats = session["eg_stats"]
+        probs = [era_success_prob(stats[o["stat"]], o["difficulty"]) for o in choice["options"]]
+    body = render_template_string(
+        ERA_GACHA_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        phase=phase,
+        runs=session.get("eg_runs", []),
+        era=session.get("eg_era"),
+        stats=session.get("eg_stats") or {"体力": 0, "知力": 0, "運": 0},
+        idx=idx,
+        choice=choice,
+        probs=probs,
+        points=int(session.get("eg_points", 0)),
+        best=best_score("era-gacha", "max"),
+        history=recent_scores("era-gacha", 10),
+        message=message,
+    )
+    return game_page("時代ガチャ人生1周", body)
+
+
+@app.route("/games/era-gacha", methods=["GET"])
+def era_gacha():
+    return render_era_gacha()
+
+
+@app.route("/games/era-gacha/gacha", methods=["POST"])
+def era_gacha_gacha():
+    if "eg_phase" not in session:
+        era_gacha_new_game()
+    if session.get("eg_phase") == "choices":
+        return render_era_gacha()
+    if len(session.get("eg_runs", [])) >= 2:
+        return render_era_gacha()
+    session["eg_era"] = random.choice(ERA_ERAS)
+    session["eg_stats"] = {name: random.randint(1, 10) for name in ERA_STATS}
+    session["eg_idx"] = 0
+    session["eg_points"] = 0
+    session["eg_successes"] = 0
+    session["eg_phase"] = "choices"
+    era = session["eg_era"]
+    stats = session["eg_stats"]
+    return render_era_gacha(
+        message=f"🎰 {era}の時代に生まれた！ 体力{stats['体力']}・知力{stats['知力']}・運{stats['運']} で人生スタート。")
+
+
+@app.route("/games/era-gacha/choose", methods=["POST"])
+def era_gacha_choose():
+    if "eg_phase" not in session:
+        era_gacha_new_game()
+    if session.get("eg_phase") != "choices":
+        return render_era_gacha()
+    idx = int(session.get("eg_idx", 0))
+    choice = ERA_CHOICES[idx]
+    try:
+        opt_idx = int(request.form.get("opt", "-1"))
+    except ValueError:
+        opt_idx = -1
+    if not (0 <= opt_idx < len(choice["options"])):
+        return render_era_gacha()
+    opt = choice["options"][opt_idx]
+    stats = session.get("eg_stats") or {}
+    prob = era_success_prob(stats.get(opt["stat"], 5), opt["difficulty"])
+    if random.randint(1, 100) <= prob:
+        session["eg_points"] = int(session.get("eg_points", 0)) + int(opt["success"])
+        session["eg_successes"] = int(session.get("eg_successes", 0)) + 1
+        msg = f"✨ 成功！（確率{prob}%） {opt['text_s']} +{opt['success']} 点"
+    else:
+        session["eg_points"] = int(session.get("eg_points", 0)) + int(opt["fail"])
+        msg = f"💦 うまくいかず…（確率{prob}%） {opt['text_f']} +{opt['fail']} 点"
+    if idx + 1 >= len(ERA_CHOICES):
+        runs = list(session.get("eg_runs", []))
+        points = int(session.get("eg_points", 0))
+        runs.append({"era": session.get("eg_era"), "points": points,
+                     "successes": int(session.get("eg_successes", 0))})
+        session["eg_runs"] = runs
+        session["eg_phase"] = "done"
+        record_score("era-gacha", points)
+        return render_era_gacha(message=msg + " 人生1周が終わりました。")
+    session["eg_idx"] = idx + 1
+    return render_era_gacha(message=msg)
+
+
+@app.route("/games/era-gacha/reset", methods=["POST"])
+def era_gacha_reset():
+    era_gacha_new_game()
+    flash("最初から挑戦します。", "ok")
+    return redirect(url_for("era_gacha"))
+
+
+# ============================
+# 60秒放置クラフト＆転生
+# 行動を1つ選ぶと素材集めとクラフトが自動で進む60秒放置
+# （クライアント JS）。終了後にスキルを1つ引き継いで転生できる。
+# 作った品の価値の合計を記録する。
+# ============================
+IDLE_CRAFT_TEMPLATE = r"""
+  <h1>🔨 60秒放置クラフト＆転生</h1>
+  <p class="howto">行動を1つ選ぶと、60秒間、素材集めとクラフトが自動で進みます（相棒が他の素材も少し拾ってきます）。作った品の価値の合計が得点です。終わったらスキルを1つ引き継いで「転生」してもう一周できます（スキルは最大3つまで重なります）。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
+    <p class="result" id="status">行動を選んでください</p>
+    <div class="row" id="actionRow">
+      <button type="button" data-action="wood">🪓 木こり（木が主）</button>
+      <button type="button" data-action="stone">⛏️ 採掘（石が主）</button>
+      <button type="button" data-action="wheat">🌾 畑仕事（麦が主）</button>
+    </div>
+    <div class="split" style="margin-top:12px;">
+      <div class="panel">
+        <h3>🎒 素材</h3>
+        <p id="materials">木 0 ／ 石 0 ／ 麦 0</p>
+        <h3>🧰 スキル</h3>
+        <p id="skills">なし</p>
+      </div>
+      <div class="panel right">
+        <h3>🏺 作った品</h3>
+        <p id="crafted">まだ何も作っていません</p>
+        <p class="result" id="valueLine">価値合計: 0</p>
+      </div>
+    </div>
+    <p class="result" id="message"></p>
+    <div class="row" id="rebirthRow" style="display:none;">
+      <span>転生スキルを選ぶ:</span>
+      <button type="button" data-skill="wood">🪓 達人の斧（木+50%）</button>
+      <button type="button" data-skill="stone">⛏️ 丈夫なツルハシ（石+50%）</button>
+      <button type="button" data-skill="wheat">🌾 豊作の種（麦+50%）</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（価値合計）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var RECIPES = [
+    {name: "木工細工", need: {wood: 5}, value: 30},
+    {name: "石の置物", need: {stone: 5}, value: 35},
+    {name: "パン", need: {wheat: 5}, value: 25},
+    {name: "家具セット", need: {wood: 8, stone: 4}, value: 90}
+  ];
+  var LABEL = {wood: "木", stone: "石", wheat: "麦"};
+  var status = document.getElementById("status");
+  var materialsEl = document.getElementById("materials");
+  var skillsEl = document.getElementById("skills");
+  var craftedEl = document.getElementById("crafted");
+  var valueEl = document.getElementById("valueLine");
+  var message = document.getElementById("message");
+  var rebirthRow = document.getElementById("rebirthRow");
+  var mats = {wood: 0, stone: 0, wheat: 0};
+  var crafted = {}, value = 0, skills = [], running = false, remain = 60, timer = null, mainAction = null;
+  function rate(mat){
+    var base = mat === mainAction ? 1.0 : 0.3;
+    if (skills.indexOf(mat) >= 0) { base *= 1.5; }
+    return base;
+  }
+  function render(){
+    materialsEl.textContent = "木 " + Math.floor(mats.wood) + " ／ 石 " + Math.floor(mats.stone) + " ／ 麦 " + Math.floor(mats.wheat);
+    skillsEl.textContent = skills.length ? skills.map(function(s){ return LABEL[s] + "+50%"; }).join("、") : "なし";
+    var names = Object.keys(crafted);
+    craftedEl.textContent = names.length ? names.map(function(n){ return n + " ×" + crafted[n]; }).join("、") : "まだ何も作っていません";
+    valueEl.textContent = "価値合計: " + value;
+  }
+  function tryCraft(){
+    var made = true;
+    while (made) {
+      made = false;
+      for (var i = 0; i < RECIPES.length; i++) {
+        var r = RECIPES[i];
+        var ok = true;
+        for (var k in r.need) {
+          if (Math.floor(mats[k]) < r.need[k]) { ok = false; break; }
+        }
+        if (ok) {
+          for (var k2 in r.need) { mats[k2] -= r.need[k2]; }
+          crafted[r.name] = (crafted[r.name] || 0) + 1;
+          value += r.value;
+          made = true;
+        }
+      }
+    }
+  }
+  function finishRun(){
+    running = false;
+    clearInterval(timer);
+    status.textContent = "終了！ 価値合計 " + value + " 点でした";
+    message.textContent = skills.length < 3 ? "転生してスキルを引き継げます" : "スキルは最大まで引き継ぎました。「最初から」は行動の選び直しから";
+    if (skills.length < 3) { rebirthRow.style.display = ""; }
+    var form = new FormData();
+    form.append("score", String(value));
+    fetch("{{ url_for('idle_craft_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          document.getElementById("bestline").textContent = "ベスト: " + d.best;
+        }
+      })
+      .catch(function(){});
+    document.querySelectorAll("#actionRow button").forEach(function(b){ b.disabled = false; });
+  }
+  function startRun(action){
+    if (running) { return; }
+    mainAction = action;
+    mats = {wood: 0, stone: 0, wheat: 0};
+    crafted = {};
+    value = 0;
+    remain = 60;
+    running = true;
+    rebirthRow.style.display = "none";
+    message.textContent = "";
+    document.querySelectorAll("#actionRow button").forEach(function(b){ b.disabled = true; });
+    status.textContent = "残り 60 秒 ／ " + LABEL[action] + "中心に集めています";
+    timer = setInterval(function(){
+      mats.wood += rate("wood");
+      mats.stone += rate("stone");
+      mats.wheat += rate("wheat");
+      tryCraft();
+      remain--;
+      status.textContent = "残り " + remain + " 秒";
+      render();
+      if (remain <= 0) { finishRun(); }
+    }, 1000);
+    render();
+  }
+  document.querySelectorAll("#actionRow button").forEach(function(b){
+    b.addEventListener("click", function(){ startRun(b.getAttribute("data-action")); });
+  });
+  document.querySelectorAll("#rebirthRow button").forEach(function(b){
+    b.addEventListener("click", function(){
+      var s = b.getAttribute("data-skill");
+      if (skills.indexOf(s) < 0) { skills.push(s); }
+      message.textContent = "🌌 転生！ スキル「" + LABEL[s] + "+50%」を引き継ぎました。行動を選んでください";
+      rebirthRow.style.display = "none";
+      status.textContent = "行動を選んでください（転生 " + skills.length + " 回）";
+      render();
+    });
+  });
+  render();
+})();
+</script>
+"""
+
+
+@app.route("/games/idle-craft", methods=["GET"])
+def idle_craft():
+    body = render_template_string(
+        IDLE_CRAFT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("idle-craft", "max"),
+        history=recent_scores("idle-craft", 10),
+    )
+    return game_page("60秒放置クラフト＆転生", body)
+
+
+@app.route("/games/idle-craft/score", methods=["POST"])
+def idle_craft_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 99999):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("idle-craft", int(raw))
+    return {"ok": True, "best": best_score("idle-craft", "max")}
+
+
+# ============================
+# ちび怪獣タワーディフェンス
+# 1本道の進路の脇にタワーを置いて、ちび怪獣の波（1ウェーブ）を
+# 迎え撃つ2Dタワーディフェンス（クライアント JS / Canvas）。
+# 倒した数×10＋残りライフ×20（勝利時）を記録する。
+# ============================
+KAIJU_TD_TEMPLATE = r"""
+  <h1>🦖 ちび怪獣タワーディフェンス</h1>
+  <p class="howto">ちび怪獣が左から右の道を進んできます。道の脇のマスを押してタワーを置き（🔫 30G・連射／💣 60G・高火力）、「ウェーブ開始」で迎え撃ちます。所持金は倒すと増えます。ライフ5つを守り切ればクリア。倒した数 × 10 点＋クリア時は残りライフ × 20 点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
+    <p class="result" id="status">所持金 100G ／ ライフ 5 ／ 倒した数 0</p>
+    <div class="row" style="margin-bottom:8px;">
+      <button type="button" id="typeGun">🔫 連射タワー（30G）</button>
+      <button type="button" id="typeBomb">💣 重砲タワー（60G）</button>
+      <button type="button" id="startBtn">▶ ウェーブ開始</button>
+      <button type="button" id="retryBtn">↩ 最初から</button>
+    </div>
+    <canvas id="cv" width="600" height="360" style="border:1px solid #ddd; border-radius:10px; background:#f2f8ec; max-width:100%;"></canvas>
+    <p class="result" id="message">タワーを置いてからウェーブを開始してください</p>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var cv = document.getElementById("cv");
+  var ctx = cv.getContext("2d");
+  var status = document.getElementById("status");
+  var message = document.getElementById("message");
+  var CELL = 60;
+  var PATH = [];
+  (function(){
+    var r, c;
+    for (c = 0; c <= 7; c++) { PATH.push([c, 1]); }
+    for (r = 2; r <= 4; r++) { PATH.push([7, r]); }
+    for (c = 8; c <= 9; c++) { PATH.push([c, 4]); }
+  })();
+  function isPath(c, r){
+    for (var i = 0; i < PATH.length; i++) {
+      if (PATH[i][0] === c && PATH[i][1] === r) { return true; }
+    }
+    return false;
+  }
+  var TOWER_TYPES = {
+    gun: {emoji: "🔫", cost: 30, range: 1.7, dmg: 1, rate: 350},
+    bomb: {emoji: "💣", cost: 60, range: 1.9, dmg: 4, rate: 1100}
+  };
+  var gold = 100, lives = 5, kills = 0, towers = [], enemies = [], shots = [];
+  var selectedType = "gun", running = false, spawned = 0, spawnTimer = null, loopTimer = null, posted = false;
+  var WAVE = 14;
+  function draw(){
+    ctx.clearRect(0, 0, 600, 360);
+    for (var r = 0; r < 6; r++) {
+      for (var c = 0; c < 10; c++) {
+        ctx.fillStyle = isPath(c, r) ? "#e6d7b8" : "#eef7e6";
+        ctx.fillRect(c * CELL + 1, r * CELL + 1, CELL - 2, CELL - 2);
+      }
+    }
+    ctx.font = "26px serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    towers.forEach(function(t){
+      ctx.fillText(t.emoji, t.c * CELL + CELL / 2, t.r * CELL + CELL / 2);
+    });
+    enemies.forEach(function(e){
+      ctx.fillText("🦖", e.x, e.y);
+      ctx.fillStyle = "#d33";
+      ctx.fillRect(e.x - 16, e.y - 26, 32 * Math.max(0, e.hp / e.maxhp), 4);
+      ctx.fillStyle = "#222";
+    });
+    shots.forEach(function(s){
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = "#f80";
+      ctx.fill();
+      ctx.fillStyle = "#222";
+    });
+    ctx.fillText("🏠", 9 * CELL + CELL / 2, 4 * CELL + CELL / 2);
+  }
+  function updateStatus(){
+    status.textContent = "所持金 " + gold + "G ／ ライフ " + lives + " ／ 倒した数 " + kills;
+  }
+  function pathPoint(dist){
+    var seg = CELL;
+    var idx = Math.floor(dist / seg);
+    if (idx >= PATH.length - 1) { return null; }
+    var a = PATH[idx], b = PATH[idx + 1];
+    var t = (dist - idx * seg) / seg;
+    return {
+      x: (a[0] + (b[0] - a[0]) * t) * CELL + CELL / 2,
+      y: (a[1] + (b[1] - a[1]) * t) * CELL + CELL / 2
+    };
+  }
+  function spawn(){
+    if (spawned >= WAVE) {
+      clearInterval(spawnTimer);
+      return;
+    }
+    spawned++;
+    var hp = 6 + spawned;
+    enemies.push({dist: 0, hp: hp, maxhp: hp, x: -30, y: CELL * 1.5});
+  }
+  function finish(win){
+    running = false;
+    clearInterval(loopTimer);
+    clearInterval(spawnTimer);
+    var score = kills * 10 + (win ? lives * 20 : 0);
+    message.textContent = win ? "🎉 守り切った！ " + score + " 点でした" : "🏠 家まで到達された… " + score + " 点でした";
+    if (!posted) {
+      posted = true;
+      var form = new FormData();
+      form.append("score", String(score));
+      fetch("{{ url_for('kaiju_td_score') }}", {method: "POST", body: form})
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d && d.ok) {
+            document.getElementById("bestline").textContent = "ベスト: " + d.best;
+          }
+        })
+        .catch(function(){});
+    }
+    draw();
+  }
+  function tick(){
+    var speed = 26;
+    enemies.forEach(function(e){
+      e.dist += speed * 0.05;
+      var p = pathPoint(e.dist);
+      if (!p) {
+        e.escaped = true;
+      } else {
+        e.x = p.x; e.y = p.y;
+      }
+    });
+    for (var i = enemies.length - 1; i >= 0; i--) {
+      if (enemies[i].escaped) {
+        enemies.splice(i, 1);
+        lives--;
+        if (lives <= 0) { finish(false); return; }
+      }
+    }
+    var now = Date.now();
+    towers.forEach(function(t){
+      if (now - t.last < t.rate) { return; }
+      var tx = t.c * CELL + CELL / 2, ty = t.r * CELL + CELL / 2;
+      var best = null, bestDist = -1;
+      enemies.forEach(function(e){
+        var d = Math.sqrt(Math.pow(e.x - tx, 2) + Math.pow(e.y - ty, 2));
+        if (d <= t.range * CELL && e.dist > bestDist) { best = e; bestDist = e.dist; }
+      });
+      if (best) {
+        t.last = now;
+        best.hp -= t.dmg;
+        shots.push({x: best.x, y: best.y, until: now + 90});
+      }
+    });
+    shots = shots.filter(function(s){ return s.until > now; });
+    for (var j = enemies.length - 1; j >= 0; j--) {
+      if (enemies[j].hp <= 0) {
+        enemies.splice(j, 1);
+        kills++;
+        gold += 8;
+      }
+    }
+    updateStatus();
+    draw();
+    if (spawned >= WAVE && enemies.length === 0 && lives > 0) {
+      finish(true);
+    }
+  }
+  cv.addEventListener("click", function(ev){
+    if (running) { return; }
+    var rect = cv.getBoundingClientRect();
+    var c = Math.floor((ev.clientX - rect.left) * (600 / rect.width) / CELL);
+    var r = Math.floor((ev.clientY - rect.top) * (360 / rect.height) / CELL);
+    if (c < 0 || c > 9 || r < 0 || r > 5) { return; }
+    if (isPath(c, r)) { message.textContent = "道の上には置けません"; return; }
+    for (var i = 0; i < towers.length; i++) {
+      if (towers[i].c === c && towers[i].r === r) { message.textContent = "そこにはもうタワーがあります"; return; }
+    }
+    var spec = TOWER_TYPES[selectedType];
+    if (gold < spec.cost) { message.textContent = "所持金が足りません"; return; }
+    gold -= spec.cost;
+    towers.push({c: c, r: r, emoji: spec.emoji, range: spec.range, dmg: spec.dmg, rate: spec.rate, last: 0});
+    message.textContent = spec.emoji + " タワーを置きました";
+    updateStatus();
+    draw();
+  });
+  document.getElementById("typeGun").addEventListener("click", function(){
+    selectedType = "gun";
+    message.textContent = "🔫 連射タワーを選択中";
+  });
+  document.getElementById("typeBomb").addEventListener("click", function(){
+    selectedType = "bomb";
+    message.textContent = "💣 重砲タワーを選択中";
+  });
+  document.getElementById("startBtn").addEventListener("click", function(){
+    if (running) { return; }
+    if (!towers.length) { message.textContent = "先にタワーを置いてください"; return; }
+    running = true;
+    posted = false;
+    spawned = 0;
+    spawn();
+    spawnTimer = setInterval(spawn, 1200);
+    loopTimer = setInterval(tick, 50);
+    message.textContent = "🦖 ウェーブ開始！";
+  });
+  document.getElementById("retryBtn").addEventListener("click", function(){
+    running = false;
+    clearInterval(loopTimer);
+    clearInterval(spawnTimer);
+    gold = 100; lives = 5; kills = 0; towers = []; enemies = []; shots = []; spawned = 0; posted = false;
+    message.textContent = "最初からやり直します";
+    updateStatus();
+    draw();
+  });
+  updateStatus();
+  draw();
+})();
+</script>
+"""
+
+
+@app.route("/games/kaiju-td", methods=["GET"])
+def kaiju_td():
+    body = render_template_string(
+        KAIJU_TD_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("kaiju-td", "max"),
+        history=recent_scores("kaiju-td", 10),
+    )
+    return game_page("ちび怪獣タワーディフェンス", body)
+
+
+@app.route("/games/kaiju-td/score", methods=["POST"])
+def kaiju_td_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 9999):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("kaiju-td", int(raw))
+    return {"ok": True, "best": best_score("kaiju-td", "max")}
+
+
+# ============================
+# あと1分・見直し配分
+# 残り60秒で計算問題の解答列を見直し、怪しい問題を選んで直す
+# 時間配分ゲーム（サーバー側セッション）。直すと正解が壊れる
+# こともある。最終的な正答数×10を記録する。
+# ============================
+def lastminute_make_problems(rng):
+    problems = []
+    for _ in range(10):
+        a = rng.randint(3, 29)
+        b = rng.randint(2, 19)
+        op = rng.choice(["+", "-", "×"])
+        if op == "+":
+            correct = a + b
+        elif op == "-":
+            if b > a:
+                a, b = b, a
+            correct = a - b
+        else:
+            correct = a * b
+        is_correct = rng.random() < 0.6
+        if is_correct:
+            shown = correct
+        else:
+            delta = rng.choice([-3, -2, -1, 1, 2, 3, 10, -10])
+            shown = correct + delta
+            if shown == correct:
+                shown = correct + 1
+        problems.append({"q": f"{a} {op} {b}", "shown": shown,
+                         "correct": correct, "is_correct": is_correct})
+    return problems
+
+
+def lastminute_score(problems, fixed):
+    """fixed[i] が True の問題は答えを直したものとして最終正誤を数える。"""
+    total = 0
+    for i, p in enumerate(problems):
+        if fixed[i]:
+            if not p["is_correct"]:
+                total += 1
+        else:
+            if p["is_correct"]:
+                total += 1
+    return total * 10
+
+
+LAST_MINUTE_TEMPLATE = r"""
+  <h1>📝 あと1分・見直し配分</h1>
+  <p class="howto">試験終了まで残り60秒！ 計算問題10問の解答を見直して、間違っていそうな問題の「直す」を押してください。直すと、その問題の答えが本当の正解に直ります。ただし、もともと正解だった問題を直すと壊れてしまいます。時間切れか「提出する」で終了。最終的な正答数 × 10 点です。</p>
+  __FLASH__
+  <div class="card">
+    {% if message %}
+      <p class="result">{{ message }}</p>
+    {% endif %}
+    {% if over %}
+      <p class="result">結果: 正答 {{ final_count }} / 10 問 ／ {{ final_score }} 点 ／ ベスト: {{ best if best is not none else '—' }}</p>
+      <table>
+        <tr><th>問題</th><th>あなたの答え</th><th>正解</th><th>判定</th></tr>
+        {% for row in review %}
+          <tr>
+            <td>{{ row.q }}</td>
+            <td>{{ row.final_answer }}</td>
+            <td>{{ row.correct }}</td>
+            <td>{{ '⭕' if row.ok else '❌' }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+      <form method="post" action="{{ url_for('last_minute_reset') }}" class="row" style="margin-top:12px;">
+        <button type="submit">もう一度挑戦</button>
+      </form>
+    {% else %}
+      <p class="result">残り {{ remain }} 秒 ／ 直した問題: {{ fixed_count }} 件</p>
+      <table>
+        <tr><th>問題</th><th>あなたの答え</th><th>操作</th></tr>
+        {% for p in problems %}
+          <tr>
+            <td>{{ p.q }} =</td>
+            <td>{{ p.display }}</td>
+            <td>
+              <form method="post" action="{{ url_for('last_minute_fix') }}">
+                <input type="hidden" name="idx" value="{{ loop.index0 }}">
+                <button type="submit">{{ '↩ 直しを取り消す' if p.fixed else '✏️ 直す' }}</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+      <form method="post" action="{{ url_for('last_minute_submit') }}" class="row" style="margin-top:12px;">
+        <button type="submit" style="font-size:18px;">📤 提出する</button>
+      </form>
+    {% endif %}
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（得点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+"""
+
+
+def last_minute_new_game():
+    session["lm_problems"] = lastminute_make_problems(random)
+    session["lm_fixed"] = [False] * 10
+    session["lm_start"] = time.time()
+    session["lm_over"] = False
+    session["lm_recorded"] = False
+
+
+def last_minute_finalize():
+    problems = session.get("lm_problems", [])
+    fixed = session.get("lm_fixed", [False] * len(problems))
+    score = lastminute_score(problems, fixed)
+    if not session.get("lm_recorded"):
+        record_score("last-minute", score)
+        session["lm_recorded"] = True
+    session["lm_over"] = True
+    return score
+
+
+def render_last_minute(message=None):
+    if "lm_problems" not in session:
+        last_minute_new_game()
+    expired_msg = None
+    if not session.get("lm_over") and (time.time() - float(session.get("lm_start", 0))) > 60:
+        last_minute_finalize()
+        expired_msg = "⌛ 時間切れ！ 自動で提出されました。"
+    problems = session.get("lm_problems", [])
+    fixed = session.get("lm_fixed", [False] * len(problems))
+    remain = max(0, 60 - int(time.time() - float(session.get("lm_start", 0))))
+    display_problems = []
+    review = []
+    for i, p in enumerate(problems):
+        if fixed[i]:
+            final_answer = p["correct"] if not p["is_correct"] else p["correct"] + 9
+        else:
+            final_answer = p["shown"]
+        display_problems.append({"q": p["q"], "display": final_answer, "fixed": bool(fixed[i])})
+        review.append({"q": p["q"], "final_answer": final_answer,
+                       "correct": p["correct"],
+                       "ok": final_answer == p["correct"]})
+    final_score = lastminute_score(problems, fixed) if session.get("lm_over") else 0
+    body = render_template_string(
+        LAST_MINUTE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        problems=display_problems,
+        review=review,
+        remain=remain,
+        fixed_count=sum(1 for f in fixed if f),
+        over=bool(session.get("lm_over", False)),
+        final_score=final_score,
+        final_count=final_score // 10,
+        best=best_score("last-minute", "max"),
+        history=recent_scores("last-minute", 10),
+        message=message if message is not None else expired_msg,
+    )
+    return game_page("あと1分・見直し配分", body)
+
+
+@app.route("/games/last-minute", methods=["GET"])
+def last_minute():
+    return render_last_minute()
+
+
+@app.route("/games/last-minute/fix", methods=["POST"])
+def last_minute_fix():
+    if "lm_problems" not in session:
+        last_minute_new_game()
+    if session.get("lm_over"):
+        return render_last_minute()
+    if (time.time() - float(session.get("lm_start", 0))) > 60:
+        return render_last_minute()
+    try:
+        idx = int(request.form.get("idx", "-1"))
+    except ValueError:
+        idx = -1
+    fixed = list(session.get("lm_fixed", []))
+    if 0 <= idx < len(fixed):
+        fixed[idx] = not fixed[idx]
+        session["lm_fixed"] = fixed
+    return render_last_minute()
+
+
+@app.route("/games/last-minute/submit", methods=["POST"])
+def last_minute_submit():
+    if "lm_problems" not in session:
+        last_minute_new_game()
+    if not session.get("lm_over"):
+        score = last_minute_finalize()
+        return render_last_minute(message=f"📤 提出しました。{score} 点です。")
+    return render_last_minute()
+
+
+@app.route("/games/last-minute/reset", methods=["POST"])
+def last_minute_reset():
+    last_minute_new_game()
+    flash("最初から挑戦します。", "ok")
+    return redirect(url_for("last_minute"))
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
 init_db()
