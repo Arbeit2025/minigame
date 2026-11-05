@@ -8810,7 +8810,7 @@ def iceweak_score():
 # ============================
 SAISEN_TEMPLATE = r"""
   <h1>🪙 賽銭チャレンジ</h1>
-  <p class="howto">スライダーで投げる角度（15〜75度）を決めて「投げる」。45度で一番遠くへ飛ぶので、口に合わせるには45度から少し外して距離を調整するのがコツです。⛩️ 賽銭箱の口（緑の範囲）にコインが落ちたら成功。パワーは毎回少しずつ変わるので、落ちた場所を見て調整してね。10投のうち入った数を記録します。</p>
+  <p class="howto">スライダーで投げる角度（15〜75度）を決めて「投げる」。45度で一番遠くへ飛ぶので、口に合わせるには45度から少し外して距離を調整するのがコツです。⛩️ 賽銭箱の口（緑の範囲）にコインが落ちたら成功。箱の位置とパワーは投げるたびに変わるので、一投ごとに狙いを定めてね。10投のうち入った数を記録します。</p>
   __FLASH__
   <div class="card">
     <p class="result" id="bestline">ベスト（入った数）: {{ best if best is not none else '—' }}</p>
@@ -8932,6 +8932,7 @@ SAISEN_TEMPLATE = r"""
       }
       if (throws >= 10) { setTimeout(finish, 600); return; }
       throwNoEl.textContent = String(throws + 1);
+      setupBox();  // 箱の位置は投げるたびに変わる（本人の希望、2026-11-05）
       newPower();
       throwBtn.disabled = false;
     }
