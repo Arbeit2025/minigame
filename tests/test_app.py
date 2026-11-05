@@ -104,7 +104,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("100 本", body)
+        self.assertIn("101 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -415,8 +415,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("100 本", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("101 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -539,8 +539,8 @@ class FiveMoreGamesTest(MinigameTest):
         for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
                       "かわしサバイバー", "ゆき玉転がし"):
             self.assertIn(title, body)
-        self.assertIn("100 本", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("101 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
 
     # ---- hitblow ----
     def test_hitblow_page_ok(self):
@@ -677,8 +677,8 @@ class ZhGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/zhgacha", body)
         self.assertIn("中国語単語ガチャ", body)
-        self.assertIn("100 本", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("101 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
         self.assertEqual(len(self.mod.ZH_WORDS), 110)
 
     def test_zhgacha_page_ok(self):
@@ -736,8 +736,8 @@ class EnGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/engacha", body)
         self.assertIn("英単語ガチャ", body)
-        self.assertIn("100 本", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("101 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
         self.assertEqual(len(self.mod.EN_WORDS), 110)
 
     def test_en_words_data_valid(self):
@@ -889,8 +889,8 @@ class ShindanGamesTest(MinigameTest):
             self.assertIn(f"/games/{slug}", body)
         for title in ("三人娘タイプ診断", "今日のおやつ診断", "べんきょうタイプ診断"):
             self.assertIn(title, body)
-        self.assertIn("100 本", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("101 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
 
     # ---- 三人娘タイプ診断 ----
     def test_trio_page_ok(self):
@@ -1011,8 +1011,8 @@ class DotboardTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/dotboard", body)
         self.assertIn("ドット絵ボード", body)
-        self.assertIn("100 本", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("101 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
 
     def test_dotboard_page_ok(self):
         res = self.client.get("/games/dotboard")
@@ -1083,8 +1083,8 @@ class NewFiveGamesTest(MinigameTest):
         for title in ("スライドパズル", "1→25タッチ", "まるばつ対戦",
                       "しりとり対戦", "風船わり"):
             self.assertIn(title, body)
-        self.assertIn("100 本", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
+        self.assertIn("101 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
 
     # ---- slidepuzzle ----
     def test_slidepuzzle_page_ok(self):
@@ -1374,8 +1374,8 @@ class SnsNov02GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
-        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
+        self.assertIn("101 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -1735,8 +1735,8 @@ class SnsNov03GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
-        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
+        self.assertIn("101 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -2028,8 +2028,8 @@ class SnsNov04GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
-        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
+        self.assertIn("101 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -2364,8 +2364,8 @@ class SnsNov05GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 100)
-        self.assertIn("100 本", body)
+        self.assertEqual(len(self.mod.GAMES), 101)
+        self.assertIn("101 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -2600,8 +2600,8 @@ class PortalImprovementsTest(MinigameTest):
             'property="og:title"', "ジャンル一覧", "mg_settings",
         ):
             self.assertIn(marker, body)
-        self.assertEqual(body.count('class="fav-btn"'), 100)
-        self.assertEqual(body.count('class="new-badge"'), 100)
+        self.assertEqual(body.count('class="fav-btn"'), 101)
+        self.assertEqual(body.count('class="new-badge"'), 101)
         self.assertIn("⏱ 約", body)
         self.assertIn("難易度：", body)
 
@@ -2650,9 +2650,14 @@ class PortalImprovementsTest(MinigameTest):
     def test_pause_ui_only_on_js_score_games(self):
         body = self.get("/games/reaction")
         self.assertIn('id="mg-pause-btn"', body)
-        self.assertIn("__mgSetPaused", body)
+        # ゲート本体は /static/mg-head.js へ外部化され、ページからは参照だけが残る
+        self.assertIn('src="/static/mg-head.js"', body)
+        self.assertNotIn("__mgGate", body)
         body = self.get("/games/janken")
         self.assertNotIn('id="mg-pause-btn"', body)
+        # ゲートなしのページはブート専用（?boot=1）だけを読み、ゲート付きは読まない
+        self.assertIn('src="/static/mg-head.js?boot=1"', body)
+        self.assertNotIn('src="/static/mg-head.js">', body)
 
     def test_share_flag_only_on_shindan_games(self):
         self.assertIn('"share": true', self.get("/games/omikuji"))
@@ -2756,6 +2761,91 @@ class TwoPlayerTest(MinigameTest):
         self.assertIn("対戦終了", body)
         self.assertIn("プレイヤー1:", body)
         self.assertIn("プレイヤー2:", body)
+
+
+class StaticJsTest(MinigameTest):
+    """共通 JS の外部化（/static/mg-head.js・/static/mg-cfg.js）のテスト。"""
+
+    def get(self, path):
+        res = self.client.get(path)
+        self.assertEqual(res.status_code, 200, path)
+        return res
+
+    def test_mg_head_js_full_has_boot_and_gate(self):
+        res = self.get("/static/mg-head.js")
+        self.assertIn("javascript", res.content_type)
+        self.assertIn("max-age=86400", res.headers.get("Cache-Control", ""))
+        body = res.get_data(as_text=True)
+        self.assertIn("mg_settings", body)  # テーマ初期化（ブート）
+        self.assertIn("__mgGate", body)  # 一時停止ゲート
+        self.assertIn("__mgSetPaused", body)
+
+    def test_mg_head_js_boot_only_has_no_gate(self):
+        body = self.get("/static/mg-head.js?boot=1").get_data(as_text=True)
+        self.assertIn("mg_settings", body)
+        self.assertNotIn("__mgGate", body)
+
+    def test_mg_cfg_js_has_logic_without_cfg_placeholder(self):
+        res = self.get("/static/mg-cfg.js")
+        self.assertIn("javascript", res.content_type)
+        self.assertIn("max-age=86400", res.headers.get("Cache-Control", ""))
+        body = res.get_data(as_text=True)
+        self.assertIn("MGSound", body)
+        self.assertIn("mg_played", body)
+        self.assertNotIn("__MG_CFG__", body)
+
+    def test_game_pages_reference_static_js(self):
+        body = self.get("/games/paper-shoot").get_data(as_text=True)
+        self.assertIn('src="/static/mg-head.js"', body)
+        self.assertIn('src="/static/mg-cfg.js"', body)
+        self.assertIn('var CFG = {"slug": "paper-shoot"', body)
+        body = self.get("/games/quiz").get_data(as_text=True)
+        self.assertIn('src="/static/mg-head.js?boot=1"', body)
+        self.assertIn('src="/static/mg-cfg.js"', body)
+        self.assertIn('var CFG = {"slug": "quiz"', body)
+
+    def test_game_pages_shrank(self):
+        # 外部化前の実測（2026-11-05）: paper-shoot 27,747 bytes / quiz 20,024 bytes
+        body = self.get("/games/paper-shoot").get_data(as_text=True)
+        self.assertLess(len(body.encode("utf-8")), 20000)
+        body = self.get("/games/quiz").get_data(as_text=True)
+        self.assertLess(len(body.encode("utf-8")), 14000)
+
+
+class EscapeRushTest(MinigameTest):
+    """脱出ラッシュ 小部屋5連戦（2026-11-05 追加）のテスト。"""
+
+    def check_js_score_game(self, slug, title, good, bad_values):
+        res = self.client.get(f"/games/{slug}")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(title, res.get_data(as_text=True))
+        res = self.client.post(f"/games/{slug}/score", data={"score": good})
+        self.assertEqual(res.get_json(), {"ok": True, "best": int(good)})
+        for bad in bad_values:
+            res = self.client.post(f"/games/{slug}/score", data={"score": bad})
+            self.assertEqual(res.status_code, 400, (slug, bad))
+
+    def test_escape_rush_page_and_score(self):
+        # スコア検証は 0〜200（実ゲームの上限は全クリア 100＋残り90＝190）
+        self.check_js_score_game(
+            "escape-rush", "脱出ラッシュ 小部屋5連戦", "150", ("-1", "abc", "201"))
+        res = self.client.post("/games/escape-rush/score", data={"score": "190"})
+        self.assertEqual(res.get_json()["best"], 190)
+
+    def test_escape_rush_registered(self):
+        self.assertEqual(len(self.mod.GAMES), 101)
+        cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
+        self.assertEqual(cats["escape-rush"], "脱出・謎解き")
+        self.assertEqual(sum(1 for c in cats.values() if c == "脱出・謎解き"), 6)
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn("/games/escape-rush", body)
+        self.assertIn("101 本", body)
+
+    def test_escape_rush_page_parts(self):
+        body = self.client.get("/games/escape-rush").get_data(as_text=True)
+        self.assertIn("合言葉", body)
+        self.assertIn("90秒", body)
+        self.assertIn('id="mg-pause-btn"', body)  # JSスコア系なので一時停止ゲート対象
 
 
 if __name__ == "__main__":

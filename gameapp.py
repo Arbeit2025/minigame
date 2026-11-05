@@ -20,7 +20,7 @@ from zoneinfo import ZoneInfo
 from pathlib import Path
 from typing import List, Optional
 
-from flask import Flask, request, redirect, url_for, flash, render_template_string, session
+from flask import Flask, Response, request, redirect, url_for, flash, render_template_string, session
 
 APP_DB = Path("roulette.db")
 
@@ -1060,6 +1060,14 @@ GAMES = [
         "description": "残り60秒で計算問題の解答列を見直し、怪しい問題を選んで直す時間配分ゲーム。もともと正解の問題を直すと壊れてしまう。",
         "endpoint": "last_minute",
     },
+    {
+        "slug": "escape-rush",
+        "title": "脱出ラッシュ 小部屋5連戦",
+        "category": "脱出・謎解き",
+        "icon": "🚪",
+        "description": "90秒で5つの小部屋を順に抜ける脱出ゲーム。鍵さがし・暗証番号・ボタンの順番・鍵の色当て・合言葉の5連戦で、まちがえるたびに残り時間が3秒減ります。最初に見せられる合言葉を覚えておくのが脱出の鍵。",
+        "endpoint": "escape_rush",
+    },
 ]
 
 
@@ -1094,6 +1102,7 @@ GAME_META = {
     "flower-match": (3, 2), "spell-duel": (3, 2), "emoji-quiz": (3, 1), "pref-drop": (3, 2),
     "wiki-derby": (3, 1), "ice-escape": (2, 2), "majority-gate": (3, 2), "micro-trio": (2, 2),
     "era-gacha": (3, 1), "idle-craft": (2, 1), "kaiju-td": (3, 2), "last-minute": (2, 2),
+    "escape-rush": (3, 2),
 }
 
 # 遊び方（目的／操作／コツ）。各ゲームページ下部の共通セクションで表示する。
@@ -1198,9 +1207,10 @@ GAME_HOWTO = {
     "idle-craft": ("行動を選ぶと自動で素材集めとクラフトが進む60秒放置。転生でスキルを引き継げる。", "行動を1つ選んで見守る。終わったら転生も選べる。", "選んだ行動の素材が速く集まる。レシピ完成を狙って行動を選ぼう。"),
     "kaiju-td": ("1本道にタワーを置いて、ちび怪獣の波を迎え撃つタワーディフェンス。", "タワーを選んで進路脇に配置する。", "ウェーブは1つ・タワーは2種。射程と進路の重なりを最大化。"),
     "last-minute": ("残り60秒で計算の解答列を見直し、間違いを直す。ただし正解を直すと壊れる。", "怪しい問題を選んで直す（トグル）。時間内に提出する。", "検算しやすい問題から。自信のないものだけ触るのが安全。"),
+    "escape-rush": ("90秒で5つの小部屋を順に抜けて脱出する。", "各部屋の手がかりを見て、物やボタン、鍵を選ぶ。最後の扉では最初に見た合言葉を選ぶ。", "まちがえるたびに残り時間が3秒減る。合言葉は始まる前にしっかり覚えておこう。"),
 }
 
-# /score エンドポイントへ fetch でスコアを送る JS ゲーム（39本）
+# /score エンドポイントへ fetch でスコアを送る JS ゲーム（40本）
 JS_SCORE_GAMES = {
     "reaction", "stopwatch", "typing", "sort", "shoefly", "dodge", "snowball",
     "touch25", "balloonpop", "cupshuffle", "colorwall", "iceweak", "saisen",
@@ -1209,6 +1219,7 @@ JS_SCORE_GAMES = {
     "bubble-shot", "ushi-tomato", "oyatsu-kaba", "swipe-ushi", "block-survive",
     "meiga-naoshi", "fukuwarai", "paper-shoot", "ivy-climb", "flower-match",
     "pref-drop", "ice-escape", "micro-trio", "idle-craft", "kaiju-td",
+    "escape-rush",
 }
 # スコアは「小さいほど良い」JS ゲーム（ベスト＝最小）
 MIN_SCORE_GAMES = {"reaction", "stopwatch", "typing", "sort", "touch25"}
@@ -1884,7 +1895,7 @@ def roulette():
     spins = list_spins(selected_id, limit=20) if selected_table else []
 
     rendered = render_template_string(
-        TEMPLATE.replace("__MG_THEME_INIT__", _MG_THEME_INIT),
+        TEMPLATE.replace("__MG_THEME_INIT__", '  <script src="/static/mg-head.js?boot=1"></script>'),
         tables=tables,
         selected_table=selected_table,
         entries=entries,
@@ -2441,6 +2452,43 @@ _MG_COMMON_SCRIPT = r"""<script>
 """
 
 
+def _script_inner(block: str) -> str:
+    """<script>...</script> 形式の定数から JS 本体を取り出す。"""
+    s = block.strip()
+    if s.startswith("<script>"):
+        s = s[len("<script>"):]
+    if s.endswith("</script>"):
+        s = s[: -len("</script>")]
+    return s.strip("\n")
+
+
+# 共通 JS は全ページ同一なので、外部ファイルとして配信してキャッシュさせる
+# （2026-11-05 高速化：paper-shoot 等のページ重量の大半がこの共通 JS だった）。
+# 中身は従来インラインだった定数から機械的に取り出したもので、内容は変えていない。
+# mg-head.js = テーマ初期化（ブート）＋一時停止ゲート。ゲート不要のページは
+# ?boot=1 でブートだけを受ける（ゲートを持たないページにゲートを足さないため）。
+_MG_BOOT_JS = _script_inner(_MG_THEME_INIT)
+_MG_HEAD_JS = _MG_BOOT_JS + "\n" + _script_inner(_MG_GATE_SCRIPT) + "\n"
+# mg-cfg.js = 共通スクリプトのロジック部分。ページごとの `var CFG = {...};` は
+# 各ページ側に小さくインラインで残し、このファイルの直前に置く。
+_MG_CFG_JS = _script_inner(_MG_COMMON_SCRIPT).replace("  var CFG = __MG_CFG__;\n", "", 1) + "\n"
+
+
+@app.route("/static/mg-head.js")
+def mg_head_js():
+    body = _MG_BOOT_JS + "\n" if request.args.get("boot") else _MG_HEAD_JS
+    res = Response(body, mimetype="application/javascript")
+    res.headers["Cache-Control"] = "public, max-age=86400"
+    return res
+
+
+@app.route("/static/mg-cfg.js")
+def mg_cfg_js():
+    res = Response(_MG_CFG_JS, mimetype="application/javascript")
+    res.headers["Cache-Control"] = "public, max-age=86400"
+    return res
+
+
 def _mg_header_html() -> str:
     return f"""
 <div class="mg-header">
@@ -2542,9 +2590,10 @@ def game_page(title: str, body: str) -> str:
             f'  <meta property="og:description" content="{html.escape(game["description"], quote=True)}" />\n'
             '  <meta property="og:type" content="website" />\n'
         )
-    parts.append(_MG_THEME_INIT)
     if is_js:
-        parts.append(_MG_GATE_SCRIPT)
+        parts.append('  <script src="/static/mg-head.js"></script>\n')
+    else:
+        parts.append('  <script src="/static/mg-head.js?boot=1"></script>\n')
     parts.append(f"  <style>{_GAME_CSS}</style>\n</head>\n<body>\n<div class=\"wrap\">\n")
     parts.append(_mg_header_html())
     parts.append(_inject_howto(body, _mg_howto_html(game)))
@@ -2554,7 +2603,8 @@ def game_page(title: str, body: str) -> str:
     parts.append("\n</div>\n")
     if is_js:
         parts.append(_MG_PAUSE_HTML)
-    parts.append(_MG_COMMON_SCRIPT.replace("__MG_CFG__", json.dumps(cfg, ensure_ascii=False)))
+    parts.append("<script>var CFG = " + json.dumps(cfg, ensure_ascii=False) + ";</script>\n")
+    parts.append('<script src="/static/mg-cfg.js"></script>')
     parts.append("\n</body>\n</html>")
     return "".join(parts)
 
@@ -19592,6 +19642,297 @@ def last_minute_reset():
     last_minute_new_game()
     flash("最初から挑戦します。", "ok")
     return redirect(url_for("last_minute"))
+
+
+# ============================
+# 脱出ラッシュ 小部屋5連戦
+# 90秒で5つの小部屋を順に抜ける脱出ゲーム（クライアント JS）。
+# まちがえると残り時間−3秒。全5部屋クリアで 100＋残り秒数、
+# 時間切れはクリアした部屋数×20 点を POST する。
+# ============================
+ESCAPE_RUSH_TEMPLATE = r"""
+  <h1>🚪 脱出ラッシュ 小部屋5連戦</h1>
+  <p class="howto">90秒で5つの小部屋を順に抜ける脱出ゲーム。始める前に合言葉が表示されるので、しっかり覚えてからスタートしてください（最後の扉で必要になります）。鍵さがし・暗証番号・ボタンの順番・鍵の色当て・合言葉の5連戦で、まちがえるたびに残り時間が3秒減ります。全部屋クリアで 100点＋残り秒数、時間切れでもクリアした部屋×20点が記録されます。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">⏱ 残り <span id="timeLeft">90</span> 秒 ／ 部屋 <span id="roomNo">-</span> / 5</p>
+    <div id="roomBox" style="margin:10px 0;"></div>
+    <p class="result" id="message">合言葉を覚えて「スタート」</p>
+    <div class="row">
+      <button type="button" id="startBtn">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var WORDS = ["あかつき", "しらゆき", "ほたる"];
+  var OBJECTS = ["📦", "🪑", "🧺", "🪴", "📚", "🛋️"];
+  var COLORS = [
+    {name: "赤", mark: "🔴"},
+    {name: "青", mark: "🔵"},
+    {name: "黄", mark: "🟡"},
+    {name: "緑", mark: "🟢"}
+  ];
+  var KEY_RIDDLES = [
+    {hint: "夕焼けの色", color: "オレンジ", mark: "🟠"},
+    {hint: "青空の色", color: "青", mark: "🔵"},
+    {hint: "若葉の色", color: "緑", mark: "🟢"}
+  ];
+  var timeEl = document.getElementById("timeLeft");
+  var roomEl = document.getElementById("roomNo");
+  var roomBox = document.getElementById("roomBox");
+  var message = document.getElementById("message");
+  var startBtn = document.getElementById("startBtn");
+  var phase = "intro"; // intro | playing | done
+  var timeLeft = 90, timerId = null, room = 0, cleared = 0;
+  var secret = WORDS[0];
+  var keyPos = 0, codeNums = [1, 1, 1], colorOrder = [], colorProg = 0, keyHint = null;
+  function shuffle(a){
+    var arr = a.slice();
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+  function showTime(){
+    timeEl.textContent = String(Math.max(0, Math.ceil(timeLeft)));
+    timeEl.style.color = timeLeft <= 10 ? "#c0392b" : "";
+  }
+  function stopTimer(){
+    if (timerId !== null) { clearInterval(timerId); timerId = null; }
+  }
+  function finish(score, escaped){
+    phase = "done";
+    stopTimer();
+    showTime();
+    roomBox.innerHTML = '<p class="big">' + (escaped ? "🚪💨 脱出！" : "⏰ 時間切れ") + "</p>";
+    startBtn.disabled = false;
+    startBtn.textContent = "もう一度挑戦する";
+    var form = new FormData();
+    form.append("score", String(score));
+    fetch("{{ url_for('escape_rush_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d && d.ok) {
+          message.textContent = escaped
+            ? "🎉 脱出成功！ スコア " + score + " 点"
+            : "⏰ 時間切れ… " + cleared + " 部屋クリアで スコア " + score + " 点";
+          document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点";
+        }
+      })
+      .catch(function(){});
+  }
+  function penalty(text){
+    timeLeft -= 3;
+    showTime();
+    if (timeLeft <= 0) {
+      timeLeft = 0;
+      finish(cleared * 20, false);
+      return false;
+    }
+    message.textContent = text;
+    return true;
+  }
+  function nextRoom(){
+    cleared = room;
+    room++;
+    renderRoom();
+  }
+  function renderRoom(){
+    roomEl.textContent = String(room);
+    if (room === 1) renderRoom1();
+    else if (room === 2) renderRoom2();
+    else if (room === 3) renderRoom3();
+    else if (room === 4) renderRoom4();
+    else if (room === 5) renderRoom5();
+  }
+  function renderRoom1(){
+    keyPos = Math.floor(Math.random() * OBJECTS.length);
+    var h = '<p class="mid">部屋1：鍵さがし</p>'
+      + '<p>6つの物の中に鍵が1つかくれている。タップして探そう。</p><div class="row">';
+    for (var i = 0; i < OBJECTS.length; i++) {
+      h += '<button type="button" class="er-obj" data-i="' + i + '" style="font-size:34px; padding:12px 16px;">' + OBJECTS[i] + "</button>";
+    }
+    roomBox.innerHTML = h + "</div>";
+    var btns = roomBox.querySelectorAll(".er-obj");
+    btns.forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if (phase !== "playing") return;
+        var i = Number(btn.getAttribute("data-i"));
+        if (i === keyPos) {
+          message.textContent = "🗝️ 鍵を見つけた！ 次の部屋へ";
+          nextRoom();
+        } else {
+          btn.disabled = true;
+          btn.textContent = "✕";
+          penalty("鍵はなかった… −3秒");
+        }
+      });
+    });
+  }
+  function renderRoom2(){
+    codeNums = [1 + Math.floor(Math.random() * 9), 1 + Math.floor(Math.random() * 9), 1 + Math.floor(Math.random() * 9)];
+    roomBox.innerHTML = '<p class="mid">部屋2：暗証番号</p>'
+      + '<p>壁のメモ： 📚 本 ×' + codeNums[0] + "　🌱 苗 ×" + codeNums[1] + "　⭐ 星 ×" + codeNums[2] + "</p>"
+      + '<p>本・苗・星の数の順に、3桁の暗証番号を入れてください。</p>'
+      + '<div class="row"><input type="text" id="erCode" inputmode="numeric" maxlength="3" style="width:110px; text-align:center;" />'
+      + '<button type="button" id="erCodeBtn">開ける</button></div>';
+    document.getElementById("erCodeBtn").addEventListener("click", function(){
+      if (phase !== "playing") return;
+      var v = document.getElementById("erCode").value.trim();
+      if (v === "" + codeNums[0] + codeNums[1] + codeNums[2]) {
+        message.textContent = "🔓 開いた！ 次の部屋へ";
+        nextRoom();
+      } else {
+        penalty("番号がちがう… −3秒");
+      }
+    });
+  }
+  function renderRoom3(){
+    colorOrder = shuffle([0, 1, 2, 3]);
+    colorProg = 0;
+    var memo = colorOrder.map(function(i){ return COLORS[i].mark; }).join(" → ");
+    var h = '<p class="mid">部屋3：ボタンの順番</p>'
+      + "<p>メモの順番どおりにボタンを押してください： " + memo + "</p>"
+      + '<p class="muted">進み具合： <span id="erProg">0</span> / 4</p><div class="row">';
+    for (var i = 0; i < COLORS.length; i++) {
+      h += '<button type="button" class="er-color" data-i="' + i + '" style="font-size:30px; padding:12px 18px;">' + COLORS[i].mark + "</button>";
+    }
+    roomBox.innerHTML = h + "</div>";
+    roomBox.querySelectorAll(".er-color").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if (phase !== "playing") return;
+        var i = Number(btn.getAttribute("data-i"));
+        if (i === colorOrder[colorProg]) {
+          colorProg++;
+          document.getElementById("erProg").textContent = String(colorProg);
+          if (colorProg >= 4) {
+            message.textContent = "🔓 開いた！ 次の部屋へ";
+            nextRoom();
+          } else {
+            message.textContent = "いい調子！ あと " + (4 - colorProg) + " つ";
+          }
+        } else {
+          colorProg = 0;
+          document.getElementById("erProg").textContent = "0";
+          penalty("順番がちがう… 最初から −3秒");
+        }
+      });
+    });
+  }
+  function renderRoom4(){
+    keyHint = KEY_RIDDLES[Math.floor(Math.random() * KEY_RIDDLES.length)];
+    var keys = shuffle(KEY_RIDDLES);
+    var h = '<p class="mid">部屋4：正しい鍵</p>'
+      + "<p>メモ： 「鍵の色は、" + keyHint.hint + "」</p><div class=\"row\">";
+    keys.forEach(function(k){
+      h += '<button type="button" class="er-key" data-color="' + k.color + '" style="font-size:20px; padding:12px 14px;">' + k.mark + " " + k.color + "の鍵</button>";
+    });
+    roomBox.innerHTML = h + "</div>";
+    roomBox.querySelectorAll(".er-key").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if (phase !== "playing") return;
+        if (btn.getAttribute("data-color") === keyHint.color) {
+          message.textContent = "🗝️ 鍵が合った！ 最後の扉へ";
+          nextRoom();
+        } else {
+          btn.disabled = true;
+          penalty("この鍵では開かない… −3秒");
+        }
+      });
+    });
+  }
+  function renderRoom5(){
+    var words = shuffle(WORDS);
+    var h = '<p class="mid">部屋5：最後の扉</p>'
+      + "<p>合言葉を選んでください。</p><div class=\"row\">";
+    words.forEach(function(w){
+      h += '<button type="button" class="er-word" data-w="' + w + '" style="font-size:20px; padding:12px 18px;">' + w + "</button>";
+    });
+    roomBox.innerHTML = h + "</div>";
+    roomBox.querySelectorAll(".er-word").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if (phase !== "playing") return;
+        if (btn.getAttribute("data-w") === secret) {
+          finish(100 + Math.floor(timeLeft), true);
+        } else {
+          btn.disabled = true;
+          penalty("合言葉がちがう… −3秒");
+        }
+      });
+    });
+  }
+  function setupIntro(){
+    phase = "intro";
+    stopTimer();
+    secret = WORDS[Math.floor(Math.random() * WORDS.length)];
+    timeLeft = 90;
+    room = 0;
+    cleared = 0;
+    roomEl.textContent = "-";
+    showTime();
+    roomBox.innerHTML = '<p>この扉の先に進むには、合言葉が必要です。</p>'
+      + '<p class="big">合言葉は『' + secret + "』</p>"
+      + "<p>最後の扉で聞かれます。覚えたら「スタート」を押してください（スタートすると合言葉は消えます）。</p>";
+    message.textContent = "合言葉を覚えて「スタート」";
+    startBtn.disabled = false;
+    startBtn.textContent = "スタート";
+  }
+  function startGame(){
+    phase = "playing";
+    room = 1;
+    cleared = 0;
+    timeLeft = 90;
+    showTime();
+    startBtn.disabled = true;
+    message.textContent = "部屋1へ！ 急いで抜けよう";
+    timerId = setInterval(function(){
+      timeLeft -= 0.1;
+      showTime();
+      if (timeLeft <= 0) {
+        timeLeft = 0;
+        finish(cleared * 20, false);
+      }
+    }, 100);
+    renderRoom();
+  }
+  startBtn.addEventListener("click", function(){
+    if (phase === "intro") { startGame(); }
+    else if (phase === "done") { setupIntro(); }
+  });
+  setupIntro();
+})();
+</script>
+"""
+
+
+@app.route("/games/escape-rush", methods=["GET"])
+def escape_rush():
+    body = render_template_string(
+        ESCAPE_RUSH_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("escape-rush", "max"),
+        history=recent_scores("escape-rush", 10),
+    )
+    return game_page("脱出ラッシュ 小部屋5連戦", body)
+
+
+@app.route("/games/escape-rush/score", methods=["POST"])
+def escape_rush_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 200):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("escape-rush", int(raw))
+    return {"ok": True, "best": best_score("escape-rush", "max")}
+
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
 init_db()
