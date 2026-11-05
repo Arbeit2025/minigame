@@ -608,6 +608,8 @@ class FiveMoreGamesTest(MinigameTest):
         self.assertIn("つりぼり図鑑", body)
         self.assertIn('<span id="kindCount">0</span>', body)
         self.assertIn("？？？", body)
+        self.assertIn('id="fishname-0"', body)
+        self.assertIn('id="fishpoints-11"', body)
         self.assertEqual(len(self.mod.FISH_KINDS), 12)
 
     def test_fishing_cast_escape_and_catch(self):
@@ -622,6 +624,7 @@ class FiveMoreGamesTest(MinigameTest):
         self.assertTrue(data["ok"])
         self.assertTrue(data["caught"])
         self.assertIn(data["name"], [f["name"] for f in self.mod.FISH_KINDS])
+        self.assertEqual(self.mod.FISH_KINDS[data["idx"]]["name"], data["name"])
         self.assertEqual(data["kinds"], 1)
         self.assertEqual(data["total"], 12)
         rows = self.query("SELECT score FROM scores WHERE game='fishing'")

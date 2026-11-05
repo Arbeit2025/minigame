@@ -1145,7 +1145,7 @@ GAME_HOWTO = {
     "flat3d": ("平面図と立体図を切り替えながら迷路を進み、ゴールを目指す。歩数が少ないほど良い。", "移動ボタンで進み、「表示切替」で視点を変える。", "立体表示でだけ見える足場がある。詰まったら視点を変えてみる。"),
     "gomoku-tsume": ("五目並べの詰め問題で、あと1手で五つ揃うマスを当てる。", "盤面を見て、打つマスを選ぶ。", "自分のリーチだけでなく、相手の止め手にもならないか確認。連続正解を狙おう。"),
     "iceweak": ("一瞬光る氷の弱点を覚えてタップし、割った数を競う。", "弱点が光った場所を覚えてタップする。", "光る位置を指で追うのではなく、視線を盤面の中心に置くと拾いやすい。"),
-    "saisen": ("角度を決めてコインを投げ、賽銭箱の口に入れる。10投勝負。", "角度を調整して「投げる」を押す。", "口の中心を狙うより、少し手前を狙うと入りやすい。"),
+    "saisen": ("角度を決めてコインを投げ、賽銭箱の口に入れる。10投勝負。", "角度を調整して「投げる」を押す。", "45度で一番遠くへ飛ぶ。着地点を見て、45度へ近づける／離すで距離を調整すると入りやすい。"),
     "suzuatume": ("落ちてくる鈴をかごでキャッチし、30秒の得点を競う。石は避ける。", "かごを左右に動かす。", "金の鈴は高得点。石を取ると減点なので、無理に追わない。"),
     "tunnelface": ("トンネルから一瞬顔を出すキャラの場所と順番を覚えて当てる。", "顔出しをよく見て、順番どおりに答える。", "場所と順番をセットで、声に出して覚えると正確になる。"),
     "bagpack": ("形の違う道具を6×6のバッグに詰め、埋めた割合でCPUと勝負する。", "道具を選んで置く。回転ボタンで向きを変えられる。", "大きな道具から置くと隙間ができにくい。"),
@@ -5045,9 +5045,9 @@ FISHING_TEMPLATE = r"""
     <table>
       {% for f in fish_list %}
         <tr>
-          <td>{% if f.caught %}{{ f.emoji }} {{ f.name }}{% else %}❓ ？？？{% endif %}</td>
+          <td id="fishname-{{ loop.index0 }}">{% if f.caught %}{{ f.emoji }} {{ f.name }}{% else %}❓ ？？？{% endif %}</td>
           <td class="muted">{{ f.rarity }}</td>
-          <td class="muted">{% if f.caught %}{{ f.points }} 点{% endif %}</td>
+          <td class="muted" id="fishpoints-{{ loop.index0 }}">{% if f.caught %}{{ f.points }} 点{% endif %}</td>
         </tr>
       {% endfor %}
     </table>
@@ -5078,6 +5078,11 @@ FISHING_TEMPLATE = r"""
           setStage("#f3fff3", d.emoji + " " + d.name + " が釣れた！");
           message.textContent = d.name + "（" + d.rarity + "／" + d.points + " 点）" + (d.is_new ? " 図鑑に新登録！" : "") + " ／ ベスト: " + d.best + " 点";
           kindCount.textContent = String(d.kinds);
+          // 図鑑表の行もその場で更新する（以前は再読み込みするまで ❓ のままだった）
+          var nameCell = document.getElementById("fishname-" + d.idx);
+          if (nameCell) { nameCell.textContent = d.emoji + " " + d.name; }
+          var ptsCell = document.getElementById("fishpoints-" + d.idx);
+          if (ptsCell) { ptsCell.textContent = d.points + " 点"; }
         } else if (d && d.ok) {
           setStage("#eef5fa", "💨 逃げられた…");
           message.textContent = "逃げられてしまった。もう一度挑戦しよう";
@@ -5164,6 +5169,7 @@ def fishing_cast():
     return {
         "ok": True,
         "caught": True,
+        "idx": idx,
         "name": fish["name"],
         "emoji": fish["emoji"],
         "rarity": fish["rarity"],
@@ -8798,11 +8804,13 @@ def iceweak_score():
 # ============================
 # 賽銭チャレンジ
 # 角度だけを決めてコインを投げ入れる（クライアント JS）。
-# 放物線の着地点が賽銭箱の口の範囲なら成功。10投の成功数を POST する。
+# 放物線が口の高さを通過するときの x が口の範囲なら成功。10投の成功数を POST する。
+# 2026-11-05 修正：箱位置をステージ幅比にし、パワーを「45度射程＝口までの距離×1.17〜1.43」
+# に連動させ、全ての投げが到達可能になるようにした（旧版は大半が物理的に届かなかった）。
 # ============================
 SAISEN_TEMPLATE = r"""
   <h1>🪙 賽銭チャレンジ</h1>
-  <p class="howto">スライダーで投げる角度（15〜75度）を決めて「投げる」。角度が浅いと手前に落ち、深いと奥に飛びすぎます。⛩️ 賽銭箱の口（緑の範囲）にコインが落ちたら成功。パワーは毎回少しずつ変わるので、落ちた場所を見て調整してね。10投のうち入った数を記録します。</p>
+  <p class="howto">スライダーで投げる角度（15〜75度）を決めて「投げる」。45度で一番遠くへ飛ぶので、口に合わせるには45度から少し外して距離を調整するのがコツです。⛩️ 賽銭箱の口（緑の範囲）にコインが落ちたら成功。パワーは毎回少しずつ変わるので、落ちた場所を見て調整してね。10投のうち入った数を記録します。</p>
   __FLASH__
   <div class="card">
     <p class="result" id="bestline">ベスト（入った数）: {{ best if best is not none else '—' }}</p>
@@ -8844,19 +8852,26 @@ SAISEN_TEMPLATE = r"""
   var startBtn = document.getElementById("startBtn");
   var throwNoEl = document.getElementById("throwNo");
   var insEl = document.getElementById("ins");
-  var W = 660, GROUND = 26, ORIGIN_X = 34, ORIGIN_Y = 200;
-  var mouthLeft = 0, mouthRight = 0, power = 0;
+  var ORIGIN_X = 34, ORIGIN_Y = 172, MOUTH_Y = 144, BOX_TOP = 150;
+  var mouthLeft = 0, mouthRight = 0, boxLeft = 0, boxRight = 0, power = 0;
   var throwing = false, throws = 0, ins = 0, playing = false;
   function setupBox(){
-    var bx = 330 + Math.floor(Math.random() * 160);  // 330〜489
+    var W2 = stage.clientWidth || 660;
+    var bx = Math.floor(W2 * (0.52 + Math.random() * 0.20));  // ステージ幅の52〜72%（スマホでも画面内）
     box.style.left = bx + "px";
     mouth.style.left = (bx + 6) + "px";
     mouth.style.width = "52px";
     mouthLeft = bx + 6;
     mouthRight = bx + 58;
+    boxLeft = bx;
+    boxRight = bx + 64;
   }
   function newPower(){
-    power = 300 + Math.random() * 130;  // 300〜430 px 相当の飛距離レンジ
+    // 45度での射程が「口の中心までの距離」の1.17〜1.43倍になるよう毎回少し変える。
+    // どの投げでも45度から外して距離を合わせれば必ず届く（旧版は大半の投げが物理的に届かなかった）。
+    var D = (mouthLeft + mouthRight) / 2 - ORIGIN_X;
+    var k = 1.3 * (0.9 + Math.random() * 0.2);
+    power = Math.sqrt(500 * k * D);
   }
   function finish(){
     playing = false;
@@ -8897,8 +8912,29 @@ SAISEN_TEMPLATE = r"""
     var rad = deg * Math.PI / 180;
     var vx = Math.cos(rad) * power;
     var vy = Math.sin(rad) * power;
-    var g = 500, t = 0, last = null;
+    var g = 500, t = 0, last = null, judged = false;
+    coin.style.transition = "none";
+    coin.style.opacity = "1";
     coin.style.display = "block";
+    function finishThrow(kind, landed){
+      throwing = false;
+      throws++;
+      if (kind === "in") {
+        ins++;
+        insEl.textContent = String(ins);
+        message.textContent = "🎉 入った！ ご縁がありますように";
+      } else if (kind === "box") {
+        message.textContent = "箱の上に当たった… 口まであと少し";
+      } else if (landed < mouthLeft) {
+        message.textContent = "手前に落ちた… 45度に近づけると遠くへ飛ぶよ";
+      } else {
+        message.textContent = "奥に飛びすぎた… 45度から離すと短くなるよ";
+      }
+      if (throws >= 10) { setTimeout(finish, 600); return; }
+      throwNoEl.textContent = String(throws + 1);
+      newPower();
+      throwBtn.disabled = false;
+    }
     function stepFn(ts){
       if (!last) { last = ts; }
       var dt = Math.min(0.05, (ts - last) / 1000);
@@ -8907,6 +8943,23 @@ SAISEN_TEMPLATE = r"""
       var x = ORIGIN_X + vx * t;
       var y = ORIGIN_Y - (vy * t - 0.5 * g * t * t);
       coin.style.left = x + "px";
+      if (!judged && (vy - g * t) < 0 && y >= MOUTH_Y) {
+        // 落下中に口の高さを通過する時点で判定する（旧版は地面レベルで判定していた）
+        judged = true;
+        if (x >= mouthLeft && x <= mouthRight) {
+          coin.style.top = MOUTH_Y + "px";
+          coin.style.transition = "top .25s ease-in, opacity .25s";
+          coin.style.top = (BOX_TOP + 16) + "px";
+          coin.style.opacity = "0";
+          finishThrow("in", x);
+          return;
+        }
+        if (x >= boxLeft && x <= boxRight) {
+          coin.style.top = (BOX_TOP - 22) + "px";
+          finishThrow("box", x);
+          return;
+        }
+      }
       coin.style.top = y + "px";
       if (y < ORIGIN_Y) {
         requestAnimationFrame(stepFn);
@@ -8914,23 +8967,7 @@ SAISEN_TEMPLATE = r"""
       }
       // 着地
       coin.style.top = ORIGIN_Y + "px";
-      throwing = false;
-      throws++;
-      var landed = x;
-      var hit = landed >= mouthLeft && landed <= mouthRight;
-      if (hit) {
-        ins++;
-        insEl.textContent = String(ins);
-        message.textContent = "🎉 入った！ ご縁がありますように";
-      } else if (landed < mouthLeft) {
-        message.textContent = "手前に落ちた… もう少し角度を深く（大きく）";
-      } else {
-        message.textContent = "奥に飛びすぎた… 角度を浅く（小さく）";
-      }
-      if (throws >= 10) { setTimeout(finish, 600); return; }
-      throwNoEl.textContent = String(throws + 1);
-      newPower();
-      throwBtn.disabled = false;
+      finishThrow("ground", x);
     }
     requestAnimationFrame(stepFn);
   });
