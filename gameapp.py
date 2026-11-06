@@ -1350,7 +1350,35 @@ GAME_HOWTO = {
     "maou-battle": ("魔王として勇者を倒す。魔王は1ターンに2回行動できる。", "攻撃・強撃・回復・呪いから2回分選ぶ。HP半分以下で第二形態になり魔力解放が解禁。", "呪いのあとに強撃を重ねると安定。回復は3回までなので、形態変化の直前が使いどころ。"),
 }
 
-# /score エンドポイントへ fetch でスコアを送る JS ゲーム（40本）
+# プレイセット（テーマ別に数本を連続プレイする導線）
+PLAYSETS = [
+    {
+        "id": "quick",
+        "name": "サクッと3本セット",
+        "description": "1本1分前後の軽いゲームを3連続。すきま時間にどうぞ。",
+        "slugs": ["reaction", "balloonpop", "swipe-ushi"],
+    },
+    {
+        "id": "brain",
+        "name": "脳トレじっくりセット",
+        "description": "記憶・推理・観察の3本。腰を据えて頭を使いたいときに。",
+        "slugs": ["memory", "hitblow", "flag-colors"],
+    },
+    {
+        "id": "versus",
+        "name": "対戦セット",
+        "description": "CPUとの読み合い3本勝負。最後は魔王で締める構成です。",
+        "slugs": ["marubatsu", "reversi-break", "maou-battle"],
+    },
+    {
+        "id": "create",
+        "name": "創作セット",
+        "description": "描いて・並べて・作る3本。スコアより作品づくりを楽しむセット。",
+        "slugs": ["dotboard", "firework-maker", "number-montage"],
+    },
+]
+
+# /score エンドポイントへ fetch でスコアを送る JS ゲーム（55本）
 JS_SCORE_GAMES = {
     "reaction", "stopwatch", "typing", "sort", "shoefly", "dodge", "snowball",
     "touch25", "balloonpop", "cupshuffle", "colorwall", "iceweak", "saisen",
@@ -1491,6 +1519,7 @@ PORTAL_TEMPLATE = r"""
     #mgToTop { position: fixed; right: 14px; bottom: 14px; z-index: 40; border: 1px solid var(--mg-btn-border); background: var(--mg-card); color: var(--mg-fg); border-radius: 999px; padding: 10px 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.25); display: none; }
     #mgToTop.show { display: block; }
     .backup-box { border: 1px solid var(--mg-border); border-radius: 12px; padding: 14px 16px; background: var(--mg-card); }
+    .sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
   </style>
 </head>
 <body id="top">
@@ -1528,6 +1557,26 @@ PORTAL_TEMPLATE = r"""
     </div>
   </section>
 
+  <section id="mgRecentSection" hidden>
+    <h2>🕘 最近遊んだゲーム</h2>
+    <div class="controls" id="mgRecentList" style="margin:0 0 6px;"></div>
+  </section>
+
+  <section aria-label="プレイセット">
+    <h2>🎯 プレイセット（連続プレイ）</h2>
+    <p class="muted">テーマでまとめた数本を、順番に続けて遊べるセットです。ゲームページに「次のゲーム」への案内が出ます。</p>
+    <div class="sets">
+      {% for ps in playsets %}
+        <div class="card">
+          <h3>{{ ps.name }}</h3>
+          <p>{{ ps.description }}</p>
+          <p class="meta">{{ ps.members|length }} 本：{% for m in ps.members %}{{ m.title }}{% if not loop.last %} → {% endif %}{% endfor %}</p>
+          <a class="play" href="{{ ps.first_url }}">▶ セットで遊ぶ</a>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
   <p class="muted" id="mgProgress">プレイ済みを確認中…</p>
   <div class="controls">
     <a class="play" href="{{ url_for('random_game') }}">🎲 おまかせで遊ぶ</a>
@@ -1537,6 +1586,22 @@ PORTAL_TEMPLATE = r"""
         <option value="default">おすすめ順</option>
         <option value="name">名前順</option>
         <option value="new">新着順</option>
+      </select>
+    </label>
+    <label>所要時間
+      <select id="mgTimeFilter">
+        <option value="all">すべて</option>
+        <option value="short">短め（〜2分）</option>
+        <option value="mid">普通（3〜4分）</option>
+        <option value="long">長め（5分〜）</option>
+      </select>
+    </label>
+    <label>難易度
+      <select id="mgLevelFilter">
+        <option value="all">すべて</option>
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
       </select>
     </label>
     <button type="button" class="tool" id="mgFavToggle" aria-pressed="false">☆ お気に入りのみ</button>
@@ -1557,13 +1622,14 @@ PORTAL_TEMPLATE = r"""
   <p class="muted" id="filterStatus">全 {{ games|length }} 本を表示中</p>
   <div class="grid">
     {% for game in games %}
-      <div class="card" data-category="{{ game.category }}" data-slug="{{ game.slug }}" data-title="{{ game.title }}" data-idx="{{ loop.index0 }}">
+      <div class="card" data-category="{{ game.category }}" data-slug="{{ game.slug }}" data-title="{{ game.title }}" data-idx="{{ loop.index0 }}" data-minutes="{{ game.minutes }}" data-level="{{ game.level }}">
         <button type="button" class="fav-btn" data-slug="{{ game.slug }}" aria-label="{{ game.title }}をお気に入りに追加">☆</button>
         <span class="new-badge" hidden>NEW</span>
         <div class="icon">{{ game.icon }}</div>
         <h3>{{ game.title }}</h3>
         <span class="pill">{{ game.category }}</span>
         <span class="meta">⏱ 約{{ game.minutes }}分／難易度：{{ '★' * game.level }}{{ '☆' * (3 - game.level) }}</span>
+        <span class="meta my-best" hidden></span>
         <p>{{ game.description }}</p>
         <a class="play" href="{{ url_for(game.endpoint) }}">▶ 遊ぶ</a>
       </div>
@@ -1634,20 +1700,28 @@ PORTAL_TEMPLATE = r"""
     var searchInput = document.getElementById('mgSearch');
     var sortSel = document.getElementById('mgSort');
     var favToggle = document.getElementById('mgFavToggle');
+    var timeSel = document.getElementById('mgTimeFilter');
+    var levelSel = document.getElementById('mgLevelFilter');
     var moreBtn = document.getElementById('mgMore');
     var moreInfo = document.getElementById('mgMoreInfo');
     var progress = document.getElementById('mgProgress');
     var PAGE = 24, shown = PAGE, curFilter = 'all', favOnly = false;
     var favs = loadJSON('mg_favorites', []);
     var played = loadJSON('mg_played', []);
+    var lastMap = loadJSON('mg_last', {});
     function isFiltering() {
-      return curFilter !== 'all' || favOnly || searchInput.value.trim() !== '' || sortSel.value !== 'default';
+      return curFilter !== 'all' || favOnly || searchInput.value.trim() !== '' || sortSel.value !== 'default' || timeSel.value !== 'all' || levelSel.value !== 'all';
     }
     function matched() {
       var q = searchInput.value.trim();
       return cards.filter(function (card) {
         if (curFilter !== 'all' && card.getAttribute('data-category') !== curFilter) return false;
         if (favOnly && favs.indexOf(card.getAttribute('data-slug')) < 0) return false;
+        var mins = Number(card.getAttribute('data-minutes') || 3);
+        if (timeSel.value === 'short' && mins > 2) return false;
+        if (timeSel.value === 'mid' && (mins < 3 || mins > 4)) return false;
+        if (timeSel.value === 'long' && mins < 5) return false;
+        if (levelSel.value !== 'all' && Number(card.getAttribute('data-level') || 2) !== Number(levelSel.value)) return false;
         if (q && card.getAttribute('data-title').indexOf(q) < 0 && card.textContent.indexOf(q) < 0) return false;
         return true;
       });
@@ -1659,7 +1733,7 @@ PORTAL_TEMPLATE = r"""
       cards.forEach(function (card) { card.style.display = 'none'; });
       list.forEach(function (card, i) { card.style.display = i < visible ? '' : 'none'; });
       if (status) {
-        if (curFilter === 'all' && !favOnly && searchInput.value.trim() === '') {
+        if (curFilter === 'all' && !favOnly && searchInput.value.trim() === '' && timeSel.value === 'all' && levelSel.value === 'all') {
           status.textContent = '全 ' + list.length + ' 本中 ' + visible + ' 本を表示中';
         } else {
           status.textContent = '条件に合うゲーム ' + list.length + ' 本中 ' + visible + ' 本を表示中';
@@ -1688,6 +1762,12 @@ PORTAL_TEMPLATE = r"""
         if (badge) badge.hidden = isPlayed;
         var star = card.querySelector('.fav-btn');
         if (star) star.textContent = favs.indexOf(slug) >= 0 ? '★' : '☆';
+        var bestSpan = card.querySelector('.my-best');
+        if (bestSpan) {
+          var ent = lastMap[slug];
+          if (ent && typeof ent.best === 'number') { bestSpan.textContent = '🏅 自分のベスト： ' + ent.best; bestSpan.hidden = false; }
+          else bestSpan.hidden = true;
+        }
       });
       if (progress) progress.textContent = playedCount + ' / ' + cards.length + ' 本プレイ済み（未プレイは NEW バッジ付き）';
     }
@@ -1701,6 +1781,8 @@ PORTAL_TEMPLATE = r"""
     });
     searchInput.addEventListener('input', function () { shown = PAGE; applyView(); });
     sortSel.addEventListener('change', function () { applySort(); shown = PAGE; applyView(); });
+    timeSel.addEventListener('change', function () { shown = PAGE; applyView(); });
+    levelSel.addEventListener('change', function () { shown = PAGE; applyView(); });
     favToggle.addEventListener('click', function () {
       favOnly = !favOnly;
       favToggle.setAttribute('aria-pressed', favOnly ? 'true' : 'false');
@@ -1720,6 +1802,28 @@ PORTAL_TEMPLATE = r"""
     });
     refreshBadges();
     applyView();
+    /* --- 最近遊んだゲーム（クイック再開） --- */
+    var recentSection = document.getElementById('mgRecentSection');
+    var recentList = document.getElementById('mgRecentList');
+    var recentEntries = loadJSON('mg_recent', []);
+    var bySlug = {};
+    cards.forEach(function (card) { bySlug[card.getAttribute('data-slug')] = card; });
+    var recentShown = 0;
+    recentEntries.forEach(function (r) {
+      if (recentShown >= 6) return;
+      var card = r && bySlug[r.slug];
+      if (!card) return;
+      var playLink = card.querySelector('.play');
+      var iconEl = card.querySelector('.icon');
+      if (!playLink) return;
+      var a = document.createElement('a');
+      a.className = 'play';
+      a.href = playLink.getAttribute('href');
+      a.textContent = (iconEl ? iconEl.textContent : '') + ' ' + card.getAttribute('data-title');
+      recentList.appendChild(a);
+      recentShown++;
+    });
+    if (recentShown) recentSection.hidden = false;
     /* --- バックアップ --- */
     var backupStatus = document.getElementById('mgBackupStatus');
     document.getElementById('mgExport').addEventListener('click', function () {
@@ -2002,6 +2106,15 @@ def index():
         item["minutes"] = minutes
         item["level"] = level
         enriched.append(item)
+    playsets = []
+    for ps in PLAYSETS:
+        members = [m for m in (_game_by_slug(slug_) for slug_ in ps["slugs"]) if m]
+        if not members:
+            continue
+        item = dict(ps)
+        item["members"] = members
+        item["first_url"] = url_for(members[0]["endpoint"]) + "?set=" + ps["id"]
+        playsets.append(item)
     pickup = dict(_today_pickup())
     p_minutes, p_level = GAME_META.get(pickup["slug"], (3, 2))
     pickup["minutes"] = p_minutes
@@ -2011,6 +2124,7 @@ def index():
         games=enriched,
         categories=sorted(categories.items()),
         pickup=pickup,
+        playsets=playsets,
         abs_url=request.url_root,
     )
 
@@ -2308,6 +2422,9 @@ _GAME_CSS = """
     #mg-diff { position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 70; background: var(--mg-card); color: var(--mg-fg); border: 1px solid var(--mg-accent); border-radius: 999px; padding: 8px 14px; font-size: 14px; box-shadow: 0 2px 10px rgba(0,0,0,.25); max-width: 92vw; }
     #mg-diff button { padding: 2px 8px; font-size: 13px; margin-left: 6px; }
     .mg-share-btn { margin-top: 6px; }
+    .mg-share-box { border: 1px solid var(--mg-border); border-radius: 12px; padding: 12px 16px; margin: 0 0 16px; background: var(--mg-card); }
+    .mg-share-box p { margin: 0 0 8px; }
+    #mg-setbar { border: 2px solid var(--mg-accent); border-radius: 12px; padding: 12px 16px; margin: 0 0 16px; background: var(--mg-card); }
 """
 
 _FLASH_BLOCK = """
@@ -2481,6 +2598,11 @@ _MG_COMMON_SCRIPT = r"""<script>
   if (CFG.slug) {
     var played = loadJSON('mg_played', []);
     if (played.indexOf(CFG.slug) < 0) { played.push(CFG.slug); saveJSON('mg_played', played); }
+    var recent = loadJSON('mg_recent', []);
+    recent = recent.filter(function(r){ return r && r.slug !== CFG.slug; });
+    recent.unshift({ slug: CFG.slug, t: Date.now() });
+    if (recent.length > 12) recent = recent.slice(0, 12);
+    saveJSON('mg_recent', recent);
   }
   /* --- スコア差分表示（前回比・ベスト比） --- */
   var diffBox = null;
@@ -2574,6 +2696,67 @@ _MG_COMMON_SCRIPT = r"""<script>
       }
     }
   }
+/* --- 個別ページのシェア導線（リンク・紹介文のコピー） --- */
+if (CFG.slug) {
+var pageUrl = location.origin + location.pathname;
+var shareBox = document.createElement('div');
+shareBox.className = 'mg-share-box';
+var introText = '' + (CFG.desc || '') + ' ' + pageUrl;
+shareBox.innerHTML = '<p class="muted">このゲームをシェア</p>';
+var shareRow = document.createElement('div');
+shareRow.className = 'row';
+shareRow.style.justifyContent = 'flex-start';
+function copyBtn(label, text){
+var b = document.createElement('button');
+b.type = 'button';
+b.textContent = label;
+b.addEventListener('click', function(){
+function done(){ b.textContent = '✅ コピーしました'; setTimeout(function(){ b.textContent = label;}, 2000);}
+function fallback(){
+var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+try { document.execCommand('copy'); done();} catch (e) {}
+document.body.removeChild(ta);
+}
+if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback);
+else fallback();
+});
+return b;
+}
+shareRow.appendChild(copyBtn('🔗 リンクをコピー', pageUrl));
+shareRow.appendChild(copyBtn('📋 紹介文をコピー', introText));
+var xLink = document.createElement('a');
+xLink.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent('' + (CFG.desc || '')) + '&url=' + encodeURIComponent(pageUrl);
+xLink.target = '_blank';
+xLink.rel = 'noopener';
+xLink.textContent = 'Xでシェア';
+xLink.style.cssText = 'display:inline-block; padding:10px 16px; border:1px solid var(--mg-btn-border); border-radius:8px; background:var(--mg-btn-bg); color:var(--mg-fg); text-decoration:none; font-size:16px;';
+shareRow.appendChild(xLink);
+shareBox.appendChild(shareRow);
+var shareHost = document.querySelector('.card') || document.querySelector('.wrap') || document.body;
+shareHost.appendChild(shareBox);
+}
+/* --- プレイセット連続プレイ導線 --- */
+if (CFG.playset) {
+var ps = CFG.playset;
+var setBar = document.createElement('div');
+setBar.id = 'mg-setbar';
+var setHead = document.createElement('p');
+setHead.style.margin = '0 0 8px';
+setHead.textContent = '🎯 プレイセット「' + ps.name + '」 ' + (ps.idx + 1) + ' / ' + ps.total + ' 本目';
+setBar.appendChild(setHead);
+var setLink = document.createElement('a');
+setLink.href = ps.nextUrl;
+setLink.className = 'mg-next-card';
+if (ps.done) {
+setLink.innerHTML = '<span class="mg-next-icon">🎉</span><span><strong>セット制覇！</strong><br><span class="muted">トップへ戻って、ほかのゲームもどうぞ</span></span>';
+} else {
+setLink.innerHTML = '<span class="mg-next-icon">▶</span><span><strong>次のゲーム：' + ps.nextTitle + '</strong><br><span class="muted">このゲームが終わったら次へ進もう</span></span>';
+}
+setBar.appendChild(setLink);
+var mgFooter = document.querySelector('.mg-footer');
+if (mgFooter && mgFooter.parentNode) mgFooter.parentNode.insertBefore(setBar, mgFooter);
+else document.body.appendChild(setBar);
+}
   /* --- 一時停止 UI --- */
   var pauseBtn = document.getElementById('mg-pause-btn');
   if (pauseBtn && window.__mgSetPaused) {
@@ -2717,10 +2900,31 @@ def game_page(title: str, body: str) -> str:
     cfg = {
         "slug": slug,
         "title": title,
+        "desc": game["description"] if game else "",
         "jsScore": is_js,
         "minScore": slug in MIN_SCORE_GAMES,
         "share": slug in SHARE_GAMES,
     }
+    set_id = request.args.get("set", "").strip()
+    if game and set_id:
+        for ps in PLAYSETS:
+            if ps["id"] == set_id and slug in ps["slugs"]:
+                idx = ps["slugs"].index(slug)
+                info = {
+                    "id": ps["id"],
+                    "name": ps["name"],
+                    "idx": idx,
+                    "total": len(ps["slugs"]),
+                }
+                if idx + 1 < len(ps["slugs"]):
+                    nxt_game = _game_by_slug(ps["slugs"][idx + 1])
+                    info["nextTitle"] = nxt_game["title"]
+                    info["nextUrl"] = url_for(nxt_game["endpoint"]) + "?set=" + ps["id"]
+                else:
+                    info["done"] = True
+                    info["nextUrl"] = url_for("index")
+                cfg["playset"] = info
+                break
     parts = [
         "<!doctype html>\n<html lang=\"ja\">\n<head>\n",
         "  <meta charset=\"utf-8\" />\n",
