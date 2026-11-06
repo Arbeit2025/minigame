@@ -2958,5 +2958,61 @@ class SnsNov06GamesTest(MinigameTest):
         body = self.client.get("/games/maou-battle").get_data(as_text=True)
         self.assertIn("第二形態", body)
         self.assertIn('id="mg-pause-btn"', body)  # JSスコア系なので一時停止ゲート対象
+
+class ImprovementsNov06Test(MinigameTest):
+    """2026-11-06 改善案5件（最近遊んだ再開／時間・難易度フィルター／カードにベスト／プレイセット／個別ページシェア）のテスト。"""
+
+    def test_index_has_time_and_level_filters(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn('id="mgTimeFilter"', body)
+        self.assertIn('id="mgLevelFilter"', body)
+        self.assertIn('data-minutes="', body)
+        self.assertIn('data-level="', body)
+        self.assertIn('class="meta my-best"', body)
+
+    def test_index_has_recent_section(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn('id="mgRecentSection"', body)
+        self.assertIn('id="mgRecentList"', body)
+        self.assertIn("最近遊んだゲーム", body)
+
+    def test_index_has_playsets(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn("プレイセット", body)
+        for name in ("サクッと3本セット", "脳トレじっくりセット", "対戦セット", "創作セット"):
+            self.assertIn(name, body)
+        for sid in ("quick", "brain", "versus", "create"):
+            self.assertIn("?set=" + sid, body)
+
+    def test_playset_cfg_first_and_last(self):
+        body = self.client.get("/games/reaction?set=quick").get_data(as_text=True)
+        self.assertIn('"playset"', body)
+        self.assertIn('"nextTitle": "風船わり"', body)
+        self.assertIn('"idx": 0', body)
+        body = self.client.get("/games/swipe-ushi?set=quick").get_data(as_text=True)
+        self.assertIn('"done": true', body)
+        body = self.client.get("/games/reaction").get_data(as_text=True)
+        self.assertNotIn('"playset"', body)
+        body = self.client.get("/games/reaction?set=nosuch").get_data(as_text=True)
+        self.assertNotIn('"playset"', body)
+
+    def test_cfg_has_desc(self):
+        body = self.client.get("/games/reaction").get_data(as_text=True)
+        self.assertIn('"desc":', body)
+
+    def test_common_js_has_new_features(self):
+        body = self.client.get("/static/mg-cfg.js").get_data(as_text=True)
+        self.assertIn("mg_recent", body)
+        self.assertIn("mg-share-box", body)
+        self.assertIn("紹介文をコピー", body)
+        self.assertIn("mg-setbar", body)
+
+    def test_playsets_definition_valid(self):
+        self.assertEqual(len(self.mod.PLAYSETS), 4)
+        slugs = {g["slug"] for g in self.mod.GAMES}
+        for ps in self.mod.PLAYSETS:
+            self.assertEqual(len(ps["slugs"]), 3, ps["id"])
+            for slug in ps["slugs"]:
+                self.assertIn(slug, slugs)
 if __name__ == "__main__":
     unittest.main()
