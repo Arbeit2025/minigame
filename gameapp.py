@@ -1188,6 +1188,126 @@ GAMES = [
         "description": "魔王の側で戦うターン制バトル。魔王は1ターンに2回行動でき、HPが半分以下になると第二形態になって魔力解放が解禁されます。",
         "endpoint": "maou_battle",
     },
+    {
+        "slug": "jelly-haul",
+        "title": "ぷるぷるジェリー運び",
+        "category": "アクション",
+        "icon": "🍮",
+        "description": "ぷるぷる揺れるジェリーを落とさずゴールまで運ぶバランス運搬。星を拾いながら、揺れが限界を超えないように進みます。",
+        "endpoint": "jelly_haul",
+    },
+    {
+        "slug": "glass-stack",
+        "title": "ガラス板つみつみ",
+        "category": "アクション",
+        "icon": "🪟",
+        "description": "左右に動くガラス板をタイミングよく落として積み上げるワンタップ積み上げ。はみ出した分は切り落とされます。",
+        "endpoint": "glass_stack",
+    },
+    {
+        "slug": "reverse-number",
+        "title": "逆さ数字おぼえ",
+        "category": "脳トレ",
+        "icon": "🔢",
+        "description": "表示された数字を逆順で思い出す記憶ゲーム。桁数がだんだん増えていきます。",
+        "endpoint": "reverse_number",
+    },
+    {
+        "slug": "harp-pitch",
+        "title": "自己申告ハープ音当て",
+        "category": "脳トレ",
+        "icon": "🎵",
+        "description": "ハープの音を聴いて、ドレミのどれかを当てる音感ゲーム。全10問。",
+        "endpoint": "harp_pitch",
+    },
+    {
+        "slug": "mochi-pound",
+        "title": "もちつきタイミング",
+        "category": "アクション",
+        "icon": "🍘",
+        "description": "合いの手の動きに合わせて、真ん中で杵を下ろすタイミングゲーム。30秒で何個つけるか。",
+        "endpoint": "mochi_pound",
+    },
+    {
+        "slug": "dot-room",
+        "title": "ドット家具コーデ置き",
+        "category": "創作",
+        "icon": "🛋️",
+        "description": "ドット絵の家具を選んで部屋に配置するコーデゲーム。種類と数がスコアになります。",
+        "endpoint": "dot_room",
+    },
+    {
+        "slug": "witch-pot",
+        "title": "魔女の大鍋まぜまぜ",
+        "category": "創作",
+        "icon": "🧙",
+        "description": "材料を最大6個入れて大鍋をかき混ぜ、色と泡立ちで決まる薬を作る調合ゲーム。",
+        "endpoint": "witch_pot",
+    },
+    {
+        "slug": "meat-cut",
+        "title": "ニクキリグラム当て",
+        "category": "アクション",
+        "icon": "🥩",
+        "description": "注文されたグラム数ちょうどに肉を1回で切り分ける目分量ゲーム。全3回。",
+        "endpoint": "meat_cut",
+    },
+    {
+        "slug": "seat-recline",
+        "title": "座席ギリギリ倒し",
+        "category": "アクション",
+        "icon": "💺",
+        "description": "後ろの人にぶつからないギリギリまで座席を倒すチキンレース。長押しで倒して、離して止めます。全3回。",
+        "endpoint": "seat_recline",
+    },
+    {
+        "slug": "otsuri-min",
+        "title": "お釣りミニマム支払い",
+        "category": "脳トレ",
+        "icon": "🪙",
+        "description": "お釣りの枚数が最小になる払い方を選ぶレジ計算ゲーム。全5問。",
+        "endpoint": "otsuri_min",
+    },
+    {
+        "slug": "bunny-ride",
+        "title": "うさぎライド壁こわし救出",
+        "category": "アクション",
+        "icon": "🐰",
+        "description": "相棒うさぎに乗って走り、壁はダッシュで壊し、穴はジャンプで越えて、捕まった仲間を助けるランゲーム。",
+        "endpoint": "bunny_ride",
+    },
+    {
+        "slug": "caravan-shot",
+        "title": "2分キャラバン溜め撃ち",
+        "category": "アクション",
+        "icon": "🚀",
+        "description": "60秒のスコアアタックシューティング。当たり判定は的の中心の点だけ。長押しの溜め撃ちは範囲が広がります。",
+        "endpoint": "caravan_shot",
+    },
+    {
+        "slug": "ihen-report",
+        "title": "異変ことば報告",
+        "category": "脱出・謎解き",
+        "icon": "🏯",
+        "description": "ループする城の一室で起きた異変を、言葉で正確に報告する間違い探し。全10回。",
+        "endpoint": "ihen_report",
+    },
+    {
+        "slug": "cube-escape",
+        "title": "六面体まわし脱出",
+        "category": "脱出・謎解き",
+        "icon": "🎲",
+        "description": "六面体の各面を回して道をつなぎ、入口から出口まで道を通す脱出パズル。",
+        "endpoint": "cube_escape",
+    },
+    {
+        "slug": "tarot-three",
+        "title": "3枚タロット読み",
+        "category": "抽選・占い",
+        "icon": "🔮",
+        "description": "大アルカナ22枚から過去・現在・未来の3枚を引くタロット占い。正位置と逆位置で意味が変わります。",
+        "endpoint": "tarot_three",
+    },
 ]
 
 
@@ -1228,6 +1348,11 @@ GAME_META = {
     "color-stop": (2, 2), "flag-colors": (3, 3), "stroke-hammer": (2, 2),
     "border-draw": (3, 3), "king-orders": (5, 3), "reversi-break": (5, 3),
     "firework-maker": (3, 1), "camera-judge": (3, 2), "maou-battle": (3, 2),
+    "jelly-haul": (3, 2), "glass-stack": (2, 2), "reverse-number": (3, 2),
+    "harp-pitch": (3, 2), "mochi-pound": (1, 1), "dot-room": (3, 1),
+    "witch-pot": (3, 1), "meat-cut": (2, 2), "seat-recline": (2, 2),
+    "otsuri-min": (3, 3), "bunny-ride": (3, 2), "caravan-shot": (2, 2),
+    "ihen-report": (3, 2), "cube-escape": (5, 3), "tarot-three": (1, 1),
 }
 
 # 遊び方（目的／操作／コツ）。各ゲームページ下部の共通セクションで表示する。
@@ -1348,6 +1473,21 @@ GAME_HOWTO = {
     "firework-maker": ("花火玉に星を並べて打ち上げ、職人スコアを上げる。", "色を選んでマスをクリックすると星の種類が切り替わる。並べたら「打ち上げ」。", "左右対称に置くと高得点。種類と色の種類の多さも加点される。"),
     "camera-judge": ("監視映像に異常があるかどうかを判定し続ける。", "映像を見て「異常あり」「正常」のボタンを5秒以内に押す。全10回。", "物の顔ぶれを先に覚えておくと、変わった1つに気づきやすい。消えているパターンもある。"),
     "maou-battle": ("魔王として勇者を倒す。魔王は1ターンに2回行動できる。", "攻撃・強撃・回復・呪いから2回分選ぶ。HP半分以下で第二形態になり魔力解放が解禁。", "呪いのあとに強撃を重ねると安定。回復は3回までなので、形態変化の直前が使いどころ。"),
+    "jelly-haul": ("ぷるぷる揺れるジェリーを落とさずゴールまで運ぶ。", "▶で少しずつ進む。動くたびに揺れが増え、静止すると収まる。揺れが限界で落下。", "星は各15点。焦って連打せず、揺れを見ながら小刻みに進むと安定する。"),
+    "glass-stack": ("ガラス板を積み上げて高くする。", "動く板をクリック／タップで落とす。はみ出しは切り落とされ、全部外すと終了。", "10枚積むと100点。板が端に来る直前より、中央を過ぎた戻り際が狙いやすい。"),
+    "reverse-number": ("表示された数字を逆順で入力する。", "数字が2秒表示されたら、逆順に入力して回答。全5ラウンド。", "2〜3桁ずつ区切って覚えると逆順にしやすい。桁数が長いほど高得点。"),
+    "harp-pitch": ("鳴った音がドレミのどれかを当てる。", "音を聴いて音名ボタンを押す。「もう一度」で聞き直せる。全10問。", "最初の音を基準に、高い・低いの距離で絞ると当たりやすい。"),
+    "mochi-pound": ("合いの手に合わせて餅をつく。", "動くマーカーが真ん中の枠に入った瞬間に「つく」。30秒間。", "ど真ん中は8点、枠内は5点。リズムに乗ると連続で決まりやすい。"),
+    "dot-room": ("ドット家具を置いて部屋をコーディネートする。", "家具を選んでマスをクリックすると置ける。「完成」でスコア送信。", "種類の多さが大きく効く。まず全種類を1つずつ置くのが近道。"),
+    "witch-pot": ("材料と混ぜ具合で決まる薬を作る。", "材料を最大6個選んで「煮込む」、10秒間クリックでかき混ぜる。", "材料の種類が多いほど基礎点が上がる。混ぜ具合で泡立ちランクが変わる。"),
+    "meat-cut": ("注文グラムちょうどに肉を切り分ける。", "肉のバーをクリックした位置で切る。全3回、誤差が小さいほど高得点。", "500g全体の割合で考える。端数が出る注文ほど、目盛りの置き換えが大事。"),
+    "seat-recline": ("座席を限界ギリギリまで倒す。", "長押しで倒れ、離すと止まる。限界を超えるとその回は0点。全3回。", "後ろの人の表情が変わったら限界が近い合図。8割で止める勇気も点になる。"),
+    "otsuri-min": ("お釣りの枚数が最小になる払い方をする。", "金額を見て、財布のコイン／お札ボタンを押して払う。全5問。", "お釣りの硬貨枚数は金額の下一桁から逆算できる。端数を消す払い方が最適。"),
+    "bunny-ride": ("障害物を越えて進み、仲間を助ける。", "壁はダッシュ、穴はジャンプ、高い壁は2回続けてジャンプ。3回ミスで終了。", "仲間の救出は40点。障害物の種類を早めに声に出すと反応が間に合う。"),
+    "caravan-shot": ("60秒で的を撃ってスコアを稼ぐ。", "的の中心の点をクリックで撃つ。長押しで溜めて離すと広範囲の溜め撃ち。", "中心を外すと当たらない。溜め撃ちは的が固まっているとき専用。"),
+    "ihen-report": ("城の部屋に起きた異変を言葉で報告する。", "基準の部屋と今の部屋を見比べて、変わった要素の報告ボタンを押す。全10回。", "変わっていない回もある。要素を上から順に読み上げる比べ方が確実。"),
+    "cube-escape": ("面を回して入口から出口へ道をつなぐ。", "面をクリックすると90度回る。道がつながると脱出成功でスコア送信。", "回した回数が少ないほど高得点。まず入口と出口に近い面から合わせる。"),
+    "tarot-three": ("過去・現在・未来の3枚を引いて運勢を読む。", "「占う」で3枚引く。正位置・逆位置で意味と運勢が変わる。", "運勢はカードの組み合わせで決まる。引き直しは1回だけ。"),
 }
 
 # プレイセット（テーマ別に数本を連続プレイする導線）
@@ -1391,6 +1531,9 @@ JS_SCORE_GAMES = {
     "uta-memory", "number-montage", "ghost-writer", "rotary-dial", "nikujaga",
     "horse-legs", "color-stop", "flag-colors", "stroke-hammer", "border-draw",
     "king-orders", "reversi-break", "firework-maker", "camera-judge", "maou-battle",
+    "jelly-haul", "glass-stack", "reverse-number", "harp-pitch", "mochi-pound",
+    "dot-room", "witch-pot", "meat-cut", "seat-recline", "otsuri-min",
+    "bunny-ride", "caravan-shot", "ihen-report", "cube-escape", "tarot-three",
 }
 # スコアは「小さいほど良い」JS ゲーム（ベスト＝最小）
 MIN_SCORE_GAMES = {"reaction", "stopwatch", "typing", "sort", "touch25"}
@@ -22618,6 +22761,1907 @@ def maou_battle_score():
         return {"ok": False, "error": "invalid score"}, 400
     record_score("maou-battle", int(raw))
     return {"ok": True, "best": best_score("maou-battle", "max")}
+
+
+
+# ============================
+# 2026-11-07 配信分（SNS10件＋ふりーむ5件）の15本
+# ============================
+JELLY_HAUL_TEMPLATE = r"""
+  <h1>🍮 ぷるぷるジェリー運び</h1>
+  <p class="howto">ぷるぷる揺れるジェリーを落とさずゴールまで運びます。▶を押すと少し進みますが揺れが増え、止まっていると揺れは収まります。揺れゲージが満タンになると落下。途中の星（各15点）を拾いながら、ゴールで40点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <div style="position:relative; height:110px; background:linear-gradient(#cfeeff,#eef9ff); border-radius:8px; overflow:hidden;">
+      <div style="position:absolute; right:6px; top:8px; font-size:26px;">🏁</div>
+      <div id="jhStars" style="position:absolute; left:0; top:6px; width:100%; font-size:18px;"></div>
+      <div id="jhCarrier" style="position:absolute; bottom:14px; left:0%; font-size:30px; transition:left .18s;">🧺</div>
+      <div id="jhJelly" style="position:absolute; bottom:44px; left:0%; font-size:30px;">🍮</div>
+      <div style="position:absolute; bottom:6px; left:2%; width:96%; height:6px; background:#b08968; border-radius:3px;"></div>
+    </div>
+    <p class="mid">進み <span id="jhPos">0</span>% ／ 星 <span id="jhStar">0</span> 個</p>
+    <div style="width:96%; margin:4px auto; height:14px; background:#eee; border-radius:7px;"><div id="jhWob" style="height:14px; width:0%; background:#e67e22; border-radius:7px;"></div></div>
+    <p class="mid">揺れゲージ</p>
+    <p class="result" id="message">「スタート」で運搬開始</p>
+    <div class="row">
+      <button type="button" id="jhBack">◀ もどる</button>
+      <button type="button" id="jhFwd">すすむ ▶</button>
+      <button type="button" id="jhStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var posEl = document.getElementById("jhPos"), starEl = document.getElementById("jhStar");
+  var wobEl = document.getElementById("jhWob"), msg = document.getElementById("message");
+  var carrier = document.getElementById("jhCarrier"), jelly = document.getElementById("jhJelly");
+  var starsEl = document.getElementById("jhStars");
+  var phase = "idle", pos = 0, wob = 0, stars = 0, timer = null;
+  var starPos = [22, 46, 70, 90], got = {};
+  function drawStars(){
+    var html = "";
+    starPos.forEach(function(p, i){
+      html += '<span style="position:absolute; left:' + p + '%;">' + (got[i] ? "✔️" : "⭐") + "</span>";
+    });
+    starsEl.innerHTML = html;
+  }
+  function render(){
+    posEl.textContent = String(Math.floor(pos));
+    starEl.textContent = String(stars);
+    wobEl.style.width = Math.min(100, wob) + "%";
+    wobEl.style.background = wob > 75 ? "#e74c3c" : "#e67e22";
+    carrier.style.left = pos + "%";
+    jelly.style.left = pos + "%";
+    jelly.style.transform = "rotate(" + Math.sin(Date.now() / 130) * (wob / 6) + "deg)";
+  }
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('jelly_haul_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function finish(text, score){
+    phase = "done";
+    if (timer) { clearInterval(timer); timer = null; }
+    msg.textContent = text + " スコア " + Math.floor(score) + " 点";
+    submit(score);
+    render();
+  }
+  function move(d){
+    if (phase !== "playing") return;
+    pos = Math.max(0, Math.min(100, pos + d * 4));
+    wob = Math.min(120, wob + 16);
+    starPos.forEach(function(p, i){
+      if (!got[i] && Math.abs(pos - p) < 4) { got[i] = true; stars++; }
+    });
+    if (wob >= 100) {
+      jelly.textContent = "💥";
+      finish("ジェリーを落としてしまった…", pos * 0.3 + stars * 10);
+      return;
+    }
+    if (pos >= 100) {
+      finish("ゴール！ 落とさず運べた！", 40 + stars * 15);
+      return;
+    }
+    render();
+  }
+  document.getElementById("jhFwd").addEventListener("click", function(){ move(1); });
+  document.getElementById("jhBack").addEventListener("click", function(){ move(-1); });
+  document.getElementById("jhStart").addEventListener("click", function(){
+    phase = "playing"; pos = 0; wob = 0; stars = 0; got = {};
+    jelly.textContent = "🍮";
+    drawStars();
+    msg.textContent = "揺れを見ながら少しずつ進もう";
+    if (timer) clearInterval(timer);
+    timer = setInterval(function(){
+      if (phase !== "playing") return;
+      wob = Math.max(0, wob - 5);
+      render();
+    }, 300);
+    render();
+  });
+  drawStars();
+})();
+</script>
+"""
+
+
+@app.route("/games/jelly-haul", methods=["GET"])
+def jelly_haul():
+    body = render_template_string(
+        JELLY_HAUL_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("jelly-haul", "max"),
+        history=recent_scores("jelly-haul", 10),
+    )
+    return game_page("ぷるぷるジェリー運び", body)
+
+
+@app.route("/games/jelly-haul/score", methods=["POST"])
+def jelly_haul_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("jelly-haul", int(raw))
+    return {"ok": True, "best": best_score("jelly-haul", "max")}
+
+
+GLASS_STACK_TEMPLATE = r"""
+  <h1>🪟 ガラス板つみつみ</h1>
+  <p class="howto">左右に動くガラス板を、クリック／タップで落として積み上げます。下の板からはみ出した分は切り落とされ、板はだんだん小さくなります。全部外すと終了。1枚10点、10枚で100点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <div id="gsStage" style="position:relative; height:300px; background:linear-gradient(#dfeefc,#f7fbff); border-radius:8px; overflow:hidden;">
+      <div id="gsMover" style="position:absolute; height:16px; background:rgba(120,200,255,.75); border:2px solid #4aa3d8; border-radius:3px; display:none;"></div>
+    </div>
+    <p class="mid">積んだ枚数 <span id="gsCount">0</span> 枚</p>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gsDrop">落とす</button>
+      <button type="button" id="gsStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var stage = document.getElementById("gsStage"), mover = document.getElementById("gsMover");
+  var countEl = document.getElementById("gsCount"), msg = document.getElementById("message");
+  var W = 100, phase = "idle", layers = 0, baseLeft = 25, baseWidth = 50;
+  var x = 0, dir = 1, speed = 0.9, raf = null, lastT = 0;
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('glass_stack_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function placeMover(){
+    mover.style.display = "block";
+    mover.style.width = baseWidth + "%";
+    mover.style.left = x + "%";
+    mover.style.bottom = (layers * 18 + 40) + "px";
+  }
+  function addLayer(left, width, broken){
+    var d = document.createElement("div");
+    d.style.position = "absolute";
+    d.style.height = "16px";
+    d.style.left = left + "%";
+    d.style.width = width + "%";
+    d.style.bottom = (layers * 18 + 22) + "px";
+    d.style.background = broken ? "rgba(255,150,150,.8)" : "rgba(120,200,255,.75)";
+    d.style.border = "2px solid " + (broken ? "#d86a6a" : "#4aa3d8");
+    d.style.borderRadius = "3px";
+    stage.appendChild(d);
+  }
+  function loop(t){
+    if (phase !== "playing") return;
+    if (lastT) {
+      x += dir * speed * (t - lastT) / 16;
+      if (x <= 0) { x = 0; dir = 1; }
+      if (x + baseWidth >= W) { x = W - baseWidth; dir = -1; }
+      mover.style.left = x + "%";
+    }
+    lastT = t;
+    raf = requestAnimationFrame(loop);
+  }
+  function drop(){
+    if (phase !== "playing") return;
+    var left = Math.max(x, baseLeft), right = Math.min(x + baseWidth, baseLeft + baseWidth);
+    var overlap = right - left;
+    if (overlap <= 0) {
+      phase = "done";
+      if (raf) cancelAnimationFrame(raf);
+      mover.style.display = "none";
+      msg.textContent = "全部外して割れてしまった… " + layers + " 枚で終了。スコア " + (layers * 10) + " 点";
+      submit(layers * 10);
+      return;
+    }
+    addLayer(left, overlap, false);
+    baseLeft = left; baseWidth = overlap;
+    layers++;
+    countEl.textContent = String(layers);
+    speed = 0.9 + layers * 0.14;
+    x = 0; dir = 1;
+    if (layers >= 10) {
+      phase = "done";
+      if (raf) cancelAnimationFrame(raf);
+      mover.style.display = "none";
+      msg.textContent = "10枚積み上げた！ スコア 100 点";
+      submit(100);
+      return;
+    }
+    msg.textContent = layers + " 枚目が積めた。幅は " + Math.round(baseWidth) + "%";
+    placeMover();
+  }
+  document.getElementById("gsDrop").addEventListener("click", drop);
+  stage.addEventListener("click", drop);
+  document.getElementById("gsStart").addEventListener("click", function(){
+    var olds = stage.querySelectorAll("div");
+    olds.forEach(function(d){ if (d !== mover) d.remove(); });
+    phase = "playing"; layers = 0; baseLeft = 25; baseWidth = 50; speed = 0.9; x = 0; dir = 1; lastT = 0;
+    countEl.textContent = "0";
+    msg.textContent = "タイミングよく落とそう";
+    placeMover();
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/glass-stack", methods=["GET"])
+def glass_stack():
+    body = render_template_string(
+        GLASS_STACK_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("glass-stack", "max"),
+        history=recent_scores("glass-stack", 10),
+    )
+    return game_page("ガラス板つみつみ", body)
+
+
+@app.route("/games/glass-stack/score", methods=["POST"])
+def glass_stack_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("glass-stack", int(raw))
+    return {"ok": True, "best": best_score("glass-stack", "max")}
+
+
+REVERSE_NUMBER_TEMPLATE = r"""
+  <h1>🔢 逆さ数字おぼえ</h1>
+  <p class="howto">表示された数字を、逆順で入力する記憶ゲームです。数字は2秒だけ表示されます。全5ラウンド（4桁→8桁）で、長い桁を正解するほど高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">ラウンド <span id="rnRound">-</span> ／ 5</p>
+    <div id="rnNum" style="font-size:40px; letter-spacing:8px; min-height:56px; font-weight:bold;">-</div>
+    <div class="row">
+      <input type="text" id="rnInput" inputmode="numeric" placeholder="逆順に入力" style="font-size:20px; padding:8px; width:220px; text-align:center;" disabled>
+      <button type="button" id="rnAnswer" disabled>回答</button>
+    </div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="rnStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var numEl = document.getElementById("rnNum"), roundEl = document.getElementById("rnRound");
+  var input = document.getElementById("rnInput"), ansBtn = document.getElementById("rnAnswer");
+  var msg = document.getElementById("message");
+  var lens = [4, 5, 6, 7, 8], round = 0, current = "", earned = 0, phase = "idle";
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('reverse_number_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function next(){
+    if (round >= lens.length) {
+      phase = "done";
+      var score = Math.round(earned / 30 * 100);
+      msg.textContent = "終了！ スコア " + score + " 点";
+      submit(score);
+      return;
+    }
+    var n = lens[round], s = "";
+    for (var i = 0; i < n; i++) s += String(Math.floor(Math.random() * 10));
+    current = s;
+    roundEl.textContent = String(round + 1);
+    numEl.textContent = s;
+    input.value = "";
+    input.disabled = true;
+    ansBtn.disabled = true;
+    msg.textContent = "覚えて…（逆順で答える）";
+    setTimeout(function(){
+      numEl.textContent = "？？？";
+      input.disabled = false;
+      ansBtn.disabled = false;
+      input.focus();
+    }, 2000);
+  }
+  function answer(){
+    if (input.disabled) return;
+    var rev = current.split("").reverse().join("");
+    if (input.value.trim() === rev) {
+      earned += lens[round];
+      msg.textContent = "正解！ 逆順は " + rev + " でした";
+    } else {
+      msg.textContent = "残念。正しくは " + rev + " でした";
+    }
+    round++;
+    input.disabled = true;
+    ansBtn.disabled = true;
+    setTimeout(next, 1100);
+  }
+  ansBtn.addEventListener("click", answer);
+  input.addEventListener("keydown", function(e){ if (e.key === "Enter") answer(); });
+  document.getElementById("rnStart").addEventListener("click", function(){
+    round = 0; earned = 0; phase = "playing";
+    next();
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/reverse-number", methods=["GET"])
+def reverse_number():
+    body = render_template_string(
+        REVERSE_NUMBER_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("reverse-number", "max"),
+        history=recent_scores("reverse-number", 10),
+    )
+    return game_page("逆さ数字おぼえ", body)
+
+
+@app.route("/games/reverse-number/score", methods=["POST"])
+def reverse_number_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("reverse-number", int(raw))
+    return {"ok": True, "best": best_score("reverse-number", "max")}
+
+
+HARP_PITCH_TEMPLATE = r"""
+  <h1>🎵 自己申告ハープ音当て</h1>
+  <p class="howto">ハープの音を聴いて、ドレミファソラシのどれかを当てる音感ゲームです。全10問、1問10点。「もう一度」で聞き直せます（音が出るので注意）。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">第 <span id="hpQ">-</span> 問 ／ 10 ／ 正解 <span id="hpOk">0</span></p>
+    <div style="font-size:44px;">🎵</div>
+    <div class="row" id="hpBtns">
+      <button type="button" data-n="0">ド</button>
+      <button type="button" data-n="1">レ</button>
+      <button type="button" data-n="2">ミ</button>
+      <button type="button" data-n="3">ファ</button>
+      <button type="button" data-n="4">ソ</button>
+      <button type="button" data-n="5">ラ</button>
+      <button type="button" data-n="6">シ</button>
+    </div>
+    <p class="result" id="message">「スタート」で開始（音が出ます）</p>
+    <div class="row">
+      <button type="button" id="hpAgain" disabled>もう一度聞く</button>
+      <button type="button" id="hpStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var names = ["ド", "レ", "ミ", "ファ", "ソ", "ラ", "シ"];
+  var freqs = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88];
+  var qEl = document.getElementById("hpQ"), okEl = document.getElementById("hpOk");
+  var msg = document.getElementById("message"), againBtn = document.getElementById("hpAgain");
+  var ctx = null, q = 0, ok = 0, target = 0, phase = "idle";
+  function play(freq){
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "triangle";
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.1);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 1.2);
+  }
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('harp_pitch_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function next(){
+    if (q >= 10) {
+      phase = "done";
+      againBtn.disabled = true;
+      msg.textContent = "終了！ " + ok + " 問正解。スコア " + (ok * 10) + " 点";
+      submit(ok * 10);
+      return;
+    }
+    q++;
+    qEl.textContent = String(q);
+    target = Math.floor(Math.random() * 7);
+    play(freqs[target]);
+    msg.textContent = "この音はどれ？";
+    againBtn.disabled = false;
+  }
+  document.getElementById("hpBtns").addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if (!b || phase !== "playing") return;
+    var n = parseInt(b.getAttribute("data-n"), 10);
+    if (n === target) {
+      ok++;
+      okEl.textContent = String(ok);
+      msg.textContent = "正解！ " + names[target] + " でした";
+    } else {
+      msg.textContent = "残念、正解は " + names[target] + " でした";
+    }
+    againBtn.disabled = true;
+    setTimeout(next, 900);
+  });
+  againBtn.addEventListener("click", function(){ if (phase === "playing") play(freqs[target]); });
+  document.getElementById("hpStart").addEventListener("click", function(){
+    q = 0; ok = 0; phase = "playing";
+    okEl.textContent = "0";
+    next();
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/harp-pitch", methods=["GET"])
+def harp_pitch():
+    body = render_template_string(
+        HARP_PITCH_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("harp-pitch", "max"),
+        history=recent_scores("harp-pitch", 10),
+    )
+    return game_page("自己申告ハープ音当て", body)
+
+
+@app.route("/games/harp-pitch/score", methods=["POST"])
+def harp_pitch_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("harp-pitch", int(raw))
+    return {"ok": True, "best": best_score("harp-pitch", "max")}
+
+
+MOCHI_POUND_TEMPLATE = r"""
+  <h1>🍘 もちつきタイミング</h1>
+  <p class="howto">合いの手のマーカーが左右に動きます。真ん中の枠に入った瞬間に「つく！」を押してください。ど真ん中は8点、枠内は5点。30秒で何点取れるかです。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">残り <span id="mpTime">30</span> 秒 ／ スコア <span id="mpScore">0</span> 点</p>
+    <div style="position:relative; height:64px; background:#fdf3e3; border-radius:8px; overflow:hidden;">
+      <div style="position:absolute; left:44%; width:12%; top:0; height:100%; background:rgba(46,204,113,.25); border-left:2px solid #2ecc71; border-right:2px solid #2ecc71;"></div>
+      <div style="position:absolute; left:49%; width:2%; top:0; height:100%; background:rgba(231,76,60,.5);"></div>
+      <div id="mpMarker" style="position:absolute; top:10px; font-size:34px;">🔨</div>
+    </div>
+    <div style="font-size:40px; margin-top:4px;">🪵🍘</div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="mpHit">つく！</button>
+      <button type="button" id="mpStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var marker = document.getElementById("mpMarker"), timeEl = document.getElementById("mpTime");
+  var scoreEl = document.getElementById("mpScore"), msg = document.getElementById("message");
+  var phase = "idle", x = 0, dir = 1, speed = 1.5, score = 0, remain = 30, raf = null, lastT = 0, tick = null;
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('mochi_pound_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function loop(t){
+    if (phase !== "playing") return;
+    if (lastT) {
+      x += dir * speed * (t - lastT) / 16;
+      if (x <= 0) { x = 0; dir = 1; }
+      if (x >= 94) { x = 94; dir = -1; }
+      marker.style.left = x + "%";
+    }
+    lastT = t;
+    raf = requestAnimationFrame(loop);
+  }
+  function end(){
+    phase = "done";
+    if (raf) cancelAnimationFrame(raf);
+    if (tick) clearInterval(tick);
+    msg.textContent = "終了！ スコア " + score + " 点";
+    submit(score);
+  }
+  document.getElementById("mpHit").addEventListener("click", function(){
+    if (phase !== "playing") return;
+    var center = x + 3;
+    if (center >= 49 && center <= 51) {
+      score = Math.min(100, score + 8);
+      msg.textContent = "ど真ん中！ +8点";
+      speed += 0.12;
+    } else if (center >= 44 && center <= 56) {
+      score = Math.min(100, score + 5);
+      msg.textContent = "枠内！ +5点";
+      speed += 0.08;
+    } else {
+      msg.textContent = "外れた…";
+    }
+    scoreEl.textContent = String(score);
+  });
+  document.getElementById("mpStart").addEventListener("click", function(){
+    phase = "playing"; x = 0; dir = 1; speed = 1.5; score = 0; remain = 30; lastT = 0;
+    scoreEl.textContent = "0"; timeEl.textContent = "30";
+    msg.textContent = "枠の中で つく！";
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(loop);
+    if (tick) clearInterval(tick);
+    tick = setInterval(function(){
+      remain--;
+      timeEl.textContent = String(remain);
+      if (remain <= 0) end();
+    }, 1000);
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/mochi-pound", methods=["GET"])
+def mochi_pound():
+    body = render_template_string(
+        MOCHI_POUND_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("mochi-pound", "max"),
+        history=recent_scores("mochi-pound", 10),
+    )
+    return game_page("もちつきタイミング", body)
+
+
+@app.route("/games/mochi-pound/score", methods=["POST"])
+def mochi_pound_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("mochi-pound", int(raw))
+    return {"ok": True, "best": best_score("mochi-pound", "max")}
+
+
+
+DOT_ROOM_TEMPLATE = r"""
+  <h1>🛋️ ドット家具コーデ置き</h1>
+  <p class="howto">ドット絵の家具を選んで、部屋のマスに配置するコーデゲームです。置いた家具の種類（各12点）と数（各2点）でスコアが決まります。「完成」でスコアを送信します。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <div class="row" id="drPalette" style="font-size:28px;">
+      <button type="button" data-f="🛋️">🛋️</button>
+      <button type="button" data-f="🪑">🪑</button>
+      <button type="button" data-f="🛏️">🛏️</button>
+      <button type="button" data-f="🪴">🪴</button>
+      <button type="button" data-f="📺">📺</button>
+      <button type="button" data-f="🕯️">🕯️</button>
+      <button type="button" data-f="📚">📚</button>
+      <button type="button" data-f="🧸">🧸</button>
+    </div>
+    <p class="mid">選択中： <span id="drSel">🛋️</span>（同じマスを押すと消えます）</p>
+    <div id="drRoom" style="display:grid; grid-template-columns:repeat(8, 1fr); gap:4px; max-width:420px; margin:0 auto;"></div>
+    <p class="mid">種類 <span id="drKinds">0</span> ／ 置いた数 <span id="drCount">0</span> ／ スコア <span id="drScore">0</span> 点</p>
+    <p class="result" id="message">家具を選んでマスを押そう</p>
+    <div class="row">
+      <button type="button" id="drClear">全消し</button>
+      <button type="button" id="drDone">完成</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var room = document.getElementById("drRoom"), selEl = document.getElementById("drSel");
+  var kindsEl = document.getElementById("drKinds"), countEl = document.getElementById("drCount"), scoreEl = document.getElementById("drScore");
+  var msg = document.getElementById("message");
+  var sel = "🛋️", cells = [];
+  function score(){
+    var kinds = {};
+    var n = 0;
+    cells.forEach(function(c){ if (c) { kinds[c] = true; n++; } });
+    var k = Object.keys(kinds).length;
+    kindsEl.textContent = String(k);
+    countEl.textContent = String(n);
+    var s = Math.min(100, k * 12 + n * 2);
+    scoreEl.textContent = String(s);
+    return s;
+  }
+  function build(){
+    room.innerHTML = "";
+    cells = [];
+    for (var i = 0; i < 48; i++) {
+      (function(idx){
+        var d = document.createElement("button");
+        d.type = "button";
+        d.style.height = "44px";
+        d.style.fontSize = "24px";
+        d.style.background = idx % 2 ? "#f3e9d2" : "#efe0bd";
+        d.style.border = "1px solid #d8c690";
+        d.style.borderRadius = "6px";
+        d.textContent = "";
+        cells.push("");
+        d.addEventListener("click", function(){
+          if (cells[idx] === sel) { cells[idx] = ""; d.textContent = ""; }
+          else { cells[idx] = sel; d.textContent = sel; }
+          score();
+        });
+        room.appendChild(d);
+      })(i);
+    }
+    score();
+  }
+  document.getElementById("drPalette").addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if (!b) return;
+    sel = b.getAttribute("data-f");
+    selEl.textContent = sel;
+  });
+  document.getElementById("drClear").addEventListener("click", build);
+  document.getElementById("drDone").addEventListener("click", function(){
+    var s = score();
+    if (s <= 0) { msg.textContent = "まず家具を置いてね"; return; }
+    var form = new FormData();
+    form.append("score", String(s));
+    fetch("{{ url_for('dot_room_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.ok) {
+          document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点";
+          msg.textContent = "完成！ スコア " + s + " 点を記録したよ";
+        }
+      })
+      .catch(function(){});
+  });
+  build();
+})();
+</script>
+"""
+
+
+@app.route("/games/dot-room", methods=["GET"])
+def dot_room():
+    body = render_template_string(
+        DOT_ROOM_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("dot-room", "max"),
+        history=recent_scores("dot-room", 10),
+    )
+    return game_page("ドット家具コーデ置き", body)
+
+
+@app.route("/games/dot-room/score", methods=["POST"])
+def dot_room_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("dot-room", int(raw))
+    return {"ok": True, "best": best_score("dot-room", "max")}
+
+
+WITCH_POT_TEMPLATE = r"""
+  <h1>🧙 魔女の大鍋まぜまぜ</h1>
+  <p class="howto">材料を最大6個選んで大鍋に入れ、10秒間クリックでかき混ぜます。材料の色の平均で薬の色が、混ぜた回数で泡立ちが決まり、その組み合わせで薬の名前とレア度（スコア）が決まります。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <div class="row" id="wpItems" style="font-size:15px;">
+      <button type="button" data-i="0">🍄 赤キノコ</button>
+      <button type="button" data-i="1">🌿 青葉</button>
+      <button type="button" data-i="2">🫐 紫ベリー</button>
+      <button type="button" data-i="3">🌼 黄花</button>
+      <button type="button" data-i="4">🐸 カエル</button>
+      <button type="button" data-i="5">💎 水晶</button>
+      <button type="button" data-i="6">🦋 蝶の羽</button>
+      <button type="button" data-i="7">🌶️ 唐辛子</button>
+    </div>
+    <p class="mid">入れた材料： <span id="wpPicked">なし</span></p>
+    <div id="wpPot" style="font-size:64px;">🍲</div>
+    <p class="mid">混ぜた回数 <span id="wpStir">0</span> 回 ／ 残り <span id="wpTime">10</span> 秒</p>
+    <p class="result" id="message">材料を6個まで選んでね</p>
+    <div class="row">
+      <button type="button" id="wpBrew" disabled>煮込む</button>
+      <button type="button" id="wpMix" disabled>かき混ぜる</button>
+      <button type="button" id="wpReset">やり直し</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var items = [
+    {name: "赤キノコ", hue: 0}, {name: "青葉", hue: 140}, {name: "紫ベリー", hue: 270},
+    {name: "黄花", hue: 50}, {name: "カエル", hue: 110}, {name: "水晶", hue: 200},
+    {name: "蝶の羽", hue: 300}, {name: "唐辛子", hue: 15}
+  ];
+  var pickedEl = document.getElementById("wpPicked"), stirEl = document.getElementById("wpStir"), timeEl = document.getElementById("wpTime");
+  var msg = document.getElementById("message"), pot = document.getElementById("wpPot");
+  var brewBtn = document.getElementById("wpBrew"), mixBtn = document.getElementById("wpMix");
+  var picked = [], phase = "pick", stir = 0, remain = 10, tick = null;
+  var bands = [
+    {max: 30, name: "炎", color: "#e74c3c"}, {max: 70, name: "陽", color: "#f39c12"},
+    {max: 130, name: "森", color: "#27ae60"}, {max: 180, name: "若葉", color: "#2ecc71"},
+    {max: 230, name: "水", color: "#3498db"}, {max: 290, name: "夜", color: "#8e44ad"},
+    {max: 361, name: "夢", color: "#e84393"}
+  ];
+  var foams = ["静かな", "ぷくぷくの", "もこもこ弾ける"];
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('witch_pot_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function showPicked(){
+    pickedEl.textContent = picked.length ? picked.map(function(i){ return items[i].name; }).join("、") : "なし";
+    brewBtn.disabled = picked.length === 0;
+  }
+  document.getElementById("wpItems").addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if (!b || phase !== "pick") return;
+    var i = parseInt(b.getAttribute("data-i"), 10);
+    var at = picked.indexOf(i);
+    if (at >= 0) picked.splice(at, 1);
+    else if (picked.length < 6) picked.push(i);
+    else { msg.textContent = "材料は6個まで"; return; }
+    b.style.opacity = at >= 0 ? "1" : "0.45";
+    showPicked();
+  });
+  brewBtn.addEventListener("click", function(){
+    if (phase !== "pick" || !picked.length) return;
+    phase = "mix";
+    stir = 0; remain = 10;
+    stirEl.textContent = "0"; timeEl.textContent = "10";
+    brewBtn.disabled = true; mixBtn.disabled = false;
+    pot.textContent = "🔥🍲";
+    msg.textContent = "10秒間、クリックでかき混ぜて！";
+    tick = setInterval(function(){
+      remain--;
+      timeEl.textContent = String(remain);
+      if (remain <= 0) finish();
+    }, 1000);
+  });
+  mixBtn.addEventListener("click", function(){
+    if (phase !== "mix") return;
+    stir++;
+    stirEl.textContent = String(stir);
+    pot.style.transform = "rotate(" + (stir % 2 ? -4 : 4) + "deg)";
+  });
+  function finish(){
+    if (tick) clearInterval(tick);
+    phase = "done";
+    mixBtn.disabled = true;
+    var hueSum = 0;
+    picked.forEach(function(i){ hueSum += items[i].hue; });
+    var hue = hueSum / picked.length;
+    var band = bands[bands.length - 1];
+    for (var j = 0; j < bands.length; j++) { if (hue < bands[j].max) { band = bands[j]; break; } }
+    var foamLv = stir >= 30 ? 2 : (stir >= 15 ? 1 : 0);
+    var potion = foams[foamLv] + band.name + "の薬";
+    var score = Math.min(100, picked.length * 10 + foamLv * 15 + (picked.length >= 5 ? 10 : 0));
+    pot.textContent = "🧪";
+    pot.style.transform = "";
+    msg.textContent = "完成！ 「" + potion + "」ができた。スコア " + score + " 点";
+    submit(score);
+  }
+  document.getElementById("wpReset").addEventListener("click", function(){
+    picked = []; phase = "pick"; stir = 0;
+    if (tick) clearInterval(tick);
+    var btns = document.querySelectorAll("#wpItems button");
+    btns.forEach(function(b){ b.style.opacity = "1"; });
+    pot.textContent = "🍲";
+    stirEl.textContent = "0"; timeEl.textContent = "10";
+    msg.textContent = "材料を6個まで選んでね";
+    showPicked();
+  });
+  showPicked();
+})();
+</script>
+"""
+
+
+@app.route("/games/witch-pot", methods=["GET"])
+def witch_pot():
+    body = render_template_string(
+        WITCH_POT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("witch-pot", "max"),
+        history=recent_scores("witch-pot", 10),
+    )
+    return game_page("魔女の大鍋まぜまぜ", body)
+
+
+@app.route("/games/witch-pot/score", methods=["POST"])
+def witch_pot_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("witch-pot", int(raw))
+    return {"ok": True, "best": best_score("witch-pot", "max")}
+
+
+MEAT_CUT_TEMPLATE = r"""
+  <h1>🥩 ニクキリグラム当て</h1>
+  <p class="howto">500gの肉の塊から、注文されたグラム数ちょうどを切り分けます。バーをクリックした位置で切ります。全3回、誤差が小さいほど高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">注文： <span id="mcTarget" style="font-size:22px; font-weight:bold;">-</span> g ／ <span id="mcRound">-</span> 回目（全3回）</p>
+    <div id="mcBar" style="position:relative; height:56px; background:linear-gradient(90deg,#e88ca0,#d96a82); border-radius:10px; cursor:pointer; max-width:520px; margin:0 auto;">
+      <div id="mcCut" style="position:absolute; top:-4px; width:4px; height:64px; background:#2c3e50; display:none;"></div>
+    </div>
+    <p class="mid">左端からクリックした位置までが切り分ける分（全体500g）</p>
+    <p class="result" id="message">「スタート」で開始。バーをクリックして切ります</p>
+    <div class="row">
+      <button type="button" id="mcStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var bar = document.getElementById("mcBar"), cut = document.getElementById("mcCut");
+  var targetEl = document.getElementById("mcTarget"), roundEl = document.getElementById("mcRound");
+  var msg = document.getElementById("message");
+  var phase = "idle", round = 0, target = 0, total = 0;
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('meat_cut_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function next(){
+    if (round >= 3) {
+      phase = "done";
+      var score = Math.round(total / 3);
+      msg.textContent = "終了！ スコア " + score + " 点";
+      submit(score);
+      return;
+    }
+    target = 80 + Math.floor(Math.random() * 35) * 10;
+    targetEl.textContent = String(target);
+    roundEl.textContent = String(round + 1);
+    cut.style.display = "none";
+    msg.textContent = target + "g になる位置でクリック！";
+  }
+  bar.addEventListener("click", function(e){
+    if (phase !== "playing") return;
+    var rect = bar.getBoundingClientRect();
+    var ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    cut.style.display = "block";
+    cut.style.left = (ratio * 100) + "%";
+    var grams = Math.round(ratio * 500);
+    var err = Math.abs(grams - target);
+    var pts = Math.max(0, 100 - err * 2);
+    total += pts;
+    phase = "wait";
+    msg.textContent = "切ったのは " + grams + "g（誤差 " + err + "g）で " + pts + " 点";
+    round++;
+    setTimeout(function(){ phase = "playing"; next(); }, 1300);
+  });
+  document.getElementById("mcStart").addEventListener("click", function(){
+    round = 0; total = 0; phase = "playing";
+    next();
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/meat-cut", methods=["GET"])
+def meat_cut():
+    body = render_template_string(
+        MEAT_CUT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("meat-cut", "max"),
+        history=recent_scores("meat-cut", 10),
+    )
+    return game_page("ニクキリグラム当て", body)
+
+
+@app.route("/games/meat-cut/score", methods=["POST"])
+def meat_cut_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("meat-cut", int(raw))
+    return {"ok": True, "best": best_score("meat-cut", "max")}
+
+
+SEAT_RECLINE_TEMPLATE = r"""
+  <h1>💺 座席ギリギリ倒し</h1>
+  <p class="howto">座席を、後ろの人にぶつからないギリギリまで倒すチキンレースです。ボタンを長押しすると倒れていき、離すと止まります。限界を超えるとその回は0点。全3回の平均がスコアです。後ろの人の表情が限界の合図です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="srRound">-</span> 回目（全3回）</p>
+    <div style="font-size:52px;">
+      <span id="srSeat" style="display:inline-block;">💺</span>
+      <span id="srFace">🙂</span>
+    </div>
+    <div style="width:90%; margin:6px auto; height:16px; background:#eee; border-radius:8px;"><div id="srBar" style="height:16px; width:0%; background:#3498db; border-radius:8px;"></div></div>
+    <p class="mid">倒した角度 <span id="srAngle">0</span> 度</p>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="srHold">長押しで倒す</button>
+      <button type="button" id="srStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var bar = document.getElementById("srBar"), angleEl = document.getElementById("srAngle");
+  var roundEl = document.getElementById("srRound"), face = document.getElementById("srFace"), seat = document.getElementById("srSeat");
+  var msg = document.getElementById("message"), holdBtn = document.getElementById("srHold");
+  var phase = "idle", round = 0, angle = 0, limit = 60, vel = 0, total = 0, raf = null, holding = false, lastT = 0;
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('seat_recline_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function render(){
+    bar.style.width = Math.min(100, angle) + "%";
+    angleEl.textContent = String(Math.floor(angle));
+    seat.style.transform = "rotate(" + (-angle * 0.5) + "deg)";
+    var ratio = angle / limit;
+    face.textContent = ratio > 0.95 ? "😱" : (ratio > 0.8 ? "😬" : (ratio > 0.55 ? "😐" : "🙂"));
+  }
+  function loop(t){
+    if (phase !== "playing") return;
+    if (lastT && holding) {
+      vel = Math.min(26, vel + (t - lastT) / 16 * 1.6);
+      angle += vel * (t - lastT) / 60;
+      if (angle > limit) {
+        phase = "wait";
+        holding = false;
+        face.textContent = "💢";
+        msg.textContent = "ぶつかった！ 限界は " + limit + " 度だった。この回は0点";
+        round++;
+        setTimeout(next, 1500);
+        render();
+        return;
+      }
+      render();
+    }
+    lastT = t;
+    raf = requestAnimationFrame(loop);
+  }
+  function release(){
+    if (phase !== "playing" || !holding) return;
+    holding = false;
+    phase = "wait";
+    var pts = Math.round(angle / limit * 100);
+    total += pts;
+    msg.textContent = angle.toFixed(0) + " 度で止めた（限界 " + limit + " 度）。この回 " + pts + " 点";
+    round++;
+    setTimeout(next, 1400);
+  }
+  function next(){
+    if (round >= 3) {
+      phase = "done";
+      if (raf) cancelAnimationFrame(raf);
+      var score = Math.round(total / 3);
+      msg.textContent = "終了！ スコア " + score + " 点";
+      submit(score);
+      return;
+    }
+    angle = 0; vel = 0; holding = false;
+    limit = 55 + Math.floor(Math.random() * 31);
+    roundEl.textContent = String(round + 1);
+    phase = "playing";
+    msg.textContent = "長押しで倒して、ギリギリで離そう";
+    render();
+  }
+  holdBtn.addEventListener("pointerdown", function(e){ e.preventDefault(); if (phase === "playing") { holding = true; vel = 4; } });
+  holdBtn.addEventListener("pointerup", release);
+  holdBtn.addEventListener("pointerleave", release);
+  document.getElementById("srStart").addEventListener("click", function(){
+    round = 0; total = 0;
+    if (raf) cancelAnimationFrame(raf);
+    lastT = 0;
+    raf = requestAnimationFrame(loop);
+    next();
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/seat-recline", methods=["GET"])
+def seat_recline():
+    body = render_template_string(
+        SEAT_RECLINE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("seat-recline", "max"),
+        history=recent_scores("seat-recline", 10),
+    )
+    return game_page("座席ギリギリ倒し", body)
+
+
+@app.route("/games/seat-recline/score", methods=["POST"])
+def seat_recline_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("seat-recline", int(raw))
+    return {"ok": True, "best": best_score("seat-recline", "max")}
+
+
+OTSURI_MIN_TEMPLATE = r"""
+  <h1>🪙 お釣りミニマム支払い</h1>
+  <p class="howto">お釣りの硬貨・お札の枚数が最小になる払い方をするレジ計算ゲームです。金額以上の支払いが必要で、払った分に対して店が最少枚数でお釣りを返します。最適な払い方で20点、全5問です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">お会計： <span id="omPrice" style="font-size:24px; font-weight:bold;">-</span> 円 ／ <span id="omRound">-</span> 問目（全5問）</p>
+    <div class="row" id="omWallet">
+      <button type="button" data-v="1000">1000円</button>
+      <button type="button" data-v="500">500円</button>
+      <button type="button" data-v="100">100円</button>
+      <button type="button" data-v="50">50円</button>
+      <button type="button" data-v="10">10円</button>
+      <button type="button" data-v="5">5円</button>
+      <button type="button" data-v="1">1円</button>
+    </div>
+    <p class="mid">払う金額： <span id="omPay">0</span> 円（<span id="omDetail">-</span>）</p>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="omClear">クリア</button>
+      <button type="button" id="omGo">この金額で払う</button>
+      <button type="button" id="omStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var denoms = [1000, 500, 100, 50, 10, 5, 1];
+  var priceEl = document.getElementById("omPrice"), roundEl = document.getElementById("omRound");
+  var payEl = document.getElementById("omPay"), detailEl = document.getElementById("omDetail");
+  var msg = document.getElementById("message");
+  var phase = "idle", round = 0, price = 0, total = 0, pay = {};
+  function coins(amount){
+    var n = 0, a = amount;
+    denoms.forEach(function(d){ n += Math.floor(a / d); a %= d; });
+    return n;
+  }
+  function paySum(){
+    var s = 0;
+    denoms.forEach(function(d){ s += (pay[d] || 0) * d; });
+    return s;
+  }
+  function showPay(){
+    var s = paySum();
+    payEl.textContent = String(s);
+    var parts = [];
+    denoms.forEach(function(d){ if (pay[d]) parts.push(d + "円×" + pay[d]); });
+    detailEl.textContent = parts.length ? parts.join("、") : "-";
+  }
+  function optimal(){
+    var best = null;
+    for (var extra = 0; extra <= 1000; extra += 1) {
+      var amount = price + extra;
+      var c = coins(extra);
+      if (best === null || c < best) best = c;
+      if (extra > 0 && amount % 1000 === 0 && extra > 1000) break;
+    }
+    return best;
+  }
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('otsuri_min_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function next(){
+    if (round >= 5) {
+      phase = "done";
+      msg.textContent = "終了！ スコア " + total + " 点";
+      submit(total);
+      return;
+    }
+    price = 103 + Math.floor(Math.random() * 880);
+    priceEl.textContent = String(price);
+    roundEl.textContent = String(round + 1);
+    pay = {};
+    showPay();
+    msg.textContent = "お釣りの枚数が最小になる払い方は？";
+  }
+  document.getElementById("omWallet").addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if (!b || phase !== "playing") return;
+    var v = parseInt(b.getAttribute("data-v"), 10);
+    pay[v] = (pay[v] || 0) + 1;
+    showPay();
+  });
+  document.getElementById("omClear").addEventListener("click", function(){ pay = {}; showPay(); });
+  document.getElementById("omGo").addEventListener("click", function(){
+    if (phase !== "playing") return;
+    var s = paySum();
+    if (s < price) { msg.textContent = "金額が足りないよ"; return; }
+    var change = s - price;
+    var mine = coins(change), best = optimal();
+    var diff = mine - best;
+    var pts = diff <= 0 ? 20 : (diff === 1 ? 12 : (diff === 2 ? 6 : 2));
+    total += pts;
+    msg.textContent = "お釣り " + change + " 円（" + mine + " 枚）。最適は " + best + " 枚。この問 " + pts + " 点";
+    phase = "wait";
+    round++;
+    setTimeout(function(){ phase = "playing"; next(); }, 1600);
+  });
+  document.getElementById("omStart").addEventListener("click", function(){
+    round = 0; total = 0; phase = "playing";
+    next();
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/otsuri-min", methods=["GET"])
+def otsuri_min():
+    body = render_template_string(
+        OTSURI_MIN_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("otsuri-min", "max"),
+        history=recent_scores("otsuri-min", 10),
+    )
+    return game_page("お釣りミニマム支払い", body)
+
+
+@app.route("/games/otsuri-min/score", methods=["POST"])
+def otsuri_min_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("otsuri-min", int(raw))
+    return {"ok": True, "best": best_score("otsuri-min", "max")}
+
+
+
+BUNNY_RIDE_TEMPLATE = r"""
+  <h1>🐰 うさぎライド壁こわし救出</h1>
+  <p class="howto">相棒うさぎに乗って自動で走ります。障害物が近づいたら、壁＝ダッシュ、穴＝ジャンプ、高い壁＝ジャンプ2回、が正解のアクションです。通過で15点、仲間の救出は40点。3回ミスで終了、300点でゴールです。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <div style="position:relative; height:96px; background:linear-gradient(#ffeef7,#fff); border-radius:8px; overflow:hidden;">
+      <div id="brRunner" style="position:absolute; bottom:16px; left:12%; font-size:36px;">🏇🐰</div>
+      <div id="brObs" style="position:absolute; bottom:16px; right:4%; font-size:36px;">　</div>
+      <div style="position:absolute; bottom:8px; left:2%; width:96%; height:5px; background:#c9a06a; border-radius:3px;"></div>
+    </div>
+    <p class="mid">スコア <span id="brScore">0</span> 点 ／ ミス <span id="brMiss">0</span> ／ 3</p>
+    <div style="width:96%; margin:4px auto; height:12px; background:#eee; border-radius:6px;"><div id="brNear" style="height:12px; width:0%; background:#e84393; border-radius:6px;"></div></div>
+    <p class="mid">障害物までの近さ（満タンで判定）</p>
+    <p class="result" id="message">「スタート」で出発</p>
+    <div class="row">
+      <button type="button" id="brJump">ジャンプ</button>
+      <button type="button" id="brDash">ダッシュ</button>
+      <button type="button" id="brStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var obsEl = document.getElementById("brObs"), nearEl = document.getElementById("brNear");
+  var scoreEl = document.getElementById("brScore"), missEl = document.getElementById("brMiss");
+  var msg = document.getElementById("message"), runner = document.getElementById("brRunner");
+  var kinds = [
+    {key: "wall", icon: "🧱", label: "壁だ！ ダッシュで壊せ"},
+    {key: "pit", icon: "🕳️", label: "穴だ！ ジャンプで越えろ"},
+    {key: "tall", icon: "🏯", label: "高い壁だ！ ジャンプ2回"},
+    {key: "rescue", icon: "🐹", label: "仲間が捕まってる！ そのまま救出"}
+  ];
+  var phase = "idle", score = 0, miss = 0, cur = null, prog = 0, jumps = 0, dashed = false, tick = null, rescued = 0;
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(300, Math.floor(score)))));
+    fetch("{{ url_for('bunny_ride_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function end(text){
+    phase = "done";
+    if (tick) clearInterval(tick);
+    msg.textContent = text + " スコア " + score + " 点（救出 " + rescued + " 回）";
+    submit(score);
+  }
+  function spawn(){
+    var r = Math.random();
+    var idx = r < 0.3 ? 0 : (r < 0.6 ? 1 : (r < 0.85 ? 2 : 3));
+    if (score >= 200 && idx === 3) idx = 2;
+    cur = kinds[idx];
+    prog = 0; jumps = 0; dashed = false;
+    obsEl.textContent = cur.icon;
+    msg.textContent = cur.label;
+  }
+  function judge(){
+    var ok = false;
+    if (cur.key === "wall") ok = dashed;
+    else if (cur.key === "pit") ok = jumps >= 1;
+    else if (cur.key === "tall") ok = jumps >= 2;
+    else if (cur.key === "rescue") ok = true;
+    if (ok) {
+      if (cur.key === "rescue") { score += 40; rescued++; msg.textContent = "仲間を助けた！ +40点"; }
+      else { score += 15; msg.textContent = "通過！ +15点"; }
+      score = Math.min(300, score);
+      scoreEl.textContent = String(score);
+      if (score >= 300) { end("ゴール！ "); return; }
+    } else {
+      miss++;
+      missEl.textContent = String(miss);
+      msg.textContent = "ぶつかった…（" + cur.label + "）";
+      if (miss >= 3) { end("3回ミスで終了。"); return; }
+    }
+    setTimeout(function(){ if (phase === "playing") spawn(); }, 650);
+    cur = null;
+    obsEl.textContent = "　";
+    nearEl.style.width = "0%";
+  }
+  document.getElementById("brJump").addEventListener("click", function(){
+    if (phase !== "playing" || !cur) return;
+    jumps++;
+    runner.style.transform = "translateY(-16px)";
+    setTimeout(function(){ runner.style.transform = ""; }, 180);
+  });
+  document.getElementById("brDash").addEventListener("click", function(){
+    if (phase !== "playing" || !cur) return;
+    dashed = true;
+    runner.style.transform = "translateX(14px)";
+    setTimeout(function(){ runner.style.transform = ""; }, 180);
+  });
+  document.getElementById("brStart").addEventListener("click", function(){
+    score = 0; miss = 0; rescued = 0; phase = "playing";
+    scoreEl.textContent = "0"; missEl.textContent = "0";
+    if (tick) clearInterval(tick);
+    spawn();
+    tick = setInterval(function(){
+      if (phase !== "playing" || !cur) return;
+      prog += 4;
+      nearEl.style.width = Math.min(100, prog) + "%";
+      obsEl.style.right = (4 + prog * 0.6) + "%";
+      if (prog >= 100) judge();
+    }, 100);
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/bunny-ride", methods=["GET"])
+def bunny_ride():
+    body = render_template_string(
+        BUNNY_RIDE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("bunny-ride", "max"),
+        history=recent_scores("bunny-ride", 10),
+    )
+    return game_page("うさぎライド壁こわし救出", body)
+
+
+@app.route("/games/bunny-ride/score", methods=["POST"])
+def bunny_ride_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 300):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("bunny-ride", int(raw))
+    return {"ok": True, "best": best_score("bunny-ride", "max")}
+
+
+CARAVAN_SHOT_TEMPLATE = r"""
+  <h1>🚀 2分キャラバン溜め撃ち</h1>
+  <p class="howto">60秒のスコアアタックです（タイトルは元ネタの2分キャラバンの名前を残しています）。的は中心の点に当たったときだけ壊れます（25点）。押しっぱなしで溜めて離すと、広範囲の溜め撃ち（1体15点）になります。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">残り <span id="csTime">60</span> 秒 ／ スコア <span id="csScore">0</span> 点 ／ 溜め <span id="csCharge">0</span>%</p>
+    <div id="csBox" style="position:relative; height:300px; background:radial-gradient(circle at 50% 40%, #1d2b53, #0b1026); border-radius:8px; overflow:hidden; cursor:crosshair; touch-action:none;"></div>
+    <p class="result" id="message">「スタート」で開始。クリックで撃ち、長押しで溜め撃ち</p>
+    <div class="row">
+      <button type="button" id="csStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var box = document.getElementById("csBox"), timeEl = document.getElementById("csTime");
+  var scoreEl = document.getElementById("csScore"), chargeEl = document.getElementById("csCharge");
+  var msg = document.getElementById("message");
+  var phase = "idle", score = 0, remain = 60, targets = [], spawnT = null, countT = null, chargeTimer = null, charge = 0, charging = false;
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(500, Math.floor(score)))));
+    fetch("{{ url_for('caravan_shot_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function addScore(n){
+    score = Math.min(500, score + n);
+    scoreEl.textContent = String(score);
+  }
+  function spawn(){
+    if (phase !== "playing") return;
+    var d = document.createElement("div");
+    var x = 8 + Math.random() * 84, y = 8 + Math.random() * 80;
+    d.style.position = "absolute";
+    d.style.left = x + "%"; d.style.top = y + "%";
+    d.style.width = "34px"; d.style.height = "34px";
+    d.style.marginLeft = "-17px"; d.style.marginTop = "-17px";
+    d.style.borderRadius = "50%";
+    d.style.background = "rgba(255,210,80,.25)";
+    d.style.border = "2px solid #ffd250";
+    d.style.display = "flex"; d.style.alignItems = "center"; d.style.justifyContent = "center";
+    d.innerHTML = '<span style="width:8px; height:8px; border-radius:50%; background:#ff5252; display:block;"></span>';
+    box.appendChild(d);
+    var t = {el: d, x: x, y: y, born: Date.now()};
+    targets.push(t);
+    setTimeout(function(){
+      if (t.el.parentNode) t.el.remove();
+      var i = targets.indexOf(t);
+      if (i >= 0) targets.splice(i, 1);
+    }, 2600);
+  }
+  function centerPx(t){
+    var rect = box.getBoundingClientRect();
+    return {x: t.x / 100 * rect.width, y: t.y / 100 * rect.height};
+  }
+  function shoot(cx, cy, radius, pts){
+    var hit = 0;
+    for (var i = targets.length - 1; i >= 0; i--) {
+      var c = centerPx(targets[i]);
+      var dx = c.x - cx, dy = c.y - cy;
+      if (Math.sqrt(dx * dx + dy * dy) <= radius) {
+        targets[i].el.remove();
+        targets.splice(i, 1);
+        hit++;
+        addScore(pts);
+      }
+    }
+    return hit;
+  }
+  box.addEventListener("pointerdown", function(e){
+    if (phase !== "playing") return;
+    charging = true; charge = 0;
+    chargeTimer = setInterval(function(){
+      charge = Math.min(100, charge + 5);
+      chargeEl.textContent = String(charge);
+    }, 50);
+  });
+  box.addEventListener("pointerup", function(e){
+    if (phase !== "playing") return;
+    if (chargeTimer) clearInterval(chargeTimer);
+    var rect = box.getBoundingClientRect();
+    var cx = e.clientX - rect.left, cy = e.clientY - rect.top;
+    if (charging && charge >= 40) {
+      var radius = 30 + charge * 0.9;
+      var hit = shoot(cx, cy, radius, 15);
+      msg.textContent = hit ? "溜め撃ちで " + hit + " 体！" : "溜め撃ちは外れた";
+    } else {
+      var hit1 = shoot(cx, cy, 13, 25);
+      msg.textContent = hit1 ? "中心ヒット！" : "中心を外した…";
+    }
+    charging = false; charge = 0;
+    chargeEl.textContent = "0";
+  });
+  function end(){
+    phase = "done";
+    if (spawnT) clearInterval(spawnT);
+    if (countT) clearInterval(countT);
+    msg.textContent = "終了！ スコア " + score + " 点";
+    submit(score);
+  }
+  document.getElementById("csStart").addEventListener("click", function(){
+    targets.forEach(function(t){ t.el.remove(); });
+    targets = [];
+    score = 0; remain = 60; phase = "playing";
+    scoreEl.textContent = "0"; timeEl.textContent = "60";
+    msg.textContent = "的の中心を狙え！";
+    if (spawnT) clearInterval(spawnT);
+    if (countT) clearInterval(countT);
+    spawnT = setInterval(spawn, 850);
+    spawn();
+    countT = setInterval(function(){
+      remain--;
+      timeEl.textContent = String(remain);
+      if (remain <= 0) end();
+    }, 1000);
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/caravan-shot", methods=["GET"])
+def caravan_shot():
+    body = render_template_string(
+        CARAVAN_SHOT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("caravan-shot", "max"),
+        history=recent_scores("caravan-shot", 10),
+    )
+    return game_page("2分キャラバン溜め撃ち", body)
+
+
+@app.route("/games/caravan-shot/score", methods=["POST"])
+def caravan_shot_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 500):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("caravan-shot", int(raw))
+    return {"ok": True, "best": best_score("caravan-shot", "max")}
+
+
+IHEN_REPORT_TEMPLATE = r"""
+  <h1>🏯 異変ことば報告</h1>
+  <p class="howto">ループする城の一室。基準の部屋と今の部屋を見比べて、変わった要素を言葉で報告してください。変わっていない回もあります。全10回、1回10点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="ihRound">-</span> 回目（全10回）／ 正解 <span id="ihOk">0</span></p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; text-align:left;">
+      <div style="flex:1; min-width:200px; background:#f7f3e8; border:1px solid #d8c690; border-radius:8px; padding:10px;">
+        <strong>基準の部屋</strong>
+        <ul id="ihBase" style="margin:6px 0; padding-left:18px; line-height:1.8;"></ul>
+      </div>
+      <div style="flex:1; min-width:200px; background:#eef4fb; border:1px solid #a9c6e2; border-radius:8px; padding:10px;">
+        <strong>今の部屋</strong>
+        <ul id="ihNow" style="margin:6px 0; padding-left:18px; line-height:1.8;"></ul>
+      </div>
+    </div>
+    <div class="row" id="ihBtns" style="margin-top:10px;">
+      <button type="button" data-k="0">絵画が変わった</button>
+      <button type="button" data-k="1">窓の外が変わった</button>
+      <button type="button" data-k="2">花が変わった</button>
+      <button type="button" data-k="3">本棚が変わった</button>
+      <button type="button" data-k="4">猫が変わった</button>
+      <button type="button" data-k="5">暖炉が変わった</button>
+      <button type="button" data-k="-1">異変なし</button>
+    </div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="ihStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var base = ["絵画：騎士の絵", "窓の外：月", "花：赤いバラ", "本棚：一番上は青い本", "猫：寝ている", "暖炉：火が燃えている"];
+  var alt = ["絵画：風景画", "窓の外：太陽", "花：白いユリ", "本棚：一番上は赤い本", "猫：起きてこちらを見ている", "暖炉：火が消えている"];
+  var baseEl = document.getElementById("ihBase"), nowEl = document.getElementById("ihNow");
+  var roundEl = document.getElementById("ihRound"), okEl = document.getElementById("ihOk");
+  var msg = document.getElementById("message");
+  var phase = "idle", round = 0, ok = 0, answer = -1;
+  function renderList(el, arr){
+    el.innerHTML = arr.map(function(s){ return "<li>" + s + "</li>"; }).join("");
+  }
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('ihen_report_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function next(){
+    if (round >= 10) {
+      phase = "done";
+      msg.textContent = "終了！ " + ok + " 回正解。スコア " + (ok * 10) + " 点";
+      submit(ok * 10);
+      return;
+    }
+    round++;
+    roundEl.textContent = String(round);
+    var now = base.slice();
+    answer = Math.random() < 0.25 ? -1 : Math.floor(Math.random() * 6);
+    if (answer >= 0) now[answer] = alt[answer];
+    renderList(nowEl, now);
+    msg.textContent = "異変を報告して";
+  }
+  document.getElementById("ihBtns").addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if (!b || phase !== "playing") return;
+    var k = parseInt(b.getAttribute("data-k"), 10);
+    if (k === answer) {
+      ok++;
+      okEl.textContent = String(ok);
+      msg.textContent = answer < 0 ? "正解。本当に異変はなかった" : "正解！ " + alt[answer] + " になっていた";
+    } else {
+      msg.textContent = answer < 0 ? "残念、実は異変なしだった" : "残念、正解は「" + base[answer].split("：")[0] + "が変わった」";
+    }
+    phase = "wait";
+    setTimeout(function(){ phase = "playing"; next(); }, 1300);
+  });
+  document.getElementById("ihStart").addEventListener("click", function(){
+    round = 0; ok = 0; phase = "playing";
+    okEl.textContent = "0";
+    renderList(baseEl, base);
+    next();
+  });
+  renderList(baseEl, base);
+  renderList(nowEl, base);
+})();
+</script>
+"""
+
+
+@app.route("/games/ihen-report", methods=["GET"])
+def ihen_report():
+    body = render_template_string(
+        IHEN_REPORT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("ihen-report", "max"),
+        history=recent_scores("ihen-report", 10),
+    )
+    return game_page("異変ことば報告", body)
+
+
+@app.route("/games/ihen-report/score", methods=["POST"])
+def ihen_report_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("ihen-report", int(raw))
+    return {"ok": True, "best": best_score("ihen-report", "max")}
+
+
+CUBE_ESCAPE_TEMPLATE = r"""
+  <h1>🎲 六面体まわし脱出</h1>
+  <p class="howto">六面体の展開図です。各面をクリックすると90度回ります。上の入口（▼）から入って、一番下の面の出口（▼）まで道をつなげてください。回した回数が少ないほど高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">入口 ▼（上の面の北側）</p>
+    <div id="ceGrid" style="display:grid; grid-template-columns:repeat(3, 64px); gap:6px; justify-content:center;"></div>
+    <p class="mid">出口 ▼（一番下の面の南側）／ 回した回数 <span id="ceClicks">0</span> 回</p>
+    <p class="result" id="message">面をクリックして回そう</p>
+    <div class="row">
+      <button type="button" id="ceReset">並べ直す</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var grid = document.getElementById("ceGrid"), clicksEl = document.getElementById("ceClicks");
+  var msg = document.getElementById("message");
+  // セル: A(0,1) B(1,0) C(1,1) D(1,2) E(2,1) F(3,1)。dir 0=北 1=東 2=南 3=西
+  var cells = [
+    {id: "A", r: 0, c: 1, type: "S"},
+    {id: "B", r: 1, c: 0, type: "L"},
+    {id: "C", r: 1, c: 1, type: "S"},
+    {id: "D", r: 1, c: 2, type: "L"},
+    {id: "E", r: 2, c: 1, type: "S"},
+    {id: "F", r: 3, c: 1, type: "S"}
+  ];
+  var glyphs = {"0,2": "┃", "1,3": "━", "0,1": "┗", "1,2": "┏", "2,3": "┓", "0,3": "┛"};
+  var rot = {}, clicks = 0, done = false;
+  function conns(cell){
+    var base = cell.type === "S" ? [0, 2] : [0, 1];
+    return base.map(function(d){ return (d + rot[cell.id]) % 4; });
+  }
+  function neighbor(cell, dir){
+    var dr = [-1, 0, 1, 0][dir], dc = [0, 1, 0, -1][dir];
+    for (var i = 0; i < cells.length; i++) {
+      if (cells[i].r === cell.r + dr && cells[i].c === cell.c + dc) return cells[i];
+    }
+    return null;
+  }
+  function solved(){
+    var byId = {};
+    cells.forEach(function(c){ byId[c.id] = c; });
+    if (conns(byId.A).indexOf(0) < 0) return false;
+    var visited = {A: true}, queue = [byId.A];
+    while (queue.length) {
+      var cur = queue.shift();
+      conns(cur).forEach(function(d){
+        var nb = neighbor(cur, d);
+        if (nb && conns(nb).indexOf((d + 2) % 4) >= 0 && !visited[nb.id]) {
+          visited[nb.id] = true;
+          queue.push(nb);
+        }
+      });
+    }
+    return !!visited.F && conns(byId.F).indexOf(2) >= 0;
+  }
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('cube_escape_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function render(){
+    grid.innerHTML = "";
+    var map = {};
+    cells.forEach(function(c){ map[c.r + "," + c.c] = c; });
+    for (var r = 0; r < 4; r++) {
+      for (var c = 0; c < 3; c++) {
+        var cell = map[r + "," + c];
+        var d = document.createElement("button");
+        d.type = "button";
+        d.style.height = "64px";
+        d.style.fontSize = "34px";
+        d.style.borderRadius = "10px";
+        if (!cell) {
+          d.style.visibility = "hidden";
+        } else {
+          (function(cell){
+            var cs = conns(cell).slice().sort();
+            d.textContent = glyphs[cs.join(",")] || "・";
+            d.style.background = "#fdf6e3";
+            d.style.border = "2px solid #d8c690";
+            d.addEventListener("click", function(){
+              if (done) return;
+              rot[cell.id] = (rot[cell.id] + 1) % 4;
+              clicks++;
+              clicksEl.textContent = String(clicks);
+              render();
+              if (solved()) {
+                done = true;
+                var score = Math.max(20, 100 - clicks * 3);
+                msg.textContent = "脱出成功！ " + clicks + " 回でつながった。スコア " + score + " 点";
+                submit(score);
+              }
+            });
+          })(cell);
+        }
+        grid.appendChild(d);
+      }
+    }
+  }
+  function setup(){
+    clicks = 0; done = false;
+    clicksEl.textContent = "0";
+    cells.forEach(function(c){
+      if (c.type === "S") rot[c.id] = [1, 3][Math.floor(Math.random() * 2)];
+      else rot[c.id] = Math.floor(Math.random() * 4);
+    });
+    msg.textContent = "面をクリックして回そう";
+    render();
+  }
+  document.getElementById("ceReset").addEventListener("click", setup);
+  setup();
+})();
+</script>
+"""
+
+
+@app.route("/games/cube-escape", methods=["GET"])
+def cube_escape():
+    body = render_template_string(
+        CUBE_ESCAPE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("cube-escape", "max"),
+        history=recent_scores("cube-escape", 10),
+    )
+    return game_page("六面体まわし脱出", body)
+
+
+@app.route("/games/cube-escape/score", methods=["POST"])
+def cube_escape_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("cube-escape", int(raw))
+    return {"ok": True, "best": best_score("cube-escape", "max")}
+
+
+TAROT_THREE_TEMPLATE = r"""
+  <h1>🔮 3枚タロット読み</h1>
+  <p class="howto">大アルカナ22枚から、過去・現在・未来の3枚を引きます。正位置と逆位置で意味と運勢が変わります。運勢の合計がスコアです。引き直しは1回だけできます。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <div id="ttCards" style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;"></div>
+    <p class="result" id="message">「占う」で3枚引いてね</p>
+    <div class="row">
+      <button type="button" id="ttDraw">占う</button>
+      <button type="button" id="ttFix" style="display:none;">この結果で確定</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var cards = [
+    ["愚者", "🃏", 18, "自由な始まり", "無計画な一歩"], ["魔術師", "🎩", 26, "創造と実現", "空回りする工夫"],
+    ["女教皇", "📖", 22, "直感と静けさ", "考えすぎ"], ["女帝", "👑", 28, "実りと豊かさ", "甘えすぎ"],
+    ["皇帝", "🏛️", 24, "安定と主導", "頑固さ"], ["教皇", "🕯️", 20, "信頼と教え", "形式だけの助言"],
+    ["恋人", "💞", 27, "良い選択と調和", "迷いの選択"], ["戦車", "🏎️", 25, "前進と勝利", "暴走"],
+    ["力", "🦁", 23, "穏やかな強さ", "自信のなさ"], ["隠者", "🔦", 16, "内省と探求", "閉じこもり"],
+    ["運命の輪", "🎡", 29, "好機の到来", "タイミングのずれ"], ["正義", "⚖️", 21, "公平な判断", "偏った判断"],
+    ["吊るされた男", "🙃", 14, "視点を変える", "停滞"], ["死神", "🌑", 15, "終わりと再生", "古いものへの執着"],
+    ["節制", "🥣", 24, "バランスと調整", "ちぐはぐな配分"], ["悪魔", "😈", 12, "欲望の自覚", "囚われ"],
+    ["塔", "🌩️", 10, "突然の刷新", "小さな崩れ"], ["星", "⭐", 30, "希望とひらめき", "儚い期待"],
+    ["月", "🌙", 13, "揺れる心の理解", "不安の増幅"], ["太陽", "🌞", 33, "喜びと成功", "眩しさ疲れ"],
+    ["審判", "🎺", 26, "再起の合図", "先送り"], ["世界", "🌍", 32, "完成と達成", "あと一歩の未完"]
+  ];
+  var wrap = document.getElementById("ttCards"), msg = document.getElementById("message");
+  var drawBtn = document.getElementById("ttDraw"), fixBtn = document.getElementById("ttFix");
+  var draws = 0, lastTotal = 0;
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('tarot_three_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function draw(){
+    draws++;
+    var idxs = [];
+    while (idxs.length < 3) {
+      var n = Math.floor(Math.random() * 22);
+      if (idxs.indexOf(n) < 0) idxs.push(n);
+    }
+    var labels = ["過去", "現在", "未来"];
+    var total = 0;
+    wrap.innerHTML = "";
+    idxs.forEach(function(n, i){
+      var c = cards[n];
+      var up = Math.random() < 0.6;
+      var luck = up ? c[2] : (34 - c[2]);
+      total += luck;
+      var d = document.createElement("div");
+      d.style.width = "150px";
+      d.style.background = up ? "#fdf6e3" : "#ece9f7";
+      d.style.border = "2px solid " + (up ? "#d8c690" : "#a79fd0");
+      d.style.borderRadius = "10px";
+      d.style.padding = "10px";
+      d.innerHTML = '<div style="font-size:13px;">' + labels[i] + '</div>' +
+        '<div style="font-size:40px; ' + (up ? "" : "transform:rotate(180deg);") + '">' + c[1] + '</div>' +
+        '<div style="font-weight:bold;">' + c[0] + '</div>' +
+        '<div style="font-size:13px;">' + (up ? "正位置" : "逆位置") + '：' + (up ? c[3] : c[4]) + '</div>' +
+        '<div style="font-size:13px;">運勢 ' + luck + '</div>';
+      wrap.appendChild(d);
+    });
+    total = Math.min(100, total);
+    lastTotal = total;
+    if (draws >= 2) {
+      drawBtn.disabled = true;
+      fixBtn.style.display = "none";
+      msg.textContent = "運勢の合計は " + total + " 点（引き直し後の結果で確定）";
+      submit(total);
+    } else {
+      drawBtn.textContent = "引き直す（あと1回）";
+      fixBtn.style.display = "";
+      msg.textContent = "運勢の合計は " + total + " 点。引き直すか、この結果で確定してね";
+    }
+  }
+  drawBtn.addEventListener("click", draw);
+  fixBtn.addEventListener("click", function(){
+    fixBtn.style.display = "none";
+    drawBtn.disabled = true;
+    msg.textContent = "運勢の合計 " + lastTotal + " 点で確定したよ";
+    submit(lastTotal);
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/tarot-three", methods=["GET"])
+def tarot_three():
+    body = render_template_string(
+        TAROT_THREE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("tarot-three", "max"),
+        history=recent_scores("tarot-three", 10),
+    )
+    return game_page("3枚タロット読み", body)
+
+
+@app.route("/games/tarot-three/score", methods=["POST"])
+def tarot_three_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("tarot-three", int(raw))
+    return {"ok": True, "best": best_score("tarot-three", "max")}
 
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
