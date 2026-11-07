@@ -104,7 +104,7 @@ class NewGamesTest(MinigameTest):
                       "ストループ", "神経衰弱", "モンティホール", "クイズ",
                       "どっちが多い？", "数字並べ替え"):
             self.assertIn(title, body)
-        self.assertIn("134 本", body)
+        self.assertIn("137 本", body)
 
     def test_omikuji_draw(self):
         res = self.client.get("/games/omikuji")
@@ -415,8 +415,8 @@ class NewFourGamesTest(MinigameTest):
         for title in ("世界地理クイズ", "ココアの部屋からの脱出",
                       "理科室からの脱出", "喫茶店の倉庫からの脱出"):
             self.assertIn(title, body)
-        self.assertIn("134 本", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertIn("137 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
 
     def test_geoquiz_bank_and_items(self):
         self.assertGreaterEqual(len(self.mod.GEO_BANK), 40)
@@ -539,8 +539,8 @@ class FiveMoreGamesTest(MinigameTest):
         for title in ("あいことば推理", "くつ飛ばし", "つりぼり図鑑",
                       "かわしサバイバー", "ゆき玉転がし"):
             self.assertIn(title, body)
-        self.assertIn("134 本", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertIn("137 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
 
     # ---- hitblow ----
     def test_hitblow_page_ok(self):
@@ -677,8 +677,8 @@ class ZhGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/zhgacha", body)
         self.assertIn("中国語単語ガチャ", body)
-        self.assertIn("134 本", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertIn("137 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
         self.assertEqual(len(self.mod.ZH_WORDS), 110)
 
     def test_zhgacha_page_ok(self):
@@ -736,8 +736,8 @@ class EnGachaTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/engacha", body)
         self.assertIn("英単語ガチャ", body)
-        self.assertIn("134 本", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertIn("137 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
         self.assertEqual(len(self.mod.EN_WORDS), 110)
 
     def test_en_words_data_valid(self):
@@ -889,8 +889,8 @@ class ShindanGamesTest(MinigameTest):
             self.assertIn(f"/games/{slug}", body)
         for title in ("三人娘タイプ診断", "今日のおやつ診断", "べんきょうタイプ診断"):
             self.assertIn(title, body)
-        self.assertIn("134 本", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertIn("137 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
 
     # ---- 三人娘タイプ診断 ----
     def test_trio_page_ok(self):
@@ -1011,8 +1011,8 @@ class DotboardTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/dotboard", body)
         self.assertIn("ドット絵ボード", body)
-        self.assertIn("134 本", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertIn("137 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
 
     def test_dotboard_page_ok(self):
         res = self.client.get("/games/dotboard")
@@ -1083,8 +1083,8 @@ class NewFiveGamesTest(MinigameTest):
         for title in ("スライドパズル", "1→25タッチ", "まるばつ対戦",
                       "しりとり対戦", "風船わり"):
             self.assertIn(title, body)
-        self.assertIn("134 本", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertIn("137 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
 
     # ---- slidepuzzle ----
     def test_slidepuzzle_page_ok(self):
@@ -1374,8 +1374,8 @@ class SnsNov02GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
-        self.assertIn("134 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
+        self.assertIn("137 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -1735,8 +1735,8 @@ class SnsNov03GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
-        self.assertIn("134 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
+        self.assertIn("137 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -2028,8 +2028,8 @@ class SnsNov04GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
-        self.assertIn("134 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
+        self.assertIn("137 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -2364,8 +2364,8 @@ class SnsNov05GamesTest(MinigameTest):
         body = self.client.get("/").get_data(as_text=True)
         for slug in self.NEW_SLUGS:
             self.assertIn(f"/games/{slug}", body)
-        self.assertEqual(len(self.mod.GAMES), 134)
-        self.assertIn("134 本", body)
+        self.assertEqual(len(self.mod.GAMES), 137)
+        self.assertIn("137 本", body)
 
     def test_new_games_categories(self):
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
@@ -2600,8 +2600,8 @@ class PortalImprovementsTest(MinigameTest):
             'property="og:title"', "ジャンル一覧", "mg_settings",
         ):
             self.assertIn(marker, body)
-        self.assertEqual(body.count('class="fav-btn"'), 134)
-        self.assertEqual(body.count('class="new-badge"'), 134)
+        self.assertEqual(body.count('class="fav-btn"'), 137)
+        self.assertEqual(body.count('class="new-badge"'), 137)
         self.assertIn("⏱ 約", body)
         self.assertIn("難易度：", body)
 
@@ -2850,13 +2850,13 @@ class EscapeRushTest(MinigameTest):
         self.assertEqual(res.get_json()["best"], 190)
 
     def test_escape_rush_registered(self):
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertEqual(len(self.mod.GAMES), 137)
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
         self.assertEqual(cats["escape-rush"], "脱出・謎解き")
-        self.assertEqual(sum(1 for c in cats.values() if c == "脱出・謎解き"), 8)
+        self.assertEqual(sum(1 for c in cats.values() if c == "脱出・謎解き"), 11)
         body = self.client.get("/").get_data(as_text=True)
         self.assertIn("/games/escape-rush", body)
-        self.assertIn("134 本", body)
+        self.assertIn("137 本", body)
 
     def test_escape_rush_page_parts(self):
         body = self.client.get("/games/escape-rush").get_data(as_text=True)
@@ -2940,7 +2940,7 @@ class SnsNov06GamesTest(MinigameTest):
             "maou-battle", "魔王2回行動バトル", "130", ("-1", "abc", "161"))
 
     def test_nov06_registered(self):
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertEqual(len(self.mod.GAMES), 137)
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
         expected = {
             "uta-memory": "脳トレ", "number-montage": "創作",
@@ -2960,10 +2960,10 @@ class SnsNov06GamesTest(MinigameTest):
         self.assertEqual(counts, {
             "アクション": 42, "脳トレ": 28, "クイズ・知識": 15,
             "抽選・占い": 12, "カード・数字": 10, "対戦": 9,
-            "脱出・謎解き": 8, "創作": 10,
+            "脱出・謎解き": 11, "創作": 10,
         })
         body = self.client.get("/").get_data(as_text=True)
-        self.assertIn("134 本", body)
+        self.assertIn("137 本", body)
         for slug in expected:
             self.assertIn(f"/games/{slug}", body)
 
@@ -3066,7 +3066,38 @@ class CardNumberNov08Test(MinigameTest):
     def test_card_number_genre_grew(self):
         cats = [g["category"] for g in self.mod.GAMES]
         self.assertEqual(cats.count("カード・数字"), 10)
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertEqual(len(self.mod.GAMES), 137)
+
+
+class EscapeNov08Test(MinigameTest):
+    """2026-11-08 朝チェックの改善案（脱出・謎解きジャンル追加）で足した3本。"""
+
+    def check_js_score_game(self, slug, title, good, bad_values):
+        res = self.client.get(f"/games/{slug}")
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(title, res.get_data(as_text=True))
+        res = self.client.post(f"/games/{slug}/score", data={"score": good})
+        self.assertEqual(res.get_json(), {"ok": True, "best": int(good)})
+        for bad in bad_values:
+            res = self.client.post(f"/games/{slug}/score", data={"score": bad})
+            self.assertEqual(res.status_code, 400, (slug, bad))
+
+    def test_locker_code(self):
+        self.check_js_score_game(
+            "locker-code", "ロッカーの鍵番号", "80", ("-1", "abc", "101"))
+
+    def test_dark_room(self):
+        self.check_js_score_game(
+            "dark-room", "真っ暗な部屋の脱出", "76", ("-1", "abc", "101"))
+
+    def test_cipher_door(self):
+        self.check_js_score_game(
+            "cipher-door", "暗号ドアの合言葉", "60", ("-1", "abc", "101"))
+
+    def test_escape_genre_grew(self):
+        cats = [g["category"] for g in self.mod.GAMES]
+        self.assertEqual(cats.count("脱出・謎解き"), 11)
+        self.assertEqual(len(self.mod.GAMES), 137)
 
 
 if __name__ == "__main__":
@@ -3147,7 +3178,7 @@ class SnsNov07GamesTest(MinigameTest):
             "tarot-three", "3枚タロット読み", "66", ("-1", "abc", "101"))
 
     def test_nov07_registered(self):
-        self.assertEqual(len(self.mod.GAMES), 134)
+        self.assertEqual(len(self.mod.GAMES), 137)
         cats = {g["slug"]: g["category"] for g in self.mod.GAMES}
         expected = {
             "jelly-haul": "アクション", "glass-stack": "アクション",
@@ -3167,10 +3198,10 @@ class SnsNov07GamesTest(MinigameTest):
         self.assertEqual(counts, {
             "アクション": 42, "脳トレ": 28, "クイズ・知識": 15,
             "抽選・占い": 12, "カード・数字": 10, "対戦": 9,
-            "脱出・謎解き": 8, "創作": 10,
+            "脱出・謎解き": 11, "創作": 10,
         })
         body = self.client.get("/").get_data(as_text=True)
-        self.assertIn("134 本", body)
+        self.assertIn("137 本", body)
         for slug in expected:
             self.assertIn(f"/games/{slug}", body)
 

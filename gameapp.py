@@ -1332,6 +1332,30 @@ GAMES = [
         "description": "CPUとカードの数字で勝負。大きいほうが勝ち、全10回。",
         "endpoint": "card_battle",
     },
+    {
+        "slug": "locker-code",
+        "title": "ロッカーの鍵番号",
+        "category": "脱出・謎解き",
+        "icon": "🔢",
+        "description": "ヒントから3桁の鍵番号を推理する脱出ゲーム。外すたびに点が下がる。",
+        "endpoint": "locker_code",
+    },
+    {
+        "slug": "dark-room",
+        "title": "真っ暗な部屋の脱出",
+        "category": "脱出・謎解き",
+        "icon": "🔦",
+        "description": "暗闇でマスを手探りし、距離のヒントで鍵を見つけてドアを開ける脱出ゲーム。",
+        "endpoint": "dark_room",
+    },
+    {
+        "slug": "cipher-door",
+        "title": "暗号ドアの合言葉",
+        "category": "脱出・謎解き",
+        "icon": "🔐",
+        "description": "ずらし暗号で書かれた合言葉を解読する脱出ゲーム。全5問。",
+        "endpoint": "cipher_door",
+    },
 ]
 
 
@@ -1378,6 +1402,7 @@ GAME_META = {
     "otsuri-min": (3, 3), "bunny-ride": (3, 2), "caravan-shot": (2, 2),
     "ihen-report": (3, 2), "cube-escape": (5, 3), "tarot-three": (1, 1),
     "target-21": (2, 2), "sum10-cards": (1, 2), "card-battle": (2, 1),
+    "locker-code": (3, 2), "dark-room": (3, 2), "cipher-door": (3, 2),
 }
 
 # 遊び方（目的／操作／コツ）。各ゲームページ下部の共通セクションで表示する。
@@ -1516,6 +1541,9 @@ GAME_HOWTO = {
     "target-21": ("カードの合計を21に近づける。", "「引く」で1枚追加、「止める」でその回の合計を確定。21を超えると0点。全3回。", "16以下ならもう1枚、17以上は止め時。11〜13の絵札は10点。"),
     "sum10-cards": ("タイルの合計を10ぴったりにする。", "数字タイルをタップして選び、合計10で1セット。超えたら選び直し。60秒。", "9+1、8+2のような大きい組み合わせから消すと速い。"),
     "card-battle": ("CPUより大きい数字のカードを出す。", "「カードを出す」で勝負。勝ち10点、引き分け5点。全10回。", "運だけの勝負。出た数字の記録で流れを読む楽しみも。"),
+    "locker-code": ("ヒントから3桁の鍵番号を当てる。", "4つのヒントを読み、3桁の数字を入力して「開ける」。外すたび−20点、5回外すと失敗。", "ヒント同士を組み合わせると候補が一気に絞れる。"),
+    "dark-room": ("鍵を見つけてドアから脱出する。", "5×5のマスをタップして手探り。鍵までの距離がヒントで出る。鍵を取ったらドアのマスへ。手数は14まで。", "距離が縮む方向に進むのが近道。ドアの位置は最初から見えている。"),
+    "cipher-door": ("ずらし暗号の合言葉を解読する。", "暗号文と、ずらし方の対応表を見て、正しい元の言葉を3択から選ぶ。全5問。", "最初の1文字を対応表で戻すと、言葉の形が見えてくる。"),
 }
 
 # プレイセット（テーマ別に数本を連続プレイする導線）
@@ -1537,6 +1565,7 @@ JS_SCORE_GAMES = {
     "dot-room", "witch-pot", "meat-cut", "seat-recline", "otsuri-min",
     "bunny-ride", "caravan-shot", "ihen-report", "cube-escape", "tarot-three",
     "target-21", "sum10-cards", "card-battle",
+    "locker-code", "dark-room", "cipher-door",
 }
 # スコアは「小さいほど良い」JS ゲーム（ベスト＝最小）
 MIN_SCORE_GAMES = {"reaction", "stopwatch", "typing", "sort", "touch25"}
@@ -25059,6 +25088,349 @@ def card_battle_score():
         return {"ok": False, "error": "invalid score"}, 400
     record_score("card-battle", int(raw))
     return {"ok": True, "best": best_score("card-battle", "max")}
+
+
+
+LOCKER_CODE_TEMPLATE = r"""
+  <h1>🔢 ロッカーの鍵番号</h1>
+  <p class="howto">ロッカーの鍵は3桁の番号です。下の4つのヒントから推理して、番号を入力して「開ける」を押してください。当たれば脱出成功。外すたびに−20点、5回外すと失敗です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <ul id="lcHints" style="text-align:left; max-width:420px; margin:8px auto; line-height:1.9;"></ul>
+    <p class="mid">外した回数: <span id="lcMiss">0</span> / 5</p>
+    <div class="row">
+      <input id="lcA" type="number" min="0" max="9" style="width:56px; font-size:22px; text-align:center;">
+      <input id="lcB" type="number" min="0" max="9" style="width:56px; font-size:22px; text-align:center;">
+      <input id="lcC" type="number" min="0" max="9" style="width:56px; font-size:22px; text-align:center;">
+      <button type="button" id="lcOpen">開ける</button>
+    </div>
+    <p class="result" id="message">「スタート」で鍵番号が決まります</p>
+    <div class="row">
+      <button type="button" id="lcStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var hintsEl = document.getElementById("lcHints"), missEl = document.getElementById("lcMiss");
+  var msg = document.getElementById("message");
+  var phase = "idle", code = null, miss = 0;
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('locker_code_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function makeHints(c){
+    var a = c[0], b = c[1], d = c[2];
+    var sum = a + b + d;
+    var evens = c.filter(function(x){ return x % 2 === 0; }).length;
+    var rel = a > b ? "百の位は十の位より大きい" : (a < b ? "百の位は十の位より小さい" : "百の位と十の位は同じ");
+    var present = c[Math.floor(Math.random() * 3)];
+    var absentPool = [0,1,2,3,4,5,6,7,8,9].filter(function(x){ return c.indexOf(x) < 0; });
+    var absent = absentPool[Math.floor(Math.random() * absentPool.length)];
+    return [
+      "3桁の合計は " + sum,
+      rel,
+      "偶数の桁は " + evens + " 個ある",
+      "数字 " + present + " を含む",
+      "数字 " + absent + " は含まない"
+    ];
+  }
+  document.getElementById("lcStart").addEventListener("click", function(){
+    code = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+    miss = 0;
+    missEl.textContent = "0";
+    hintsEl.innerHTML = "";
+    makeHints(code).forEach(function(h){
+      var li = document.createElement("li");
+      li.textContent = "🔑 " + h;
+      hintsEl.appendChild(li);
+    });
+    phase = "playing";
+    msg.textContent = "推理して番号を入力";
+  });
+  document.getElementById("lcOpen").addEventListener("click", function(){
+    if (phase !== "playing") return;
+    var guess = [document.getElementById("lcA").value, document.getElementById("lcB").value, document.getElementById("lcC").value];
+    if (guess.some(function(v){ return v === ""; })) { msg.textContent = "3桁とも入力してね"; return; }
+    guess = guess.map(function(v){ return parseInt(v, 10); });
+    if (guess.join("") === code.join("")) {
+      phase = "done";
+      var score = 100 - 20 * miss;
+      msg.textContent = "開いた！ 脱出成功。スコア " + score + " 点";
+      submit(score);
+    } else {
+      miss++;
+      missEl.textContent = String(miss);
+      var same = 0;
+      guess.forEach(function(v, i){ if (v === code[i]) same++; });
+      if (miss >= 5) {
+        phase = "done";
+        msg.textContent = "失敗…正解は " + code.join("") + " でした";
+        submit(0);
+      } else {
+        msg.textContent = "違うみたい。位置まで合ってる桁は " + same + " つ";
+      }
+    }
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/locker-code", methods=["GET"])
+def locker_code():
+    body = render_template_string(
+        LOCKER_CODE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("locker-code", "max"),
+        history=recent_scores("locker-code", 10),
+    )
+    return game_page("ロッカーの鍵番号", body)
+
+
+@app.route("/games/locker-code/score", methods=["POST"])
+def locker_code_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("locker-code", int(raw))
+    return {"ok": True, "best": best_score("locker-code", "max")}
+
+
+DARK_ROOM_TEMPLATE = r"""
+  <h1>🔦 真っ暗な部屋の脱出</h1>
+  <p class="howto">5×5の暗い部屋です。マスをタップすると鍵までの距離がヒントで出ます。鍵（🗝）を見つけたら、ドア（🚪）のマスへ進めば脱出。タップできるのは14回まで。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">残りタップ: <span id="drLeft">14</span> ／ 鍵: <span id="drKey">まだ</span></p>
+    <div id="drGrid" style="display:grid; grid-template-columns:repeat(5, 52px); gap:6px; justify-content:center; margin:12px 0;"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="drStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var grid = document.getElementById("drGrid"), leftEl = document.getElementById("drLeft"), keyEl = document.getElementById("drKey");
+  var msg = document.getElementById("message");
+  var phase = "idle", keyPos = -1, doorPos = 4, taps = 0, hasKey = false, seen = {};
+  var MAXTAP = 14;
+  function dist(a, b){
+    return Math.abs(Math.floor(a / 5) - Math.floor(b / 5)) + Math.abs(a % 5 - b % 5);
+  }
+  function render(){
+    grid.innerHTML = "";
+    for (var i = 0; i < 25; i++) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.style.cssText = "height:52px; font-size:20px; border-radius:8px;";
+      if (i === doorPos) b.textContent = "🚪";
+      else if (seen[i] === "key") b.textContent = "🗝";
+      else if (seen[i]) b.textContent = seen[i];
+      else b.textContent = "・";
+      (function(idx){ b.addEventListener("click", function(){ tap(idx); }); })(i);
+      grid.appendChild(b);
+    }
+    leftEl.textContent = String(MAXTAP - taps);
+    keyEl.textContent = hasKey ? "持ってる" : "まだ";
+  }
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('dark_room_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function tap(i){
+    if (phase !== "playing") return;
+    if (i === doorPos) {
+      if (hasKey) {
+        phase = "done";
+        var score = 40 + (MAXTAP - taps) * 4;
+        msg.textContent = "脱出成功！ スコア " + Math.min(100, score) + " 点";
+        submit(Math.min(100, score));
+      } else {
+        msg.textContent = "鍵がないと開かない";
+      }
+      render();
+      return;
+    }
+    if (seen[i]) { msg.textContent = "そこはもう調べた"; return; }
+    taps++;
+    if (i === keyPos) {
+      hasKey = true;
+      seen[i] = "key";
+      msg.textContent = "鍵を見つけた！ ドアへ急ごう";
+    } else {
+      var d = dist(i, keyPos);
+      seen[i] = d <= 2 ? "🔥" : (d <= 4 ? "🌡" : "❄");
+      msg.textContent = d <= 2 ? "鍵はすぐ近く（距離 " + d + "）" : (d <= 4 ? "鍵まで距離 " + d : "鍵は遠い（距離 " + d + "）");
+    }
+    if (taps >= MAXTAP && phase === "playing") {
+      phase = "done";
+      msg.textContent = "時間切れ…脱出失敗";
+      submit(hasKey ? 20 : 5);
+    }
+    render();
+  }
+  document.getElementById("drStart").addEventListener("click", function(){
+    do { keyPos = Math.floor(Math.random() * 25); } while (keyPos === doorPos);
+    taps = 0; hasKey = false; seen = {}; phase = "playing";
+    msg.textContent = "手探りで鍵を探そう";
+    render();
+  });
+  render();
+})();
+</script>
+"""
+
+
+@app.route("/games/dark-room", methods=["GET"])
+def dark_room():
+    body = render_template_string(
+        DARK_ROOM_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("dark-room", "max"),
+        history=recent_scores("dark-room", 10),
+    )
+    return game_page("真っ暗な部屋の脱出", body)
+
+
+@app.route("/games/dark-room/score", methods=["POST"])
+def dark_room_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("dark-room", int(raw))
+    return {"ok": True, "best": best_score("dark-room", "max")}
+
+
+CIPHER_DOOR_TEMPLATE = r"""
+  <h1>🔐 暗号ドアの合言葉</h1>
+  <p class="howto">ドアにはアルファベットをずらした暗号で合言葉が書かれています。ずらし幅と対応表を手がかりに、正しい元の言葉を3択から選んでください。全5問、1問20点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="cdRound">-</span> / 5 問目 ／ スコア <span id="cdScore">0</span> 点</p>
+    <p class="big" id="cdCipher" style="letter-spacing:3px; min-height:34px;">-</p>
+    <p class="mid" id="cdShift">-</p>
+    <div class="row" id="cdChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="cdStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var cipherEl = document.getElementById("cdCipher"), shiftEl = document.getElementById("cdShift");
+  var roundEl = document.getElementById("cdRound"), scoreEl = document.getElementById("cdScore");
+  var choicesEl = document.getElementById("cdChoices"), msg = document.getElementById("message");
+  var WORDS = ["APPLE", "RIVER", "MUSIC", "LIGHT", "WATER", "BREAD", "CLOCK", "PLANT", "HOUSE", "DREAM", "STONE", "CLOUD"];
+  var phase = "idle", round = 0, score = 0, answer = "";
+  function shiftWord(w, k){
+    return w.split("").map(function(ch){
+      return String.fromCharCode((ch.charCodeAt(0) - 65 + k) % 26 + 65);
+    }).join("");
+  }
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('cipher_door_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function next(){
+    round++;
+    if (round > 5) {
+      phase = "done";
+      msg.textContent = "ドアが開いた！ スコア " + score + " 点";
+      submit(score);
+      return;
+    }
+    roundEl.textContent = String(round);
+    var k = 1 + Math.floor(Math.random() * 5);
+    answer = WORDS[Math.floor(Math.random() * WORDS.length)];
+    cipherEl.textContent = shiftWord(answer, k);
+    shiftEl.textContent = "暗号は " + k + " 文字ずらし（A→" + String.fromCharCode(65 + k) + "）";
+    var opts = [answer];
+    while (opts.length < 3) {
+      var w = WORDS[Math.floor(Math.random() * WORDS.length)];
+      if (opts.indexOf(w) < 0) opts.push(w);
+    }
+    opts.sort(function(){ return Math.random() - 0.5; });
+    choicesEl.innerHTML = "";
+    opts.forEach(function(w){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = w;
+      b.addEventListener("click", function(){ pick(w); });
+      choicesEl.appendChild(b);
+    });
+    msg.textContent = "元の言葉はどれ？";
+  }
+  function pick(w){
+    if (phase !== "playing") return;
+    if (w === answer) { score += 20; msg.textContent = "正解！ +20点"; }
+    else msg.textContent = "違う…正解は " + answer;
+    scoreEl.textContent = String(score);
+    phase = "wait";
+    setTimeout(function(){ phase = "playing"; next(); }, 1100);
+  }
+  document.getElementById("cdStart").addEventListener("click", function(){
+    round = 0; score = 0; scoreEl.textContent = "0"; phase = "playing";
+    next();
+  });
+})();
+</script>
+"""
+
+
+@app.route("/games/cipher-door", methods=["GET"])
+def cipher_door():
+    body = render_template_string(
+        CIPHER_DOOR_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("cipher-door", "max"),
+        history=recent_scores("cipher-door", 10),
+    )
+    return game_page("暗号ドアの合言葉", body)
+
+
+@app.route("/games/cipher-door/score", methods=["POST"])
+def cipher_door_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("cipher-door", int(raw))
+    return {"ok": True, "best": best_score("cipher-door", "max")}
 
 
 
