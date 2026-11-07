@@ -1491,32 +1491,6 @@ GAME_HOWTO = {
 }
 
 # プレイセット（テーマ別に数本を連続プレイする導線）
-PLAYSETS = [
-    {
-        "id": "quick",
-        "name": "サクッと3本セット",
-        "description": "1本1分前後の軽いゲームを3連続。すきま時間にどうぞ。",
-        "slugs": ["reaction", "balloonpop", "swipe-ushi"],
-    },
-    {
-        "id": "brain",
-        "name": "脳トレじっくりセット",
-        "description": "記憶・推理・観察の3本。腰を据えて頭を使いたいときに。",
-        "slugs": ["memory", "hitblow", "flag-colors"],
-    },
-    {
-        "id": "versus",
-        "name": "対戦セット",
-        "description": "CPUとの読み合い3本勝負。最後は魔王で締める構成です。",
-        "slugs": ["marubatsu", "reversi-break", "maou-battle"],
-    },
-    {
-        "id": "create",
-        "name": "創作セット",
-        "description": "描いて・並べて・作る3本。スコアより作品づくりを楽しむセット。",
-        "slugs": ["dotboard", "firework-maker", "number-montage"],
-    },
-]
 
 # /score エンドポイントへ fetch でスコアを送る JS ゲーム（55本）
 JS_SCORE_GAMES = {
@@ -1662,7 +1636,6 @@ PORTAL_TEMPLATE = r"""
     #mgToTop { position: fixed; right: 14px; bottom: 14px; z-index: 40; border: 1px solid var(--mg-btn-border); background: var(--mg-card); color: var(--mg-fg); border-radius: 999px; padding: 10px 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.25); display: none; }
     #mgToTop.show { display: block; }
     .backup-box { border: 1px solid var(--mg-border); border-radius: 12px; padding: 14px 16px; background: var(--mg-card); }
-    .sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
   </style>
 </head>
 <body id="top">
@@ -1705,19 +1678,14 @@ PORTAL_TEMPLATE = r"""
     <div class="controls" id="mgRecentList" style="margin:0 0 6px;"></div>
   </section>
 
-  <section aria-label="プレイセット">
-    <h2>🎯 プレイセット（連続プレイ）</h2>
-    <p class="muted">テーマでまとめた数本を、順番に続けて遊べるセットです。ゲームページに「次のゲーム」への案内が出ます。</p>
-    <div class="sets">
-      {% for ps in playsets %}
-        <div class="card">
-          <h3>{{ ps.name }}</h3>
-          <p>{{ ps.description }}</p>
-          <p class="meta">{{ ps.members|length }} 本：{% for m in ps.members %}{{ m.title }}{% if not loop.last %} → {% endif %}{% endfor %}</p>
-          <a class="play" href="{{ ps.first_url }}">▶ セットで遊ぶ</a>
-        </div>
-      {% endfor %}
+  <section aria-label="オフライン">
+    <h2>📴 オフラインで遊ぶ</h2>
+    <p class="muted">全ゲームをこの端末に保存しておくと、ネットがなくても遊べます。一度開いたゲームも自動で保存されます。スコアの送信だけはオンライン時に行われます。</p>
+    <div class="controls">
+      <button type="button" class="play" id="mgOfflineSave">📥 全ゲームを保存する</button>
+      <button type="button" class="play" id="mgOfflineClear">🗑 保存を消す</button>
     </div>
+    <p class="muted" id="mgOfflineStatus"></p>
   </section>
 
   <p class="muted" id="mgProgress">プレイ済みを確認中…</p>
@@ -2022,6 +1990,39 @@ PORTAL_TEMPLATE = r"""
     });
   })();
 </script>
+<script>
+(function () {
+  var saveBtn = document.getElementById('mgOfflineSave');
+  if (!saveBtn) return;
+  var clearBtn = document.getElementById('mgOfflineClear');
+  var status = document.getElementById('mgOfflineStatus');
+  var CACHE_NAME = 'minigame-v1';
+  var URLS = [{% for g in games %}'{{ url_for(g.endpoint) }}'{% if not loop.last %}, {% endif %}{% endfor %}];
+  saveBtn.addEventListener('click', function () {
+    if (!('caches' in window)) { status.textContent = 'このブラウザはオフライン保存に対応していません。'; return; }
+    saveBtn.disabled = true;
+    caches.open(CACHE_NAME).then(function (cache) {
+      var done = 0;
+      status.textContent = '保存中… 0 / ' + URLS.length;
+      return Promise.all(URLS.map(function (u) {
+        return cache.add(u).catch(function () {}).then(function () {
+          done++;
+          status.textContent = '保存中… ' + done + ' / ' + URLS.length;
+        });
+      }));
+    }).then(function () {
+      status.textContent = '保存しました（' + URLS.length + ' 本）。オフラインでも遊べます。';
+      saveBtn.disabled = false;
+    });
+  });
+  clearBtn.addEventListener('click', function () {
+    if (!('caches' in window)) return;
+    caches.delete(CACHE_NAME).then(function () {
+      status.textContent = '保存を消しました。';
+    });
+  });
+})();
+</script>
 </body>
 </html>
 """
@@ -2249,15 +2250,6 @@ def index():
         item["minutes"] = minutes
         item["level"] = level
         enriched.append(item)
-    playsets = []
-    for ps in PLAYSETS:
-        members = [m for m in (_game_by_slug(slug_) for slug_ in ps["slugs"]) if m]
-        if not members:
-            continue
-        item = dict(ps)
-        item["members"] = members
-        item["first_url"] = url_for(members[0]["endpoint"]) + "?set=" + ps["id"]
-        playsets.append(item)
     pickup = dict(_today_pickup())
     p_minutes, p_level = GAME_META.get(pickup["slug"], (3, 2))
     pickup["minutes"] = p_minutes
@@ -2267,7 +2259,6 @@ def index():
         games=enriched,
         categories=sorted(categories.items()),
         pickup=pickup,
-        playsets=playsets,
         abs_url=request.url_root,
     )
 
@@ -2567,7 +2558,6 @@ _GAME_CSS = """
     .mg-share-btn { margin-top: 6px; }
     .mg-share-box { border: 1px solid var(--mg-border); border-radius: 12px; padding: 12px 16px; margin: 0 0 16px; background: var(--mg-card); }
     .mg-share-box p { margin: 0 0 8px; }
-    #mg-setbar { border: 2px solid var(--mg-accent); border-radius: 12px; padding: 12px 16px; margin: 0 0 16px; background: var(--mg-card); }
 """
 
 _FLASH_BLOCK = """
@@ -2878,23 +2868,6 @@ shareBox.appendChild(shareRow);
 var shareHost = document.querySelector('.card') || document.querySelector('.wrap') || document.body;
 shareHost.appendChild(shareBox);
 }
-/* --- プレイセット連続プレイ導線 --- */
-if (CFG.playset) {
-var ps = CFG.playset;
-var setBar = document.createElement('div');
-setBar.id = 'mg-setbar';
-var setHead = document.createElement('p');
-setHead.style.margin = '0 0 8px';
-setHead.textContent = '🎯 プレイセット「' + ps.name + '」 ' + (ps.idx + 1) + ' / ' + ps.total + ' 本目';
-setBar.appendChild(setHead);
-var setLink = document.createElement('a');
-setLink.href = ps.nextUrl;
-setLink.className = 'mg-next-card';
-if (ps.done) {
-setLink.innerHTML = '<span class="mg-next-icon">🎉</span><span><strong>セット制覇！</strong><br><span class="muted">トップへ戻って、ほかのゲームもどうぞ</span></span>';
-} else {
-setLink.innerHTML = '<span class="mg-next-icon">▶</span><span><strong>次のゲーム：' + ps.nextTitle + '</strong><br><span class="muted">このゲームが終わったら次へ進もう</span></span>';
-}
 setBar.appendChild(setLink);
 var mgFooter = document.querySelector('.mg-footer');
 if (mgFooter && mgFooter.parentNode) mgFooter.parentNode.insertBefore(setBar, mgFooter);
@@ -2936,7 +2909,35 @@ def _script_inner(block: str) -> str:
 # 中身は従来インラインだった定数から機械的に取り出したもので、内容は変えていない。
 # mg-head.js = テーマ初期化（ブート）＋一時停止ゲート。ゲート不要のページは
 # ?boot=1 でブートだけを受ける（ゲートを持たないページにゲートを足さないため）。
-_MG_BOOT_JS = _script_inner(_MG_THEME_INIT)
+
+# Service Worker の登録とオフラインバッジ（全ページ共通・2026-11-07 追加）。
+_MG_SW_SCRIPT = r"""<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+(function () {
+  function upd() {
+    var b = document.getElementById('mg-offline-badge');
+    if (!navigator.onLine) {
+      if (!b) {
+        b = document.createElement('div');
+        b.id = 'mg-offline-badge';
+        b.textContent = '📴 オフライン中（スコアは送信されません）';
+        b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:12px;z-index:9999;background:#333;color:#fff;padding:8px 14px;border-radius:999px;font-size:14px;box-shadow:0 2px 8px rgba(0,0,0,.3);';
+        document.body.appendChild(b);
+      }
+    } else if (b) { b.remove(); }
+  }
+  window.addEventListener('online', upd);
+  window.addEventListener('offline', upd);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', upd); else upd();
+})();
+</script>
+"""
+
+_MG_BOOT_JS = _script_inner(_MG_THEME_INIT) + "\n" + _script_inner(_MG_SW_SCRIPT)
 _MG_HEAD_JS = _MG_BOOT_JS + "\n" + _script_inner(_MG_GATE_SCRIPT) + "\n"
 # mg-cfg.js = 共通スクリプトのロジック部分。ページごとの `var CFG = {...};` は
 # 各ページ側に小さくインラインで残し、このファイルの直前に置く。
@@ -2949,6 +2950,72 @@ def mg_head_js():
     res = Response(body, mimetype="application/javascript")
     res.headers["Cache-Control"] = "public, max-age=86400"
     return res
+
+
+# Service Worker: トップ・静的ファイル・/offline を先に保存し、
+# ゲームページは開くたびに保存する。スコア送信（POST）は対象外。
+# キャッシュ名はトップページの保存ボタン処理と一致させること。
+_SW_JS = r"""
+var CACHE = 'minigame-v1';
+var CORE = ['/', '/offline', '/static/mg-head.js', '/static/mg-head.js?boot=1',
+            '/static/mg-cfg.js', '/static/mg-game.css'];
+self.addEventListener('install', function (e) {
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); })
+    .then(function () { return self.skipWaiting(); }));
+});
+self.addEventListener('activate', function (e) {
+  e.waitUntil(caches.keys().then(function (keys) {
+    return Promise.all(keys.map(function (k) {
+      if (k !== CACHE) return caches.delete(k);
+    }));
+  }).then(function () { return self.clients.claim(); }));
+});
+self.addEventListener('fetch', function (e) {
+  var req = e.request;
+  if (req.method !== 'GET') return;
+  var url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  if (req.mode === 'navigate') {
+    e.respondWith(fetch(req).then(function (res) {
+      var copy = res.clone();
+      caches.open(CACHE).then(function (c) { c.put(req, copy); });
+      return res;
+    }).catch(function () {
+      return caches.match(req).then(function (hit) {
+        return hit || caches.match('/offline');
+      });
+    }));
+    return;
+  }
+  e.respondWith(caches.match(req).then(function (hit) {
+    return hit || fetch(req).then(function (res) {
+      var copy = res.clone();
+      caches.open(CACHE).then(function (c) { c.put(req, copy); });
+      return res;
+    });
+  }));
+});
+"""
+
+_OFFLINE_BODY = """
+        <h1>📴 オフラインです</h1>
+        <div class="card">
+          <p>ネットにつながっていません。保存済みのゲームは、そのまま遊べます。</p>
+          <p><a class="play" href="/">トップへ戻る</a></p>
+        </div>
+"""
+
+
+@app.route("/sw.js")
+def service_worker():
+    res = Response(_SW_JS, mimetype="application/javascript")
+    res.headers["Cache-Control"] = "no-cache"
+    return res
+
+
+@app.route("/offline")
+def offline_page():
+    return game_page("オフライン", _OFFLINE_BODY)
 
 
 @app.route("/static/mg-cfg.js")
@@ -3057,26 +3124,6 @@ def game_page(title: str, body: str) -> str:
         "minScore": slug in MIN_SCORE_GAMES,
         "share": slug in SHARE_GAMES,
     }
-    set_id = request.args.get("set", "").strip()
-    if game and set_id:
-        for ps in PLAYSETS:
-            if ps["id"] == set_id and slug in ps["slugs"]:
-                idx = ps["slugs"].index(slug)
-                info = {
-                    "id": ps["id"],
-                    "name": ps["name"],
-                    "idx": idx,
-                    "total": len(ps["slugs"]),
-                }
-                if idx + 1 < len(ps["slugs"]):
-                    nxt_game = _game_by_slug(ps["slugs"][idx + 1])
-                    info["nextTitle"] = nxt_game["title"]
-                    info["nextUrl"] = url_for(nxt_game["endpoint"]) + "?set=" + ps["id"]
-                else:
-                    info["done"] = True
-                    info["nextUrl"] = url_for("index")
-                cfg["playset"] = info
-                break
     parts = [
         "<!doctype html>\n<html lang=\"ja\">\n<head>\n",
         "  <meta charset=\"utf-8\" />\n",
