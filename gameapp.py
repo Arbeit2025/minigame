@@ -1308,6 +1308,30 @@ GAMES = [
         "description": "大アルカナ22枚から過去・現在・未来の3枚を引くタロット占い。正位置と逆位置で意味が変わります。",
         "endpoint": "tarot_three",
     },
+    {
+        "slug": "target-21",
+        "title": "21をねらえ",
+        "category": "カード・数字",
+        "icon": "🃏",
+        "description": "カードを引いて合計21に近づける度胸試し。超えたらその回は0点。全3回。",
+        "endpoint": "target_21",
+    },
+    {
+        "slug": "sum10-cards",
+        "title": "たして10カード",
+        "category": "カード・数字",
+        "icon": "🔟",
+        "description": "数字タイルを選んで合計ぴったり10を作る。60秒で何セット作れるか。",
+        "endpoint": "sum10_cards",
+    },
+    {
+        "slug": "card-battle",
+        "title": "カード数字バトル",
+        "category": "カード・数字",
+        "icon": "⚔️",
+        "description": "CPUとカードの数字で勝負。大きいほうが勝ち、全10回。",
+        "endpoint": "card_battle",
+    },
 ]
 
 
@@ -1353,6 +1377,7 @@ GAME_META = {
     "witch-pot": (3, 1), "meat-cut": (2, 2), "seat-recline": (2, 2),
     "otsuri-min": (3, 3), "bunny-ride": (3, 2), "caravan-shot": (2, 2),
     "ihen-report": (3, 2), "cube-escape": (5, 3), "tarot-three": (1, 1),
+    "target-21": (2, 2), "sum10-cards": (1, 2), "card-battle": (2, 1),
 }
 
 # 遊び方（目的／操作／コツ）。各ゲームページ下部の共通セクションで表示する。
@@ -1488,6 +1513,9 @@ GAME_HOWTO = {
     "ihen-report": ("城の部屋に起きた異変を言葉で報告する。", "基準の部屋と今の部屋を見比べて、変わった要素の報告ボタンを押す。全10回。", "変わっていない回もある。要素を上から順に読み上げる比べ方が確実。"),
     "cube-escape": ("面を回して入口から出口へ道をつなぐ。", "面をクリックすると90度回る。道がつながると脱出成功でスコア送信。", "回した回数が少ないほど高得点。まず入口と出口に近い面から合わせる。"),
     "tarot-three": ("過去・現在・未来の3枚を引いて運勢を読む。", "「占う」で3枚引く。正位置・逆位置で意味と運勢が変わる。", "運勢はカードの組み合わせで決まる。引き直しは1回だけ。"),
+    "target-21": ("カードの合計を21に近づける。", "「引く」で1枚追加、「止める」でその回の合計を確定。21を超えると0点。全3回。", "16以下ならもう1枚、17以上は止め時。11〜13の絵札は10点。"),
+    "sum10-cards": ("タイルの合計を10ぴったりにする。", "数字タイルをタップして選び、合計10で1セット。超えたら選び直し。60秒。", "9+1、8+2のような大きい組み合わせから消すと速い。"),
+    "card-battle": ("CPUより大きい数字のカードを出す。", "「カードを出す」で勝負。勝ち10点、引き分け5点。全10回。", "運だけの勝負。出た数字の記録で流れを読む楽しみも。"),
 }
 
 # プレイセット（テーマ別に数本を連続プレイする導線）
@@ -1508,6 +1536,7 @@ JS_SCORE_GAMES = {
     "jelly-haul", "glass-stack", "reverse-number", "harp-pitch", "mochi-pound",
     "dot-room", "witch-pot", "meat-cut", "seat-recline", "otsuri-min",
     "bunny-ride", "caravan-shot", "ihen-report", "cube-escape", "tarot-three",
+    "target-21", "sum10-cards", "card-battle",
 }
 # スコアは「小さいほど良い」JS ゲーム（ベスト＝最小）
 MIN_SCORE_GAMES = {"reaction", "stopwatch", "typing", "sort", "touch25"}
@@ -24709,6 +24738,328 @@ def tarot_three_score():
         return {"ok": False, "error": "invalid score"}, 400
     record_score("tarot-three", int(raw))
     return {"ok": True, "best": best_score("tarot-three", "max")}
+
+
+TARGET21_TEMPLATE = r"""
+  <h1>🃏 21をねらえ</h1>
+  <p class="howto">カードを引いて合計を21に近づける度胸試しです。「引く」で1枚追加（11〜13の絵札は10点）、「止める」でその回の合計が点になります。21を超えたらその回は0点。全3回の合計を100点満点に換算します。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="t21Round">-</span> 回目（全3回）／これまでの合計: <span id="t21Total">0</span></p>
+    <p style="font-size:34px; min-height:44px;" id="t21Hand">🂠</p>
+    <p class="mid">いまの合計: <span id="t21Sum" style="font-size:22px; font-weight:bold;">0</span></p>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="t21Draw">カードを引く</button>
+      <button type="button" id="t21Stop">ここで止める</button>
+      <button type="button" id="t21Start">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var handEl = document.getElementById("t21Hand"), sumEl = document.getElementById("t21Sum");
+  var roundEl = document.getElementById("t21Round"), totalEl = document.getElementById("t21Total");
+  var msg = document.getElementById("message");
+  var phase = "idle", round = 0, hand = [], rounds = [];
+  function points(v){ return v > 10 ? 10 : v; }
+  function sum(){ var s = 0; hand.forEach(function(v){ s += points(v); }); return s; }
+  function face(v){ return v === 1 ? "A" : (v === 11 ? "J" : (v === 12 ? "Q" : (v === 13 ? "K" : String(v)))); }
+  function render(){
+    handEl.textContent = hand.length ? hand.map(face).join(" ") : "🂠";
+    sumEl.textContent = String(sum());
+    roundEl.textContent = phase === "idle" ? "-" : String(round + 1);
+    var t = 0; rounds.forEach(function(x){ t += x; }); totalEl.textContent = String(t);
+  }
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('target_21_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function finishRound(pts, text){
+    rounds.push(pts);
+    phase = "wait";
+    msg.textContent = text;
+    render();
+    setTimeout(function(){
+      round++;
+      if (round >= 3) {
+        phase = "done";
+        var t = 0; rounds.forEach(function(x){ t += x; });
+        var score = Math.round(t / 63 * 100);
+        msg.textContent = "終了！ 3回の合計 " + t + " → スコア " + score + " 点";
+        submit(score);
+      } else {
+        hand = [];
+        phase = "playing";
+        msg.textContent = "次の回。引くか止めるか。";
+        render();
+      }
+    }, 1500);
+  }
+  document.getElementById("t21Draw").addEventListener("click", function(){
+    if (phase !== "playing") return;
+    hand.push(1 + Math.floor(Math.random() * 13));
+    var s = sum();
+    render();
+    if (s > 21) finishRound(0, "バースト！ 合計 " + s + " で21を超えた。この回は0点");
+    else if (s === 21) finishRound(21, "21ぴったり！ この回は21点");
+    else msg.textContent = "合計 " + s + "。もう1枚引く？";
+  });
+  document.getElementById("t21Stop").addEventListener("click", function(){
+    if (phase !== "playing" || hand.length === 0) return;
+    finishRound(sum(), "合計 " + sum() + " で確定。この回は " + sum() + " 点");
+  });
+  document.getElementById("t21Start").addEventListener("click", function(){
+    round = 0; hand = []; rounds = []; phase = "playing";
+    msg.textContent = "引くか止めるか。";
+    render();
+  });
+  render();
+})();
+</script>
+"""
+
+
+@app.route("/games/target-21", methods=["GET"])
+def target_21():
+    body = render_template_string(
+        TARGET21_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("target-21", "max"),
+        history=recent_scores("target-21", 10),
+    )
+    return game_page("21をねらえ", body)
+
+
+@app.route("/games/target-21/score", methods=["POST"])
+def target_21_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("target-21", int(raw))
+    return {"ok": True, "best": best_score("target-21", "max")}
+
+
+SUM10_TEMPLATE = r"""
+  <h1>🔟 たして10カード</h1>
+  <p class="howto">数字タイルをタップして選び、合計がぴったり10になると1セット（10点）でタイルが入れ替わります。合計が10を超えたら選択はリセット。60秒で何セット作れるか。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid">残り時間: <span id="s10Time" style="font-size:22px; font-weight:bold;">60.0</span> 秒 ／ セット数: <span id="s10Sets">0</span> ／ 選択中の合計: <span id="s10Sum">0</span></p>
+    <div id="s10Grid" style="display:grid; grid-template-columns:repeat(3, 72px); gap:10px; justify-content:center; margin:12px 0;"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="s10Start">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var grid = document.getElementById("s10Grid"), timeEl = document.getElementById("s10Time");
+  var setsEl = document.getElementById("s10Sets"), sumEl = document.getElementById("s10Sum");
+  var msg = document.getElementById("message");
+  var phase = "idle", tiles = [], picked = [], sets = 0, left = 60000, lastTick = 0;
+  function deal(){
+    tiles = [];
+    for (var i = 0; i < 9; i++) tiles.push(1 + Math.floor(Math.random() * 9));
+    picked = [];
+    render();
+  }
+  function pickedSum(){ var s = 0; picked.forEach(function(i){ s += tiles[i]; }); return s; }
+  function render(){
+    grid.innerHTML = "";
+    tiles.forEach(function(v, i){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = String(v);
+      b.style.cssText = "font-size:26px; padding:14px 0; border-radius:10px;" + (picked.indexOf(i) >= 0 ? " background:var(--mg-accent); color:#fff;" : "");
+      b.addEventListener("click", function(){ tap(i); });
+      grid.appendChild(b);
+    });
+    setsEl.textContent = String(sets);
+    sumEl.textContent = String(pickedSum());
+    timeEl.textContent = (Math.max(0, left) / 1000).toFixed(1);
+  }
+  function submit(score){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(score)))));
+    fetch("{{ url_for('sum10_cards_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  function tap(i){
+    if (phase !== "playing") return;
+    var at = picked.indexOf(i);
+    if (at >= 0) picked.splice(at, 1); else picked.push(i);
+    var s = pickedSum();
+    if (s === 10) {
+      sets++;
+      msg.textContent = "ぴったり10！ " + sets + " セット目";
+      deal();
+      return;
+    }
+    if (s > 10) {
+      picked = [];
+      msg.textContent = "10を超えた…選び直し";
+    } else {
+      msg.textContent = "合計 " + s + "。あと " + (10 - s);
+    }
+    render();
+  }
+  var timer = setInterval(function(){
+    if (phase !== "playing") { lastTick = Date.now(); return; }
+    var now = Date.now();
+    if (lastTick) left -= (now - lastTick);
+    lastTick = now;
+    if (left <= 0) {
+      left = 0;
+      phase = "done";
+      var score = Math.min(100, sets * 10);
+      msg.textContent = "終了！ " + sets + " セット → スコア " + score + " 点";
+      submit(score);
+    }
+    timeEl.textContent = (Math.max(0, left) / 1000).toFixed(1);
+  }, 200);
+  document.getElementById("s10Start").addEventListener("click", function(){
+    sets = 0; left = 60000; lastTick = Date.now(); phase = "playing";
+    msg.textContent = "合計10を作ろう";
+    deal();
+  });
+  deal();
+})();
+</script>
+"""
+
+
+@app.route("/games/sum10-cards", methods=["GET"])
+def sum10_cards():
+    body = render_template_string(
+        SUM10_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("sum10-cards", "max"),
+        history=recent_scores("sum10-cards", 10),
+    )
+    return game_page("たして10カード", body)
+
+
+@app.route("/games/sum10-cards/score", methods=["POST"])
+def sum10_cards_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("sum10-cards", int(raw))
+    return {"ok": True, "best": best_score("sum10-cards", "max")}
+
+
+CARD_BATTLE_TEMPLATE = r"""
+  <h1>⚔️ カード数字バトル</h1>
+  <p class="howto">「カードを出す」と自分とCPUのカード（1〜13）が同時に出ます。大きいほうが勝ちで10点、引き分け5点。全10回の合計点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="cbRound">-</span> 回目（全10回）／スコア: <span id="cbScore">0</span> 点（<span id="cbWins">0</span> 勝）</p>
+    <p style="font-size:24px; min-height:36px;">あなた: <span id="cbMine" style="font-weight:bold;">🂠</span> vs CPU: <span id="cbCpu" style="font-weight:bold;">🂠</span></p>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="cbPlay">カードを出す</button>
+      <button type="button" id="cbStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+<script>
+(function(){
+  var mineEl = document.getElementById("cbMine"), cpuEl = document.getElementById("cbCpu");
+  var roundEl = document.getElementById("cbRound"), scoreEl = document.getElementById("cbScore"), winsEl = document.getElementById("cbWins");
+  var msg = document.getElementById("message");
+  var phase = "idle", round = 0, score = 0, wins = 0;
+  function face(v){ return v === 1 ? "A" : (v === 11 ? "J" : (v === 12 ? "Q" : (v === 13 ? "K" : String(v)))); }
+  function render(){
+    roundEl.textContent = phase === "idle" ? "-" : String(Math.min(round + 1, 10));
+    scoreEl.textContent = String(score);
+    winsEl.textContent = String(wins);
+  }
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('card_battle_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  document.getElementById("cbPlay").addEventListener("click", function(){
+    if (phase !== "playing") return;
+    var mine = 1 + Math.floor(Math.random() * 13);
+    var cpu = 1 + Math.floor(Math.random() * 13);
+    mineEl.textContent = face(mine) + "（" + mine + "）";
+    cpuEl.textContent = face(cpu) + "（" + cpu + "）";
+    if (mine > cpu) { score += 10; wins++; msg.textContent = "勝ち！ +10点"; }
+    else if (mine === cpu) { score += 5; msg.textContent = "引き分け +5点"; }
+    else msg.textContent = "負け… +0点";
+    round++;
+    if (round >= 10) {
+      phase = "done";
+      var finalScore = Math.min(100, score);
+      msg.textContent += " ／ 終了！ スコア " + finalScore + " 点";
+      submit(finalScore);
+    }
+    render();
+  });
+  document.getElementById("cbStart").addEventListener("click", function(){
+    round = 0; score = 0; wins = 0; phase = "playing";
+    mineEl.textContent = "🂠"; cpuEl.textContent = "🂠";
+    msg.textContent = "カードを出して勝負";
+    render();
+  });
+  render();
+})();
+</script>
+"""
+
+
+@app.route("/games/card-battle", methods=["GET"])
+def card_battle():
+    body = render_template_string(
+        CARD_BATTLE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("card-battle", "max"),
+        history=recent_scores("card-battle", 10),
+    )
+    return game_page("カード数字バトル", body)
+
+
+@app.route("/games/card-battle/score", methods=["POST"])
+def card_battle_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("card-battle", int(raw))
+    return {"ok": True, "best": best_score("card-battle", "max")}
+
 
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
