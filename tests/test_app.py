@@ -2644,8 +2644,10 @@ class PortalImprovementsTest(MinigameTest):
 
     def test_dark_mode_css_present(self):
         self.assertIn('[data-theme="dark"]', self.get("/"))
-        self.assertIn('[data-theme="dark"]', self.get("/games/janken"))
         self.assertIn('[data-theme="dark"]', self.get("/games/roulette"))
+        # ゲームページ共通CSSは /static/mg-game.css へ外部化された（2026-11-07）
+        self.assertIn('href="/static/mg-game.css"', self.get("/games/janken"))
+        self.assertIn('[data-theme="dark"]', self.get("/static/mg-game.css"))
 
     def test_pause_ui_only_on_js_score_games(self):
         body = self.get("/games/reaction")
@@ -2810,6 +2812,21 @@ class StaticJsTest(MinigameTest):
         self.assertLess(len(body.encode("utf-8")), 20000)
         body = self.get("/games/quiz").get_data(as_text=True)
         self.assertLess(len(body.encode("utf-8")), 14000)
+
+    def test_mg_game_css_served_with_cache(self):
+        res = self.get("/static/mg-game.css")
+        self.assertIn("text/css", res.content_type)
+        self.assertIn("max-age=86400", res.headers.get("Cache-Control", ""))
+        body = res.get_data(as_text=True)
+        self.assertIn('[data-theme="dark"]', body)
+        self.assertIn(".mg-share-box", body)
+
+    def test_game_pages_reference_static_css(self):
+        body = self.get("/games/boomerang").get_data(as_text=True)
+        self.assertIn('href="/static/mg-game.css"', body)
+        self.assertNotIn('[data-theme="dark"]', body)
+        # CSS埋め込み時の実測（2026-11-07）: boomerang 18,257 bytes → 外部化で大幅減
+        self.assertLess(len(body.encode("utf-8")), 13000)
 
 
 class EscapeRushTest(MinigameTest):
