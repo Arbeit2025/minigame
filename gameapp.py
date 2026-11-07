@@ -2815,6 +2815,15 @@ def mg_cfg_js():
     return res
 
 
+@app.route("/static/mg-game.css")
+def mg_game_css():
+    # ゲームページ共通CSS（旧: 各ページへ <style> で埋め込み）。JS と同じく
+    # 外部化してキャッシュを効かせ、ページ本体の転送量を減らす。
+    res = Response(_GAME_CSS, mimetype="text/css")
+    res.headers["Cache-Control"] = "public, max-age=86400"
+    return res
+
+
 def _mg_header_html() -> str:
     return f"""
 <div class="mg-header">
@@ -2941,7 +2950,7 @@ def game_page(title: str, body: str) -> str:
         parts.append('  <script src="/static/mg-head.js"></script>\n')
     else:
         parts.append('  <script src="/static/mg-head.js?boot=1"></script>\n')
-    parts.append(f"  <style>{_GAME_CSS}</style>\n</head>\n<body>\n<div class=\"wrap\">\n")
+    parts.append('  <link rel="stylesheet" href="/static/mg-game.css" />\n</head>\n<body>\n<div class="wrap">\n')
     parts.append(_mg_header_html())
     parts.append(_inject_howto(body, _mg_howto_html(game)))
     if game:
