@@ -3137,6 +3137,9 @@ class SnsNov07GamesTest(MinigameTest):
             self.assertIn(f"/games/{slug}", body)
 
     def test_nov07_page_parts(self):
+        body = self.client.get("/games/seat-recline").get_data(as_text=True)
+        # 2回目以降もアニメーションが続くこと（wait でも rAF を止めない）
+        self.assertIn('phase === "done" || phase === "idle"', body)
         body = self.client.get("/games/jelly-haul").get_data(as_text=True)
         self.assertIn("揺れゲージ", body)
         body = self.client.get("/games/ihen-report").get_data(as_text=True)
