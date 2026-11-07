@@ -2993,24 +2993,18 @@ class ImprovementsNov06Test(MinigameTest):
         self.assertIn('id="mgRecentList"', body)
         self.assertIn("最近遊んだゲーム", body)
 
-    def test_index_has_playsets(self):
+    def test_index_has_offline_section(self):
+        # プレイセットは廃止し、オフライン保存の節に置き換えた（2026-11-07）
         body = self.client.get("/").get_data(as_text=True)
-        self.assertIn("プレイセット", body)
-        for name in ("サクッと3本セット", "脳トレじっくりセット", "対戦セット", "創作セット"):
-            self.assertIn(name, body)
-        for sid in ("quick", "brain", "versus", "create"):
-            self.assertIn("?set=" + sid, body)
+        self.assertIn("オフラインで遊ぶ", body)
+        self.assertIn('id="mgOfflineSave"', body)
+        self.assertIn('id="mgOfflineClear"', body)
+        self.assertIn('id="mgOfflineStatus"', body)
+        self.assertNotIn("プレイセット", body)
+        self.assertNotIn("?set=", body)
 
-    def test_playset_cfg_first_and_last(self):
+    def test_set_param_is_ignored(self):
         body = self.client.get("/games/reaction?set=quick").get_data(as_text=True)
-        self.assertIn('"playset"', body)
-        self.assertIn('"nextTitle": "風船わり"', body)
-        self.assertIn('"idx": 0', body)
-        body = self.client.get("/games/swipe-ushi?set=quick").get_data(as_text=True)
-        self.assertIn('"done": true', body)
-        body = self.client.get("/games/reaction").get_data(as_text=True)
-        self.assertNotIn('"playset"', body)
-        body = self.client.get("/games/reaction?set=nosuch").get_data(as_text=True)
         self.assertNotIn('"playset"', body)
 
     def test_cfg_has_desc(self):
@@ -3022,15 +3016,28 @@ class ImprovementsNov06Test(MinigameTest):
         self.assertIn("mg_recent", body)
         self.assertIn("mg-share-box", body)
         self.assertIn("紹介文をコピー", body)
-        self.assertIn("mg-setbar", body)
+        self.assertNotIn("mg-setbar", body)
 
-    def test_playsets_definition_valid(self):
-        self.assertEqual(len(self.mod.PLAYSETS), 4)
-        slugs = {g["slug"] for g in self.mod.GAMES}
-        for ps in self.mod.PLAYSETS:
-            self.assertEqual(len(ps["slugs"]), 3, ps["id"])
-            for slug in ps["slugs"]:
-                self.assertIn(slug, slugs)
+    def test_playsets_removed(self):
+        self.assertFalse(hasattr(self.mod, "PLAYSETS"))
+
+    def test_service_worker_served(self):
+        res = self.client.get("/sw.js")
+        self.assertEqual(res.status_code, 200)
+        body = res.get_data(as_text=True)
+        self.assertIn("minigame-v1", body)
+        self.assertIn("addEventListener('fetch'", body)
+        self.assertIn("addEventListener('install'", body)
+
+    def test_offline_page(self):
+        body = self.client.get("/offline").get_data(as_text=True)
+        self.assertIn("オフラインです", body)
+
+    def test_head_js_registers_sw(self):
+        body = self.client.get("/static/mg-head.js?boot=1").get_data(as_text=True)
+        self.assertIn("serviceWorker", body)
+        self.assertIn("/sw.js", body)
+        self.assertIn("mg-offline-badge", body)
 if __name__ == "__main__":
     unittest.main()
 
