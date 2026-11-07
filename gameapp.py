@@ -23774,8 +23774,10 @@ SEAT_RECLINE_TEMPLATE = r"""
     face.textContent = ratio > 0.95 ? "😱" : (ratio > 0.8 ? "😬" : (ratio > 0.55 ? "😐" : "🙂"));
   }
   function loop(t){
-    if (phase !== "playing") return;
-    if (lastT && holding) {
+    // 待機フェーズ（wait）でもループを止めない。止めると2回目以降に
+    // requestAnimationFrame の連鎖が切れて座席が動かなくなる（2026-11-07 修正）。
+    if (phase === "done" || phase === "idle") return;
+    if (phase === "playing" && lastT && holding) {
       vel = Math.min(26, vel + (t - lastT) / 16 * 1.6);
       angle += vel * (t - lastT) / 60;
       if (angle > limit) {
@@ -23785,8 +23787,6 @@ SEAT_RECLINE_TEMPLATE = r"""
         msg.textContent = "ぶつかった！ 限界は " + limit + " 度だった。この回は0点";
         round++;
         setTimeout(next, 1500);
-        render();
-        return;
       }
       render();
     }
