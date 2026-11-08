@@ -3727,7 +3727,7 @@ REACTION_TEMPLATE = r"""
   <p class="howto">スタートを押して待機し、画面が緑になったらすぐクリック。小さいミリ秒ほど速い反応です。</p>
   __FLASH__
   <div class="card">
-    <div id="stage" style="border-radius:12px; padding:44px 12px; text-align:center; font-size:22px; background:#eee; cursor:pointer; user-select:none;">ここを押してスタート</div>
+    <div id="stage" style="border-radius:12px; padding:44px 12px; text-align:center; font-size:22px; background:#eee; color:#333; cursor:pointer; user-select:none;">ここを押してスタート</div>
     <p class="result" id="message">ベスト（最速）: {{ best if best is not none else '—' }}{% if best is not none %} ms{% endif %}</p>
     {% if history %}
       <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録</h3>
@@ -5951,7 +5951,7 @@ FISHING_TEMPLATE = r"""
   <p class="howto">「つりをする」を押して待ち、ウキが沈んだら（画面の色が変わったら）すぐに「釣り上げる」を押そう。反応が速いほどレアな魚が釣れやすく、遅いと逃げられます。全 {{ total }} 種の図鑑コンプリートを目指そう。</p>
   __FLASH__
   <div class="card">
-    <div id="stage" style="border-radius:12px; padding:40px 12px; text-align:center; font-size:22px; background:#eef5fa; user-select:none;">🎣 準備OK</div>
+    <div id="stage" style="border-radius:12px; padding:40px 12px; text-align:center; font-size:22px; background:#eef5fa; color:#333; user-select:none;">🎣 準備OK</div>
     <div class="row" style="margin-top:12px;">
       <button id="castBtn" type="button">つりをする</button>
       <button id="reelBtn" type="button" disabled>釣り上げる</button>
@@ -7925,13 +7925,16 @@ TOUCH25_TEMPLATE = r"""
       var value = parseInt(btn.getAttribute("data-value"), 10);
       if (value !== expected) {
         var old = btn.style.background;
+        var oldColor = btn.style.color;
         btn.style.background = "#f8c9c9";
+        btn.style.color = "#333";
         message.textContent = "それは " + value + "。次は " + expected + " を押してね";
-        setTimeout(function(){ btn.style.background = old; }, 350);
+        setTimeout(function(){ btn.style.background = old; btn.style.color = oldColor; }, 350);
         return;
       }
       btn.disabled = true;
       btn.style.background = "#bfe8bf";
+      btn.style.color = "#333";
       btn.style.borderColor = "#7ab87a";
       expected += 1;
       if (expected > 25) {
@@ -10693,6 +10696,7 @@ MOJIOTOSHI_TEMPLATE = r"""
       for (var c = 0; c < COLS; c++) {
         var ch = grid[r][c];
         var el = cells[r * COLS + c];
+        el.style.color = "#333";
         if (falling && r === Math.floor(fallY) && c === col) {
           el.textContent = falling;
           el.style.background = "#ffe9a8";
@@ -17078,7 +17082,7 @@ FUKUWARAI_TEMPLATE = r"""
       var b = document.createElement("button");
       b.type = "button";
       b.textContent = p.emoji + " " + p.label + (placed[p.key] ? " ✓" : "");
-      if (selected === p.key) { b.style.background = "#ffe9a8"; }
+      if (selected === p.key) { b.style.background = "#ffe9a8"; b.style.color = "#333"; }
       b.addEventListener("click", function(){ selected = p.key; renderParts(); });
       partBtns.appendChild(b);
     });
@@ -19484,7 +19488,7 @@ MICRO_TRIO_TEMPLATE = r"""
     <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}</p>
     <p class="result" id="stageLabel">第1戦：反射</p>
     <div id="arena" style="border:1px solid #ddd; border-radius:10px; padding:18px; text-align:center; background:#fafafa;">
-      <div id="reflexBox" style="height:120px; border-radius:10px; background:#e8b4b4; font-size:22px; line-height:120px;">待って…</div>
+      <div id="reflexBox" style="height:120px; border-radius:10px; background:#e8b4b4; color:#333; font-size:22px; line-height:120px;">待って…</div>
       <div id="mashArea" style="display:none;">
         <p class="big" id="mashCount">0 回</p>
         <button type="button" id="mashBtn" style="font-size:22px; padding:18px 30px;">👆 連打！</button>
@@ -21103,7 +21107,7 @@ GHOST_WRITER_TEMPLATE = r"""
   <div class="card">
     <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
     <p class="mid"><span id="gwProg">-</span> 通目 ／ スコア <span id="gwScore">0</span> 点</p>
-    <div id="gwLetter" style="text-align:left; background:#fdf6e3; border:1px solid #e0cf9f; border-radius:8px; padding:14px; margin:10px 0; line-height:1.9;"></div>
+    <div id="gwLetter" style="text-align:left; background:#fdf6e3; color:#333; border:1px solid #e0cf9f; border-radius:8px; padding:14px; margin:10px 0; line-height:1.9;"></div>
     <div class="row" id="gwChoices"></div>
     <p class="result" id="message">「スタート」で最初の手紙が届きます</p>
     <div class="row">
@@ -21416,7 +21420,7 @@ NIKUJAGA_TEMPLATE = r"""
     {q: "「ほかす」は通じる？", a: "通じる（捨てる意味）", b: "通じない", pa: [0,0,0,0,2,1,0], pb: [1,1,2,1,0,1,1]},
     {q: "お好み焼きはご飯のおかずになる？", a: "なる", b: "ならない", pa: [0,0,0,0,2,0,0], pb: [1,1,2,1,0,1,1]},
     {q: "雪かきの道具は？", a: "ママさんダンプ", b: "スコップやスノープッシャー", pa: [2,2,0,0,0,0,0], pb: [0,0,2,1,1,0,1]},
-    {q: "ちゃんぽんと皿うどん、身近なのは？", a: "身近", b: "あまり食べない", pa: [0,0,0,0,0,0,2], pb: [1,1,1,1,1,1,0]}
+    {q: "ちゃんぽんや皿うどんは、身近な食べ物？", a: "身近", b: "あまり食べない", pa: [0,0,0,0,0,0,2], pb: [1,1,1,1,1,1,0]}
   ];
   var msg = document.getElementById("message");
   var qBox = document.getElementById("njQ");
@@ -22974,7 +22978,7 @@ MAOU_BATTLE_TEMPLATE = r"""
       <button type="button" data-act="curse">🔮 呪い</button>
       <button type="button" data-act="blast" id="mbBlast" disabled>🌋 魔力解放（第二形態で解禁）</button>
     </div>
-    <div id="mbLog" style="text-align:left; background:#f7f3ff; border:1px solid #d8cdf0; border-radius:8px; padding:10px; margin:10px 0; min-height:64px; line-height:1.7;"></div>
+    <div id="mbLog" style="text-align:left; background:#f7f3ff; color:#333; border:1px solid #d8cdf0; border-radius:8px; padding:10px; margin:10px 0; min-height:64px; line-height:1.7;"></div>
     <p class="result" id="message">「スタート」で戦闘開始</p>
     <div class="row">
       <button type="button" id="mbStart">スタート</button>
@@ -24663,11 +24667,11 @@ IHEN_REPORT_TEMPLATE = r"""
     <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
     <p class="mid"><span id="ihRound">-</span> 回目（全10回）／ 正解 <span id="ihOk">0</span></p>
     <div style="display:flex; gap:10px; flex-wrap:wrap; text-align:left;">
-      <div style="flex:1; min-width:200px; background:#f7f3e8; border:1px solid #d8c690; border-radius:8px; padding:10px;">
+      <div style="flex:1; min-width:200px; background:#f7f3e8; color:#333; border:1px solid #d8c690; border-radius:8px; padding:10px;">
         <strong>基準の部屋</strong>
         <ul id="ihBase" style="margin:6px 0; padding-left:18px; line-height:1.8;"></ul>
       </div>
-      <div style="flex:1; min-width:200px; background:#eef4fb; border:1px solid #a9c6e2; border-radius:8px; padding:10px;">
+      <div style="flex:1; min-width:200px; background:#eef4fb; color:#333; border:1px solid #a9c6e2; border-radius:8px; padding:10px;">
         <strong>今の部屋</strong>
         <ul id="ihNow" style="margin:6px 0; padding-left:18px; line-height:1.8;"></ul>
       </div>
@@ -24987,6 +24991,7 @@ TAROT_THREE_TEMPLATE = r"""
       var d = document.createElement("div");
       d.style.width = "150px";
       d.style.background = up ? "#fdf6e3" : "#ece9f7";
+      d.style.color = "#333";
       d.style.border = "2px solid " + (up ? "#d8c690" : "#a79fd0");
       d.style.borderRadius = "10px";
       d.style.padding = "10px";
