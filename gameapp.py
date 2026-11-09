@@ -2198,6 +2198,7 @@ PORTAL_TEMPLATE = r"""
     .mg-settings summary { cursor: pointer; padding: 4px 8px; border: 1px solid var(--mg-border); border-radius: 8px; background: var(--mg-card); }
     .mg-settings-body { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--mg-border); border-radius: 10px; background: var(--mg-card); padding: 10px 12px; margin-top: 6px; }
     .mg-settings-body label { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .mg-theme-btn { padding: 4px 10px; font-size: 13px; }
     select, input[type="search"], input[type="text"] { background: var(--mg-card); color: var(--mg-fg); border: 1px solid var(--mg-border); border-radius: 8px; padding: 8px; }
     .catsbar { background: var(--mg-bg); }
     @media (max-width: 700px) {
@@ -2237,13 +2238,15 @@ PORTAL_TEMPLATE = r"""
     footer ul { margin: 6px 0; padding-left: 18px; }
     #mgToTop { position: fixed; right: 14px; bottom: 14px; z-index: 40; border: 1px solid var(--mg-btn-border); background: var(--mg-card); color: var(--mg-fg); border-radius: 999px; padding: 10px 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.25); display: none; }
     #mgToTop.show { display: block; }
-    .backup-box { border: 1px solid var(--mg-border); border-radius: 12px; padding: 14px 16px; background: var(--mg-card); }
+    html, body { overflow-x: clip; }
+  .backup-box { border: 1px solid var(--mg-border); border-radius: 12px; padding: 14px 16px; background: var(--mg-card); }
   </style>
 </head>
 <body id="top">
 <div class="wrap">
   <div class="headrow">
     <h1>🎮 自作ミニゲーム集</h1>
+    <button type="button" id="mg-theme-btn" class="mg-theme-btn">🌗 自動</button>
     <details class="mg-settings">
       <summary>⚙ 設定（テーマ・音・動き）</summary>
       <div class="mg-settings-body">
@@ -2394,7 +2397,10 @@ PORTAL_TEMPLATE = r"""
     function applyMotion() { document.documentElement.classList.toggle('mg-reduce-motion', !!settings.reduceMotion); }
     var themeSel = document.getElementById('mg-theme-sel');
     themeSel.value = settings.theme || 'auto';
-    themeSel.addEventListener('change', function () { settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); });
+    themeSel.addEventListener('change', function () { settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); syncThemeBtn(); });
+    var themeBtn = document.getElementById('mg-theme-btn');
+    function syncThemeBtn() { if (!themeBtn) return; var t = settings.theme || 'auto'; themeBtn.textContent = t === 'dark' ? '🌙 ダーク' : t === 'light' ? '☀ ライト' : '🌗 自動'; }
+    if (themeBtn) { syncThemeBtn(); themeBtn.addEventListener('click', function () { var order = ['auto', 'light', 'dark']; var cur = settings.theme || 'auto'; var nxt = order[(order.indexOf(cur) + 1) % 3]; settings.theme = nxt; saveJSON('mg_settings', settings); applyTheme(); themeSel.value = nxt; syncThemeBtn(); }); }
     var vol = document.getElementById('mg-vol');
     vol.value = settings.volume;
     vol.addEventListener('input', function () { settings.volume = Number(vol.value); saveJSON('mg_settings', settings); });
@@ -2598,7 +2604,7 @@ PORTAL_TEMPLATE = r"""
   if (!saveBtn) return;
   var clearBtn = document.getElementById('mgOfflineClear');
   var status = document.getElementById('mgOfflineStatus');
-  var CACHE_NAME = 'minigame-v1';
+  var CACHE_NAME = 'minigame-v2';
   var URLS = [{% for g in games %}'{{ url_for(g.endpoint) }}'{% if not loop.last %}, {% endif %}{% endfor %}];
   saveBtn.addEventListener('click', function () {
     if (!('caches' in window)) { status.textContent = 'このブラウザはオフライン保存に対応していません。'; return; }
@@ -2903,6 +2909,47 @@ def roulette():
         + _mg_footer_html()
         + """<script>(function(){try{var p=JSON.parse(localStorage.getItem('mg_played')||'[]');if(p.indexOf('roulette')<0){p.push('roulette');localStorage.setItem('mg_played',JSON.stringify(p));}}catch(e){}})();</script>"""
     )
+    rendered = rendered.replace(
+        '<div class="wrap">',
+        '<div class="wrap">\n' + _mg_header_html() + """<style>
+    html, body { overflow-x: clip; }
+    .mg-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin: 0 0 8px; flex-wrap: wrap; }
+    .mg-header p { margin: 0; }
+    .mg-settings { font-size: 13px; }
+    .mg-settings summary { cursor: pointer; padding: 4px 8px; border: 1px solid #ddd; border-radius: 8px; background: #fff; }
+    .mg-settings-body { display: flex; flex-direction: column; gap: 8px; border: 1px solid #ddd; border-radius: 10px; background: #fff; padding: 10px 12px; margin-top: 6px; }
+    .mg-settings-body label { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .mg-theme-btn { padding: 4px 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; }
+    :root[data-theme=\"dark\"] body { background: #17191d; color: #e8e9eb; }
+    :root[data-theme=\"dark\"] .card { background: #21252c; border-color: #3a4150; }
+    :root[data-theme=\"dark\"] button { background: #2a2f38; border-color: #6b7280; color: #e8e9eb; }
+    :root[data-theme=\"dark\"] .mg-settings summary, :root[data-theme=\"dark\"] .mg-settings-body, :root[data-theme=\"dark\"] .mg-theme-btn { background: #21252c; border-color: #3a4150; color: #e8e9eb; }
+    :root[data-theme=\"dark\"] input[type=\"text\"], :root[data-theme=\"dark\"] input[type=\"number\"], :root[data-theme=\"dark\"] select { background: #21252c; border-color: #3a4150; color: #e8e9eb; }
+    :root[data-theme=\"dark\"] .muted { color: #a7adb8; }
+    :root[data-theme=\"dark\"] .flash { border-color: #3a4150; }
+    :root[data-theme=\"dark\"] .flash.ok { background: #17301b; border-color: #2f5d33; }
+    :root[data-theme=\"dark\"] .flash.ng { background: #381d1d; border-color: #6e3535; }
+    :root[data-theme=\"dark\"] a { color: #8ab8ff; }
+  </style>
+""",
+        1,
+    )
+    extra += (
+        "<script>var CFG = "
+        + json.dumps(
+            {
+                "slug": "roulette",
+                "title": "ルーレット抽選",
+                "desc": roulette_game["description"],
+                "jsScore": False,
+                "minScore": False,
+                "share": False,
+            },
+            ensure_ascii=False,
+        )
+        + ";</script>\n"
+        + '<script src="/static/mg-cfg.js"></script>'
+    )
     return rendered.replace("</body>", extra + "\n</body>", 1)
 
 
@@ -3093,6 +3140,7 @@ _GAME_CSS = """
     }
     :root[data-theme="dark"] a { color: #8ab8ff; }
     :root[data-theme="dark"] a:visited { color: #b49ae0; }
+    html, body { overflow-x: clip; }
     body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; line-height: 1.6; background: var(--mg-bg); color: var(--mg-fg); }
     .wrap { max-width: 720px; margin: 0 auto; }
     h1 { font-size: 24px; margin: 0 0 6px; }
@@ -3101,8 +3149,9 @@ _GAME_CSS = """
     button { padding: 10px 16px; border: 1px solid var(--mg-btn-border); border-radius: 8px; background: var(--mg-btn-bg); color: var(--mg-fg); cursor: pointer; font-size: 16px; }
     button:hover { background: var(--mg-btn-hover); }
     button:disabled { opacity: .55; cursor: default; }
-    .big { font-size: 44px; text-align: center; margin: 10px 0; }
-    .mid { font-size: 22px; text-align: center; margin: 8px 0; }
+    .big { font-size: min(44px, 7.5vw); text-align: center; margin: 10px 0; }
+    #gMain, #gSub { white-space: pre-line; }
+    .mid { font-size: min(22px, 5.2vw); text-align: center; margin: 8px 0; }
     .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: center; }
     .muted { color: var(--mg-muted); font-size: 13px; }
     .flash { padding: 10px 12px; border-radius: 10px; margin: 0 0 12px; border: 1px solid var(--mg-border); }
@@ -3141,6 +3190,7 @@ _GAME_CSS = """
     .mg-settings summary { cursor: pointer; padding: 4px 8px; border: 1px solid var(--mg-border); border-radius: 8px; background: var(--mg-card); }
     .mg-settings-body { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--mg-border); border-radius: 10px; background: var(--mg-card); padding: 10px 12px; margin-top: 6px; }
     .mg-settings-body label { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .mg-theme-btn { padding: 4px 10px; font-size: 13px; }
     .mg-howto { border: 1px dashed var(--mg-border); border-radius: 12px; padding: 12px 16px; margin: 0 0 16px; background: var(--mg-card); }
     .mg-howto h2 { font-size: 16px; margin: 0 0 8px; }
     .mg-howto dl { margin: 0; display: grid; grid-template-columns: 3.2em 1fr; gap: 4px 10px; }
@@ -3287,7 +3337,25 @@ _MG_COMMON_SCRIPT = r"""<script>
   var themeSel = document.getElementById('mg-theme-sel');
   if (themeSel) {
     themeSel.value = settings.theme || 'auto';
-    themeSel.addEventListener('change', function(){ settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); });
+    themeSel.addEventListener('change', function(){ settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); syncThemeBtn(); });
+    themeSel.addEventListener('input', function(){ settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); syncThemeBtn(); });
+  }
+  var themeBtn = document.getElementById('mg-theme-btn');
+  function syncThemeBtn(){
+    if (!themeBtn) return;
+    var t = settings.theme || 'auto';
+    themeBtn.textContent = t === 'dark' ? '🌙 ダーク' : t === 'light' ? '☀ ライト' : '🌗 自動';
+  }
+  if (themeBtn) {
+    syncThemeBtn();
+    themeBtn.addEventListener('click', function(){
+      var order = ['auto', 'light', 'dark'];
+      var cur = settings.theme || 'auto';
+      var nxt = order[(order.indexOf(cur) + 1) % 3];
+      settings.theme = nxt; saveJSON('mg_settings', settings); applyTheme();
+      if (themeSel) themeSel.value = nxt;
+      syncThemeBtn();
+    });
   }
   var vol = document.getElementById('mg-vol');
   if (vol) {
@@ -3558,7 +3626,7 @@ def mg_head_js():
 # ゲームページは開くたびに保存する。スコア送信（POST）は対象外。
 # キャッシュ名はトップページの保存ボタン処理と一致させること。
 _SW_JS = r"""
-var CACHE = 'minigame-v1';
+var CACHE = 'minigame-v2';
 var CORE = ['/', '/offline', '/static/mg-head.js', '/static/mg-head.js?boot=1',
             '/static/mg-cfg.js', '/static/mg-game.css'];
 self.addEventListener('install', function (e) {
@@ -3640,6 +3708,7 @@ def _mg_header_html() -> str:
     return f"""
 <div class="mg-header">
   <p><a href="{url_for('index')}">← ゲーム一覧へ戻る</a></p>
+  <button type="button" id="mg-theme-btn" class="mg-theme-btn">🌗 自動</button>
   <details class="mg-settings">
     <summary>⚙ 設定（テーマ・音・動き）</summary>
     <div class="mg-settings-body">
@@ -29367,7 +29436,7 @@ AFRO_BONSAI_TEMPLATE = r"""
     [1,1,0,1,1, 1,1,1,1,1, 0,1,1,1,0, 0,1,0,1,0, 0,0,0,0,0]
   ];
   function draw(){
-    function fmt(arr){ var s = ""; for (var i = 0; i < 25; i++){ s += arr[i] ? "🌿" : "・"; if (i % 5 === 4) s += "　"; } return s; }
+    function fmt(arr){ var s = ""; for (var i = 0; i < 25; i++){ s += arr[i] ? "🌿" : "・"; if (i % 5 === 4) s += "\n"; } return s; }
     mainEl.textContent = "お題：" + fmt(target);
     subEl.textContent = "自分：" + fmt(cells);
   }
@@ -29872,7 +29941,7 @@ JANKEN_CHAIN_TEMPLATE = r"""
   var grid = [], round = 0;
   function draw(){
     var s = "";
-    for (var i = 0; i < 16; i++){ s += grid[i] === null ? "・" : HANDS[grid[i]]; if (i % 4 === 3) s += "　"; }
+    for (var i = 0; i < 16; i++){ s += grid[i] === null ? "・" : HANDS[grid[i]]; if (i % 4 === 3) s += "\n"; }
     mainEl.textContent = s;
     subEl.textContent = "残り " + grid.filter(function(v){ return v !== null; }).length + " コマ";
   }
@@ -30094,7 +30163,7 @@ NEKO_SORT_TEMPLATE = r"""
     var rows = [];
     for (var r = 4; r >= 0; r--){ rows.push(cols.map(function(c){ return c[r] || "・"; }).join("")); }
     mainEl.textContent = "次の猫：" + CATS[cur];
-    subEl.textContent = rows.join("　") + "｜あと " + left + " 秒";
+    subEl.textContent = rows.join("\n") + "｜あと " + left + " 秒";
   }
   function drop(col){
     if (phase !== "playing" || cols[col].length >= 5) return;
@@ -30407,7 +30476,7 @@ SQUARE_ROTATE_TEMPLATE = r"""
   var tiles = [], moves = 0, round = 0;
   function draw(){
     var s = "";
-    for (var i = 0; i < 9; i++){ s += ARROWS[tiles[i]]; if (i % 3 === 2) s += "　"; }
+    for (var i = 0; i < 9; i++){ s += ARROWS[tiles[i]]; if (i % 3 === 2) s += "\n"; }
     mainEl.textContent = s;
     subEl.textContent = "手数 " + moves;
   }
@@ -30526,7 +30595,7 @@ GRAVITY_FOUR_TEMPLATE = r"""
     return -1;
   }
   function draw(){
-    mainEl.textContent = board.map(function(row){ return row.map(function(v){ return v === 1 ? "🔴" : v === 2 ? "🟡" : "・"; }).join(""); }).join("　");
+    mainEl.textContent = board.map(function(row){ return row.map(function(v){ return v === 1 ? "🔴" : v === 2 ? "🟡" : "・"; }).join(""); }).join("\n");
     subEl.textContent = "列 1〜7 から選んでください";
   }
   function cpuMove(){
@@ -30635,7 +30704,7 @@ CHOCO_SHIP_TEMPLATE = r"""
   var grid = [], shipped = 0, left = 60, timer = null;
   function draw(){
     var s = "";
-    for (var i = 0; i < 20; i++){ s += grid[i] || "・"; if (i % 5 === 4) s += "　"; }
+    for (var i = 0; i < 20; i++){ s += grid[i] || "・"; if (i % 5 === 4) s += "\n"; }
     mainEl.textContent = s;
     subEl.textContent = "出荷 " + shipped + " 個｜あと " + left + " 秒";
   }
@@ -30752,7 +30821,7 @@ STACK_GUIDE_TEMPLATE = r"""
     var rows = [];
     for (var r = 7; r >= 0; r--) rows.push(cols.map(function(c){ return c[r] || "・"; }).join(""));
     mainEl.textContent = "次のブロック：" + BLOCKS[cur] + " 🧍（上に乗りたい）";
-    subEl.textContent = rows.join("　");
+    subEl.textContent = rows.join("\n");
   }
   function hasTriple(){
     for (var x = 0; x < 4; x++) for (var y = 0; y < cols[x].length; y++){
@@ -30969,7 +31038,7 @@ TILE_MERGE_TEMPLATE = r"""
   function spawn(){ var empty = []; for (var i = 0; i < 16; i++) if (!grid[i]) empty.push(i); if (empty.length) grid[empty[Math.floor(Math.random()*empty.length)]] = Math.random() < 0.9 ? 2 : 4; }
   function draw(){
     var s = "";
-    for (var i = 0; i < 16; i++){ s += grid[i] ? String(grid[i]) : "・"; if (i % 4 === 3) s += "　"; else s += " "; }
+    for (var i = 0; i < 16; i++){ s += grid[i] ? String(grid[i]) : "・"; if (i % 4 === 3) s += "\n"; else s += " "; }
     mainEl.textContent = s;
     subEl.textContent = "合体合計 " + mergedTotal;
   }
@@ -31212,7 +31281,7 @@ QUAD_WORD_TEMPLATE = r"""
     return out.join("");
   }
   function draw(){
-    mainEl.textContent = targets.map(function(w, i){ return solved[i] ? w : "？？？？"; }).join("｜");
+    mainEl.textContent = targets.map(function(w, i){ return solved[i] ? w : "？？？？"; }).join("\n");
     subEl.textContent = "入力：" + (input || "―") + "｜あと " + (9 - tries) + " 回";
   }
   function startGame(){
@@ -31318,7 +31387,7 @@ JIGSAW_FIT_TEMPLATE = r"""
   var placed = [], selPiece = -1, pieces = [];
   function draw(){
     var s = "";
-    for (var i = 0; i < 9; i++){ s += placed[i] || "・"; if (i % 3 === 2) s += "　"; }
+    for (var i = 0; i < 9; i++){ s += placed[i] || "・"; if (i % 3 === 2) s += "\n"; }
     mainEl.textContent = s;
     subEl.textContent = "未配置：" + pieces.map(function(p, i){ return p.used ? "" : (i+1) + p.face; }).filter(Boolean).join(" ");
   }
@@ -31542,7 +31611,7 @@ LIGHT_UP_TEMPLATE = r"""
     for (var y = 0; y < 5; y++){ for (var x = 0; x < 5; x++){
       var k = key(x, y);
       s += WALLS[k] ? "⬛" : bulbs[k] ? "💡" : lit[k] ? "🟨" : "・";
-    } s += "　"; }
+    } s += "\n"; }
     mainEl.textContent = s;
     var litCount = Object.keys(lit).length;
     subEl.textContent = "照らされているマス " + litCount + " / 21｜照らし合い " + conflicts() + " 件";
@@ -31652,7 +31721,7 @@ BALL_ROLL_TEMPLATE = r"""
     var st = STAGES[stage], s = "";
     for (var y = 0; y < 6; y++){ for (var x = 0; x < 6; x++){
       s += (x === px && y === py) ? "🔵" : st.w[y][x] === "#" ? "⬛" : (x === st.g[0] && y === st.g[1]) ? "🏁" : "・";
-    } s += "　"; }
+    } s += "\n"; }
     mainEl.textContent = s;
     subEl.textContent = "ステージ " + (stage+1) + " / 3｜手数 " + moves;
   }
@@ -31776,7 +31845,7 @@ NONOGRAM_TEMPLATE = r"""
     for (var x = 0; x < 8; x++) colHints.push(hints(PATTERN.map(function(r){ return r[x]; })));
     mainEl.textContent = "列ヒント：" + colHints.join(" ");
     var s = "";
-    for (var y = 0; y < 8; y++){ s += hints(PATTERN[y]) + "｜" + cells.slice(y*8, y*8+8).map(function(v){ return v ? "⬛" : "・"; }).join("") + "　"; }
+    for (var y = 0; y < 8; y++){ s += hints(PATTERN[y]) + "｜" + cells.slice(y*8, y*8+8).map(function(v){ return v ? "⬛" : "・"; }).join("") + "\n"; }
     subEl.textContent = s;
   }
   function startGame(){
@@ -31976,7 +32045,7 @@ GRAVITY_MAHJONG_TEMPLATE = r"""
     ["🍓", "🍑", "🍑", "🍓"]
   ];
   function draw(){
-    mainEl.textContent = cols.map(function(c, i){ return "列" + (i+1) + "：" + (c.slice().reverse().join("") || "空"); }).join("｜");
+    mainEl.textContent = cols.map(function(c, i){ return "列" + (i+1) + "：" + (c.slice().reverse().join("") || "空"); }).join("\n");
     subEl.textContent = "一番下：" + cols.map(function(c){ return c.length ? c[0] : "―"; }).join(" ");
   }
   function startGame(){
