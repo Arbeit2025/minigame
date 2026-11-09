@@ -2636,7 +2636,8 @@ class PortalImprovementsTest(MinigameTest):
 
     def test_game_pages_have_settings_footer_ogp(self):
         body = self.get("/games/janken")
-        self.assertIn('id="mg-theme-sel"', body)
+        self.assertIn('id="mg-theme-btn"', body)
+        self.assertNotIn('id="mg-theme-sel"', body)
         self.assertIn('id="mg-vol"', body)
         self.assertIn('id="mg-mute"', body)
         self.assertIn("mg-footer", body)
@@ -3025,7 +3026,7 @@ class ImprovementsNov06Test(MinigameTest):
         res = self.client.get("/sw.js")
         self.assertEqual(res.status_code, 200)
         body = res.get_data(as_text=True)
-        self.assertIn("minigame-v4", body)
+        self.assertIn("minigame-v5", body)
         self.assertIn("addEventListener('fetch'", body)
         self.assertIn("addEventListener('install'", body)
 
@@ -3394,10 +3395,10 @@ class ScrollThemeTest(MinigameTest):
         self.assertIn("mg-theme-btn", js)
         self.assertIn("syncThemeBtn", js)
 
-    def test_sw_cache_v4(self):
+    def test_sw_cache_v5(self):
         sw = self.get("/sw.js")
-        self.assertIn("minigame-v4", sw)
-        self.assertNotIn("minigame-v3", sw)
+        self.assertIn("minigame-v5", sw)
+        self.assertNotIn("minigame-v4", sw)
 
     def test_static_urls_are_versioned(self):
         # 古い HTTP キャッシュ（max-age=86400）を即時無効化するための ?v= 付きURL
@@ -3412,6 +3413,27 @@ class ScrollThemeTest(MinigameTest):
         self.assertIn("padding:16px 0", self.get("/games/machigai-card"))
         # ドローポーカーの手札表示は対決フェーズの分岐内なのでテンプレートで確認
         self.assertIn("padding:1px 5px", self.mod.DRAWPOKER_TEMPLATE)
+
+    def test_theme_select_removed(self):
+        # テーマ切り替えは右上のボタンに一本化（2026-11-10 本人指示）
+        for path in ("/", "/games/janken", "/games/roulette"):
+            body = self.get(path)
+            self.assertNotIn("mg-theme-sel", body, path)
+            self.assertIn("mg-theme-btn", body, path)
+        self.assertIn("⚙ 設定（音・動き）", self.get("/"))
+        self.assertIn("⚙ 設定（音・動き）", self.get("/games/janken"))
+        self.assertNotIn("mg-theme-sel", self.get("/static/mg-cfg.js"))
+
+    def test_finish_clears_choices(self):
+        # 終了時に前の問題の選択肢が残らない（2026-11-10 本人報告：おばけ代筆）
+        gw = self.mod.GHOST_WRITER_TEMPLATE
+        fin = gw[gw.index("function finish()"):]
+        self.assertIn('choiceBox.innerHTML = "";', fin.split("startBtn.addEventListener")[0])
+        # 共通スケルトン30本の endGame も選択肢・操作ボタンを消す
+        end = 'function endGame(text){ phase = "done"; choicesEl.innerHTML = "";'
+        self.assertIn(end, self.mod.GRAVITY_FOUR_TEMPLATE)
+        self.assertIn(end, self.mod.TESTIMONY_CLASH_TEMPLATE)
+        self.assertIn(end, self.mod.UROOBOE_SHOPPING_TEMPLATE)
 
     def test_theme_button_inline_binding(self):
         # 古い SW キャッシュ環境でもボタンが効くよう、HTML 内に binding を持つ
