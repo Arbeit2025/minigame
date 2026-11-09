@@ -2248,15 +2248,8 @@ PORTAL_TEMPLATE = r"""
     <h1>🎮 自作ミニゲーム集</h1>
     <button type="button" id="mg-theme-btn" class="mg-theme-btn">🌗 自動</button>
     <details class="mg-settings">
-      <summary>⚙ 設定（テーマ・音・動き）</summary>
+      <summary>⚙ 設定（音・動き）</summary>
       <div class="mg-settings-body">
-        <label>テーマ
-          <select id="mg-theme-sel">
-            <option value="auto">自動（端末に合わせる）</option>
-            <option value="light">ライト</option>
-            <option value="dark">ダーク</option>
-          </select>
-        </label>
         <label>音量 <input type="range" id="mg-vol" min="0" max="100" step="5" /></label>
         <label><input type="checkbox" id="mg-mute" /> 音を消す</label>
         <label><input type="checkbox" id="mg-motion" /> 動きを減らす</label>
@@ -2278,7 +2271,6 @@ PORTAL_TEMPLATE = r"""
     var cur = load();
     var nxt = order[(order.indexOf(cur.theme || 'auto') + 1) % 3];
     cur.theme = nxt; save(cur); apply(cur); label(cur);
-    var sel = document.getElementById('mg-theme-sel'); if (sel) sel.value = nxt;
   });
 })();
 </script>
@@ -2414,12 +2406,9 @@ PORTAL_TEMPLATE = r"""
       document.documentElement.setAttribute('data-theme', t);
     }
     function applyMotion() { document.documentElement.classList.toggle('mg-reduce-motion', !!settings.reduceMotion); }
-    var themeSel = document.getElementById('mg-theme-sel');
-    themeSel.value = settings.theme || 'auto';
-    themeSel.addEventListener('change', function () { settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); syncThemeBtn(); });
     var themeBtn = document.getElementById('mg-theme-btn');
     function syncThemeBtn() { if (!themeBtn) return; var t = settings.theme || 'auto'; themeBtn.textContent = t === 'dark' ? '🌙 ダーク' : t === 'light' ? '☀ ライト' : '🌗 自動'; }
-    if (themeBtn && !themeBtn.__mgBound) { themeBtn.__mgBound = true; syncThemeBtn(); themeBtn.addEventListener('click', function () { var order = ['auto', 'light', 'dark']; var cur = settings.theme || 'auto'; var nxt = order[(order.indexOf(cur) + 1) % 3]; settings.theme = nxt; saveJSON('mg_settings', settings); applyTheme(); themeSel.value = nxt; syncThemeBtn(); }); }
+    if (themeBtn && !themeBtn.__mgBound) { themeBtn.__mgBound = true; syncThemeBtn(); themeBtn.addEventListener('click', function () { var order = ['auto', 'light', 'dark']; var cur = settings.theme || 'auto'; var nxt = order[(order.indexOf(cur) + 1) % 3]; settings.theme = nxt; saveJSON('mg_settings', settings); applyTheme(); syncThemeBtn(); }); }
     var vol = document.getElementById('mg-vol');
     vol.value = settings.volume;
     vol.addEventListener('input', function () { settings.volume = Number(vol.value); saveJSON('mg_settings', settings); });
@@ -2623,7 +2612,7 @@ PORTAL_TEMPLATE = r"""
   if (!saveBtn) return;
   var clearBtn = document.getElementById('mgOfflineClear');
   var status = document.getElementById('mgOfflineStatus');
-  var CACHE_NAME = 'minigame-v4';
+  var CACHE_NAME = 'minigame-v5';
   var URLS = [{% for g in games %}'{{ url_for(g.endpoint) }}'{% if not loop.last %}, {% endif %}{% endfor %}];
   saveBtn.addEventListener('click', function () {
     if (!('caches' in window)) { status.textContent = 'このブラウザはオフライン保存に対応していません。'; return; }
@@ -3353,12 +3342,6 @@ _MG_COMMON_SCRIPT = r"""<script>
     document.documentElement.setAttribute('data-theme', t);
   }
   function applyMotion(){ document.documentElement.classList.toggle('mg-reduce-motion', !!settings.reduceMotion); }
-  var themeSel = document.getElementById('mg-theme-sel');
-  if (themeSel) {
-    themeSel.value = settings.theme || 'auto';
-    themeSel.addEventListener('change', function(){ settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); syncThemeBtn(); });
-    themeSel.addEventListener('input', function(){ settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); syncThemeBtn(); });
-  }
   var themeBtn = document.getElementById('mg-theme-btn');
   function syncThemeBtn(){
     if (!themeBtn) return;
@@ -3373,7 +3356,6 @@ _MG_COMMON_SCRIPT = r"""<script>
       var cur = settings.theme || 'auto';
       var nxt = order[(order.indexOf(cur) + 1) % 3];
       settings.theme = nxt; saveJSON('mg_settings', settings); applyTheme();
-      if (themeSel) themeSel.value = nxt;
       syncThemeBtn();
     });
   }
@@ -3642,16 +3624,16 @@ def mg_head_js():
     return res
 
 
-_STATIC_V = "20261109-4"  # 静的ファイルURLの版。CSS/JS を変えたら上げる
+_STATIC_V = "20261110-1"  # 静的ファイルURLの版。CSS/JS を変えたら上げる
 
 
 # Service Worker: トップ・静的ファイル・/offline を先に保存し、
 # ゲームページは開くたびに保存する。スコア送信（POST）は対象外。
 # キャッシュ名はトップページの保存ボタン処理と一致させること。
 _SW_JS = r"""
-var CACHE = 'minigame-v4';
-var CORE = ['/', '/offline', '/static/mg-head.js?v=20261109-4', '/static/mg-head.js?boot=1&v=20261109-4',
-            '/static/mg-cfg.js?v=20261109-4', '/static/mg-game.css?v=20261109-4'];
+var CACHE = 'minigame-v5';
+var CORE = ['/', '/offline', '/static/mg-head.js?v=20261110-1', '/static/mg-head.js?boot=1&v=20261110-1',
+            '/static/mg-cfg.js?v=20261110-1', '/static/mg-game.css?v=20261110-1'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); })
     .then(function () { return self.skipWaiting(); }));
@@ -3741,7 +3723,6 @@ _MG_THEME_BTN_SCRIPT = """<script>
     var cur = load();
     var nxt = order[(order.indexOf(cur.theme || 'auto') + 1) % 3];
     cur.theme = nxt; save(cur); apply(cur); label(cur);
-    var sel = document.getElementById('mg-theme-sel'); if (sel) sel.value = nxt;
   });
 })();
 </script>
@@ -3753,15 +3734,8 @@ def _mg_header_html() -> str:
   <p><a href="{url_for('index')}">← ゲーム一覧へ戻る</a></p>
   <button type="button" id="mg-theme-btn" class="mg-theme-btn">🌗 自動</button>
   <details class="mg-settings">
-    <summary>⚙ 設定（テーマ・音・動き）</summary>
+    <summary>⚙ 設定（音・動き）</summary>
     <div class="mg-settings-body">
-      <label>テーマ
-        <select id="mg-theme-sel">
-          <option value="auto">自動（端末に合わせる）</option>
-          <option value="light">ライト</option>
-          <option value="dark">ダーク</option>
-        </select>
-      </label>
       <label>音量 <input type="range" id="mg-vol" min="0" max="100" step="5" /></label>
       <label><input type="checkbox" id="mg-mute" /> 音を消す</label>
       <label><input type="checkbox" id="mg-motion" /> 動きを減らす</label>
@@ -21578,6 +21552,7 @@ GHOST_WRITER_TEMPLATE = r"""
         }
       })
       .catch(function(){});
+    choiceBox.innerHTML = "";
     letterBox.innerHTML = "<p style='margin:0;'>👻 ボガ「助かったよ。また頼むね」</p>";
     startBtn.disabled = false;
     startBtn.textContent = "もう一度挑戦する";
@@ -28946,7 +28921,7 @@ ROOT_GARDEN_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var hp = 3, lanes = [], timer = null, left = 40;
   function render(){
@@ -29051,7 +29026,7 @@ BOW_TARGET_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var round = 0, value = 0, dir = 1, raf = null;
   function loop(){
@@ -29154,7 +29129,7 @@ CYBER_CAT_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var myHp = 60, enHp = 60, charge = 0, turn = 0;
   function render(){
@@ -29260,7 +29235,7 @@ WIND_FEATHER_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var y = 5, vy = 0, obs = [], timer = null, left = 30, holding = false, passed = 0;
   function render(){
@@ -29369,7 +29344,7 @@ HAMSTER_CHEEKS_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var total = 0, item = 0, tries = 0;
   function next(){
@@ -29470,7 +29445,7 @@ AFRO_BONSAI_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var target = [], cells = [], round = 0;
   var SHAPES = [
@@ -29577,7 +29552,7 @@ BURGER_STACK_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var ORDERS = [["🍞","🥬","🧀","🥩","🍞"],["🍞","🍅","🥩","🍞"],["🍞","🧀","🍅","🥬","🍞"],["🍞","🥩","🥩","🧀","🍞"],["🍞","🥬","🍅","🧀","🥩","🍞"]];
   var order = [], oi = 0, stack = [], item = "", pos = 0, dir = 1, raf = null;
@@ -29683,7 +29658,7 @@ HANKO_RUSH_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var left = 30, timer = null, amount = 0;
   function next(){
@@ -29779,7 +29754,7 @@ RUSUBAN_CAT_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var round = 0, pos = 0, dir = 1, raf = null, cushion = 50;
   function loop(){
@@ -29882,7 +29857,7 @@ CHIKUWA_JUDGE_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var left = 30, timer = null, isChikuwa = true;
   var ITEMS = [["🍢 穴のあいた筒のおでん種", true], ["🌀 渦巻き模様の平たい練り物", false], ["🍢 真ん中に穴、きゅうりが入るやつ", true], ["🌀 ぐるぐる巻き、すき焼きに入るやつ", false], ["🍢 焼き目つきの筒、穴から覗ける", true], ["🌀 渦巻きがトレードマーク", false]];
@@ -29979,7 +29954,7 @@ JANKEN_CHAIN_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var HANDS = ["✊", "✌", "🖐"]; // 0グー 1チョキ 2パー: i は (i+1)%3 に勝つ
   var grid = [], round = 0;
@@ -30088,7 +30063,7 @@ DUCK_MIX_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var COLORS = ["赤", "青", "黄"];
   var MIX = {"赤赤":"赤","青青":"青","黄黄":"黄","赤青":"紫","赤黄":"オレンジ","青黄":"緑"};
@@ -30199,7 +30174,7 @@ NEKO_SORT_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var cols = [[], [], []], cur = 0, left = 45, timer = null, dropTimer = null;
   var CATS = ["🟧", "⬜", "⬛"];
@@ -30308,7 +30283,7 @@ TESTIMONY_CLASH_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var QS = [
     {e: "証拠：店の防犯カメラには、21時ちょうどに店を出る青いコートの人物が映っている。", s: ["私は21時に店を出ました。青いコートでした。", "私は22時まで店にいました。青いコートです。", "私は21時に店を出て、まっすぐ帰りました。"], a: 1},
@@ -30412,7 +30387,7 @@ UROOBOE_SHOPPING_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var ITEMS = ["牛乳","卵","パン","りんご","バナナ","チーズ","ヨーグルト","じゃがいも","にんじん","玉ねぎ","豆腐","納豆"];
   var list = [], picked = [], phase2 = false;
@@ -30514,7 +30489,7 @@ SQUARE_ROTATE_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var ARROWS = ["↑", "→", "↓", "←"];
   var tiles = [], moves = 0, round = 0;
@@ -30619,7 +30594,7 @@ GRAVITY_FOUR_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var board = [], over = false;
   function win(b, p){
@@ -30742,7 +30717,7 @@ CHOCO_SHIP_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var KINDS = ["🍫", "🍬", "🧁"];
   var grid = [], shipped = 0, left = 60, timer = null;
@@ -30857,7 +30832,7 @@ STACK_GUIDE_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var cols = [[], [], [], []], cur = 0, timer = null, stackCount = 0;
   var BLOCKS = ["🟥", "🟦", "🟨"];
@@ -30964,7 +30939,7 @@ HASHI_BRIDGE_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var ISLANDS = [[0,0,2],[2,0,3],[4,0,1],[0,2,1],[2,2,4],[4,2,2],[2,4,2],[4,4,1]];
   var NAMES = ["A","B","C","D","E","F","G","H"];
@@ -31076,7 +31051,7 @@ TILE_MERGE_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var grid = [], mergedTotal = 0;
   function spawn(){ var empty = []; for (var i = 0; i < 16; i++) if (!grid[i]) empty.push(i); if (empty.length) grid[empty[Math.floor(Math.random()*empty.length)]] = Math.random() < 0.9 ? 2 : 4; }
@@ -31198,7 +31173,7 @@ PYRAMID_MAHJONG_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var tiles = [], selected = -1;
   // x, y, layer, face
@@ -31310,7 +31285,7 @@ QUAD_WORD_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var WORDS = ["ペンギン", "ライオン", "カラオケ", "ヒマワリ", "アサガオ", "モモンガ", "サッポロ", "オオサカ", "ナガサキ", "フクオカ"];
   var KANA = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンッャュョー";
@@ -31425,7 +31400,7 @@ JIGSAW_FIT_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var PICTURE = ["🌳", "🌞", "🌳", "🌷", "🏠", "🌷", "🐶", "🌼", "🐱"];
   var placed = [], selPiece = -1, pieces = [];
@@ -31523,7 +31498,7 @@ POP_FLAP_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var y = 4, wall = null, timer = null, wx = 99;
   function render(){
@@ -31622,7 +31597,7 @@ LIGHT_UP_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var WALLS = {"1,0": 1, "3,2": 1, "0,4": 1, "4,4": 1};
   var bulbs = {};
@@ -31753,7 +31728,7 @@ BALL_ROLL_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var STAGES = [
     {w: ["S..#..", "##.#.#", ".....#", ".###..", "...##.", "#...G."], s: [0,0], g: [4,5]},
@@ -31865,7 +31840,7 @@ NONOGRAM_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var PATTERN = [
     [0,1,1,0,0,1,1,0],
@@ -31981,7 +31956,7 @@ TRIO_TRAY_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var FACES = ["🍎", "🍇", "🍋", "🍓", "🍑", "🍒", "🥝", "🍉"];
   var field = [], tray = [], trios = 0;
@@ -32078,7 +32053,7 @@ GRAVITY_MAHJONG_TEMPLATE = r"""
     var b = document.createElement("button"); b.type = "button"; b.textContent = label;
     b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
   }
-  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+  function endGame(text){ phase = "done"; choicesEl.innerHTML = ""; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
 
   var cols = [], selected = -1;
   var LAYOUT = [
