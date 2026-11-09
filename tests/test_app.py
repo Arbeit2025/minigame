@@ -3025,7 +3025,7 @@ class ImprovementsNov06Test(MinigameTest):
         res = self.client.get("/sw.js")
         self.assertEqual(res.status_code, 200)
         body = res.get_data(as_text=True)
-        self.assertIn("minigame-v1", body)
+        self.assertIn("minigame-v2", body)
         self.assertIn("addEventListener('fetch'", body)
         self.assertIn("addEventListener('install'", body)
 
@@ -3363,3 +3363,42 @@ class SnsNov09GamesTest(MinigameTest):
         self.assertEqual(len(self.mod.GAMES), 197)
         res = self.client.get("/")
         self.assertIn("197 本", res.get_data(as_text=True))
+
+
+class ScrollThemeTest(MinigameTest):
+    """横スクロール解消とゲーム画面のテーマ切替ボタン（2026-11-09）。"""
+
+    def get(self, path):
+        res = self.client.get(path)
+        self.assertEqual(res.status_code, 200, path)
+        return res.get_data(as_text=True)
+
+    def test_theme_button_on_all_game_pages(self):
+        for game in self.mod.GAMES:
+            html = self.client.get(f"/games/{game['slug']}").get_data(as_text=True)
+            self.assertIn('id="mg-theme-btn"', html, game["slug"])
+
+    def test_theme_button_on_index_and_offline(self):
+        self.assertIn('id="mg-theme-btn"', self.get("/"))
+        self.assertIn('id="mg-theme-btn"', self.get("/offline"))
+
+    def test_game_css_prevents_horizontal_scroll(self):
+        css = self.get("/static/mg-game.css")
+        self.assertIn("overflow-x: clip", css)
+        self.assertIn("white-space: pre-line", css)
+        self.assertIn("min(44px, 7.5vw)", css)
+        self.assertIn(".mg-theme-btn", css)
+
+    def test_cfg_js_has_theme_button_logic(self):
+        js = self.get("/static/mg-cfg.js")
+        self.assertIn("mg-theme-btn", js)
+        self.assertIn("syncThemeBtn", js)
+
+    def test_sw_cache_v2(self):
+        sw = self.get("/sw.js")
+        self.assertIn("minigame-v2", sw)
+        self.assertNotIn("minigame-v1", sw)
+
+    def test_board_rows_use_newlines(self):
+        html = self.get("/games/gravity-four")
+        self.assertIn('}).join("\\n")', html)
