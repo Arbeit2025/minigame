@@ -2263,6 +2263,25 @@ PORTAL_TEMPLATE = r"""
       </div>
     </details>
   </div>
+<script>
+(function(){
+  var btn = document.getElementById('mg-theme-btn');
+  if (!btn || btn.__mgBound) return;
+  btn.__mgBound = true;
+  function load(){ try { return JSON.parse(localStorage.getItem('mg_settings') || '{}'); } catch (e) { return {}; } }
+  function save(s){ try { localStorage.setItem('mg_settings', JSON.stringify(s)); } catch (e) {} }
+  function apply(s){ var t = s.theme || 'auto'; if (t === 'auto') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', t); }
+  function label(s){ var t = s.theme || 'auto'; btn.textContent = t === 'dark' ? '🌙 ダーク' : t === 'light' ? '☀ ライト' : '🌗 自動'; }
+  var s0 = load(); label(s0);
+  btn.addEventListener('click', function(){
+    var order = ['auto', 'light', 'dark'];
+    var cur = load();
+    var nxt = order[(order.indexOf(cur.theme || 'auto') + 1) % 3];
+    cur.theme = nxt; save(cur); apply(cur); label(cur);
+    var sel = document.getElementById('mg-theme-sel'); if (sel) sel.value = nxt;
+  });
+})();
+</script>
   <p class="lead">ここにあるのは、全部わたし（作者）が自分で作ったゲームだけです。登録不要・無料で、ブラウザからそのまま遊べます。少しずつ増やしていく予定です。</p>
 
   <section class="pickup" aria-label="今日の1本">
@@ -2400,7 +2419,7 @@ PORTAL_TEMPLATE = r"""
     themeSel.addEventListener('change', function () { settings.theme = themeSel.value; saveJSON('mg_settings', settings); applyTheme(); syncThemeBtn(); });
     var themeBtn = document.getElementById('mg-theme-btn');
     function syncThemeBtn() { if (!themeBtn) return; var t = settings.theme || 'auto'; themeBtn.textContent = t === 'dark' ? '🌙 ダーク' : t === 'light' ? '☀ ライト' : '🌗 自動'; }
-    if (themeBtn) { syncThemeBtn(); themeBtn.addEventListener('click', function () { var order = ['auto', 'light', 'dark']; var cur = settings.theme || 'auto'; var nxt = order[(order.indexOf(cur) + 1) % 3]; settings.theme = nxt; saveJSON('mg_settings', settings); applyTheme(); themeSel.value = nxt; syncThemeBtn(); }); }
+    if (themeBtn && !themeBtn.__mgBound) { themeBtn.__mgBound = true; syncThemeBtn(); themeBtn.addEventListener('click', function () { var order = ['auto', 'light', 'dark']; var cur = settings.theme || 'auto'; var nxt = order[(order.indexOf(cur) + 1) % 3]; settings.theme = nxt; saveJSON('mg_settings', settings); applyTheme(); themeSel.value = nxt; syncThemeBtn(); }); }
     var vol = document.getElementById('mg-vol');
     vol.value = settings.volume;
     vol.addEventListener('input', function () { settings.volume = Number(vol.value); saveJSON('mg_settings', settings); });
@@ -2604,7 +2623,7 @@ PORTAL_TEMPLATE = r"""
   if (!saveBtn) return;
   var clearBtn = document.getElementById('mgOfflineClear');
   var status = document.getElementById('mgOfflineStatus');
-  var CACHE_NAME = 'minigame-v2';
+  var CACHE_NAME = 'minigame-v3';
   var URLS = [{% for g in games %}'{{ url_for(g.endpoint) }}'{% if not loop.last %}, {% endif %}{% endfor %}];
   saveBtn.addEventListener('click', function () {
     if (!('caches' in window)) { status.textContent = 'このブラウザはオフライン保存に対応していません。'; return; }
@@ -2911,7 +2930,7 @@ def roulette():
     )
     rendered = rendered.replace(
         '<div class="wrap">',
-        '<div class="wrap">\n' + _mg_header_html() + """<style>
+        '<div class="wrap">\n' + _mg_header_html() + _MG_THEME_BTN_SCRIPT + """<style>
     html, body { overflow-x: clip; }
     .mg-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin: 0 0 8px; flex-wrap: wrap; }
     .mg-header p { margin: 0; }
@@ -3346,7 +3365,8 @@ _MG_COMMON_SCRIPT = r"""<script>
     var t = settings.theme || 'auto';
     themeBtn.textContent = t === 'dark' ? '🌙 ダーク' : t === 'light' ? '☀ ライト' : '🌗 自動';
   }
-  if (themeBtn) {
+  if (themeBtn && !themeBtn.__mgBound) {
+    themeBtn.__mgBound = true;
     syncThemeBtn();
     themeBtn.addEventListener('click', function(){
       var order = ['auto', 'light', 'dark'];
@@ -3626,7 +3646,7 @@ def mg_head_js():
 # ゲームページは開くたびに保存する。スコア送信（POST）は対象外。
 # キャッシュ名はトップページの保存ボタン処理と一致させること。
 _SW_JS = r"""
-var CACHE = 'minigame-v2';
+var CACHE = 'minigame-v3';
 var CORE = ['/', '/offline', '/static/mg-head.js', '/static/mg-head.js?boot=1',
             '/static/mg-cfg.js', '/static/mg-game.css'];
 self.addEventListener('install', function (e) {
@@ -3657,13 +3677,11 @@ self.addEventListener('fetch', function (e) {
     }));
     return;
   }
-  e.respondWith(caches.match(req).then(function (hit) {
-    return hit || fetch(req).then(function (res) {
-      var copy = res.clone();
-      caches.open(CACHE).then(function (c) { c.put(req, copy); });
-      return res;
-    });
-  }));
+  e.respondWith(fetch(req).then(function (res) {
+    var copy = res.clone();
+    caches.open(CACHE).then(function (c) { c.put(req, copy); });
+    return res;
+  }).catch(function () { return caches.match(req); }));
 });
 """
 
@@ -3703,6 +3721,28 @@ def mg_game_css():
     res.headers["Cache-Control"] = "public, max-age=86400"
     return res
 
+
+
+_MG_THEME_BTN_SCRIPT = """<script>
+(function(){
+  var btn = document.getElementById('mg-theme-btn');
+  if (!btn || btn.__mgBound) return;
+  btn.__mgBound = true;
+  function load(){ try { return JSON.parse(localStorage.getItem('mg_settings') || '{}'); } catch (e) { return {}; } }
+  function save(s){ try { localStorage.setItem('mg_settings', JSON.stringify(s)); } catch (e) {} }
+  function apply(s){ var t = s.theme || 'auto'; if (t === 'auto') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', t); }
+  function label(s){ var t = s.theme || 'auto'; btn.textContent = t === 'dark' ? '🌙 ダーク' : t === 'light' ? '☀ ライト' : '🌗 自動'; }
+  var s0 = load(); label(s0);
+  btn.addEventListener('click', function(){
+    var order = ['auto', 'light', 'dark'];
+    var cur = load();
+    var nxt = order[(order.indexOf(cur.theme || 'auto') + 1) % 3];
+    cur.theme = nxt; save(cur); apply(cur); label(cur);
+    var sel = document.getElementById('mg-theme-sel'); if (sel) sel.value = nxt;
+  });
+})();
+</script>
+"""
 
 def _mg_header_html() -> str:
     return f"""
@@ -3813,6 +3853,7 @@ def game_page(title: str, body: str) -> str:
         parts.append('  <script src="/static/mg-head.js?boot=1"></script>\n')
     parts.append('  <link rel="stylesheet" href="/static/mg-game.css" />\n</head>\n<body>\n<div class="wrap">\n')
     parts.append(_mg_header_html())
+    parts.append(_MG_THEME_BTN_SCRIPT)
     parts.append(_inject_howto(body, _mg_howto_html(game)))
     if game:
         parts.append(_mg_next_html(game))

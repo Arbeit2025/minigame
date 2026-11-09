@@ -3025,7 +3025,7 @@ class ImprovementsNov06Test(MinigameTest):
         res = self.client.get("/sw.js")
         self.assertEqual(res.status_code, 200)
         body = res.get_data(as_text=True)
-        self.assertIn("minigame-v2", body)
+        self.assertIn("minigame-v3", body)
         self.assertIn("addEventListener('fetch'", body)
         self.assertIn("addEventListener('install'", body)
 
@@ -3394,10 +3394,16 @@ class ScrollThemeTest(MinigameTest):
         self.assertIn("mg-theme-btn", js)
         self.assertIn("syncThemeBtn", js)
 
-    def test_sw_cache_v2(self):
+    def test_sw_cache_v3(self):
         sw = self.get("/sw.js")
-        self.assertIn("minigame-v2", sw)
-        self.assertNotIn("minigame-v1", sw)
+        self.assertIn("minigame-v3", sw)
+        self.assertNotIn("minigame-v2", sw)
+
+    def test_theme_button_inline_binding(self):
+        # 古い SW キャッシュ環境でもボタンが効くよう、HTML 内に binding を持つ
+        self.assertIn("__mgBound", self.get("/games/gravity-four"))
+        self.assertIn("__mgBound", self.get("/"))
+        self.assertIn("__mgBound", self.get("/games/roulette"))
 
     def test_board_rows_use_newlines(self):
         html = self.get("/games/gravity-four")
