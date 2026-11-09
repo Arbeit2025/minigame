@@ -1596,6 +1596,246 @@ GAMES = [
         "description": "ダーツの狙いゲージを、風船の命中ゾーンで止めるタイミングゲーム。全5回。",
         "endpoint": "balloon_expert",
     },
+    {
+        "slug": "root-garden",
+        "title": "根はり庭ガード",
+        "category": "アクション",
+        "icon": "🌱",
+        "description": "月夜の庭で、落ちてくる岩や虫から根っこを守り抜くガードゲーム。40秒。",
+        "endpoint": "root_garden",
+    },
+    {
+        "slug": "bow-target",
+        "title": "弓当て的あて",
+        "category": "アクション",
+        "icon": "🏹",
+        "description": "風に揺れる狙いを止めて矢を放つ、的当てタイミングゲーム。全5射。",
+        "endpoint": "bow_target",
+    },
+    {
+        "slug": "cyber-cat",
+        "title": "サイバー猫ターン対戦",
+        "category": "対戦",
+        "icon": "🐱",
+        "description": "サイバー猫同士のターン制バトル。技の使い分けで相手のHPを先に削り切る。",
+        "endpoint": "cyber_cat",
+    },
+    {
+        "slug": "wind-feather",
+        "title": "風ふき羽根ナビ",
+        "category": "アクション",
+        "icon": "🪶",
+        "description": "風のボタンで羽根をふわりと浮かせ、流れてくる障害物をよけ続けるゲーム。",
+        "endpoint": "wind_feather",
+    },
+    {
+        "slug": "hamster-cheeks",
+        "title": "ほっぺ詰めハムスター",
+        "category": "脳トレ",
+        "icon": "🐹",
+        "description": "ほっぺの容量いっぱいまで床材を詰める、足し算パッキングゲーム。",
+        "endpoint": "hamster_cheeks",
+    },
+    {
+        "slug": "afro-bonsai",
+        "title": "アフロ盆栽カット",
+        "category": "創作",
+        "icon": "🌳",
+        "description": "もさもさ盆栽をお題のシルエットどおりに刈り込む、形合わせゲーム。",
+        "endpoint": "afro_bonsai",
+    },
+    {
+        "slug": "burger-stack",
+        "title": "ブッ刺しバーガー積み",
+        "category": "アクション",
+        "icon": "🍔",
+        "description": "注文どおりの順番で、落ちてくる具材を受け止めて積み上げるゲーム。",
+        "endpoint": "burger_stack",
+    },
+    {
+        "slug": "hanko-rush",
+        "title": "ハンコラッシュ",
+        "category": "アクション",
+        "icon": "🔴",
+        "description": "流れてくる書類に、正しいハンコを押し分ける反射ゲーム。制限時間30秒。",
+        "endpoint": "hanko_rush",
+    },
+    {
+        "slug": "rusuban-cat",
+        "title": "ルスバン猫落とし",
+        "category": "アクション",
+        "icon": "🐈",
+        "description": "左右に揺れる台の上から猫を落とし、下のクッションに着地させるタイミングゲーム。",
+        "endpoint": "rusuban_cat",
+    },
+    {
+        "slug": "chikuwa-judge",
+        "title": "ちくわ見分けデス",
+        "category": "脳トレ",
+        "icon": "🍢",
+        "description": "ちくわとちくわぶを一瞬で見分ける高速判定ゲーム。制限時間30秒。",
+        "endpoint": "chikuwa_judge",
+    },
+    {
+        "slug": "janken-chain",
+        "title": "じゃんけん連鎖消し",
+        "category": "脳トレ",
+        "icon": "✊",
+        "description": "じゃんけんの勝ち負けでコマを連鎖消しするパズル。4×4盤面、全3面。",
+        "endpoint": "janken_chain",
+    },
+    {
+        "slug": "duck-mix",
+        "title": "アヒルまぜまぜ図鑑",
+        "category": "創作",
+        "icon": "🦆",
+        "description": "2匹のアヒルを合わせて、生まれる子の色と柄を当てる組み合わせゲーム。",
+        "endpoint": "duck_mix",
+    },
+    {
+        "slug": "neko-sort",
+        "title": "ねこ列そろえ帰宅",
+        "category": "アクション",
+        "icon": "🐈",
+        "description": "落ちてくる猫ピースを列にそろえて帰らせる、落ちものパズル。45秒。",
+        "endpoint": "neko_sort",
+    },
+    {
+        "slug": "testimony-clash",
+        "title": "証言矛盾つきつけ",
+        "category": "クイズ・知識",
+        "icon": "☕",
+        "description": "証言と証拠品の矛盾箇所を選ぶ、文章ミステリーゲーム。全5問。",
+        "endpoint": "testimony_clash",
+    },
+    {
+        "slug": "urooboe-shopping",
+        "title": "うろ覚え買い物リスト",
+        "category": "脳トレ",
+        "icon": "🛒",
+        "description": "お使いリストをうろ覚えで再現する記憶ゲーム。覚える時間は8秒。",
+        "endpoint": "urooboe_shopping",
+    },
+    {
+        "slug": "square-rotate",
+        "title": "回転スクエア絵あわせ",
+        "category": "脳トレ",
+        "icon": "🔲",
+        "description": "バラバラな向きの矢印タイルを回して、全て上向きにそろえるパズル。",
+        "endpoint": "square_rotate",
+    },
+    {
+        "slug": "gravity-four",
+        "title": "重力落とし4目ならべ",
+        "category": "対戦",
+        "icon": "🔴",
+        "description": "列の上からコマを落とす四目並べ。CPUより先に4つ並べれば勝ち。",
+        "endpoint": "gravity_four",
+    },
+    {
+        "slug": "choco-ship",
+        "title": "チョコ12そろえ出荷",
+        "category": "脳トレ",
+        "icon": "🍫",
+        "description": "同じチョコを3つ以上クリックで消して、12個以上の出荷を目指す落ちものパズル。",
+        "endpoint": "choco_ship",
+    },
+    {
+        "slug": "stack-guide",
+        "title": "消さない積み上げガイド",
+        "category": "アクション",
+        "icon": "🧱",
+        "description": "3つつながると消えてしまうブロックを、あえて消さずに積み上げる逆転パズル。",
+        "endpoint": "stack_guide",
+    },
+    {
+        "slug": "hashi-bridge",
+        "title": "橋かけ大陸パズル",
+        "category": "脳トレ",
+        "icon": "🌉",
+        "description": "数字の島々に橋をかけて、ひとつながりの大陸にするパズル（橋かけ）。",
+        "endpoint": "hashi_bridge",
+    },
+    {
+        "slug": "tile-merge",
+        "title": "スライド合体タイル",
+        "category": "脳トレ",
+        "icon": "🔢",
+        "description": "全タイルを一方向に滑らせて同数同士を合体させる、2048系パズルのミニ版。",
+        "endpoint": "tile_merge",
+    },
+    {
+        "slug": "pyramid-mahjong",
+        "title": "ピラミッド麻雀ペア消し",
+        "category": "脳トレ",
+        "icon": "🀄",
+        "description": "積み重なったタイルから、取れる同絵柄ペアを消していく麻雀ソリティア。",
+        "endpoint": "pyramid_mahjong",
+    },
+    {
+        "slug": "quad-word",
+        "title": "4語同時当てクォードル",
+        "category": "クイズ・知識",
+        "icon": "🔤",
+        "description": "4つのカタカナ4文字の言葉を、共通の入力で同時に当てる言葉当てゲーム。",
+        "endpoint": "quad_word",
+    },
+    {
+        "slug": "jigsaw-fit",
+        "title": "ジグソーはめこみ",
+        "category": "創作",
+        "icon": "🧩",
+        "description": "バラバラの絵文字ピースを、3×3の正しい位置にはめ込むジグソーパズル。",
+        "endpoint": "jigsaw_fit",
+    },
+    {
+        "slug": "pop-flap",
+        "title": "ポップ羽ばたき抜け",
+        "category": "アクション",
+        "icon": "🎈",
+        "description": "タップで羽ばたいて、流れてくる壁の隙間を抜け続けるフラッピー系ゲーム。",
+        "endpoint": "pop_flap",
+    },
+    {
+        "slug": "light-up",
+        "title": "電球ライトアップ配置",
+        "category": "脳トレ",
+        "icon": "💡",
+        "description": "電球を置いて全部のマスを照らす、Akari（美術館）系の配置パズル。",
+        "endpoint": "light_up",
+    },
+    {
+        "slug": "ball-roll",
+        "title": "玉ころがしアブストラクト",
+        "category": "アクション",
+        "icon": "🔵",
+        "description": "迷路の中を玉を転がしてゴールを目指す、ステージ制パズル。全3面。",
+        "endpoint": "ball_roll",
+    },
+    {
+        "slug": "nonogram",
+        "title": "ノノグラム絵あぶり",
+        "category": "脳トレ",
+        "icon": "🖼",
+        "description": "行と列の数字ヒントを読み解いて絵を浮かび上がらせるノノグラム。",
+        "endpoint": "nonogram",
+    },
+    {
+        "slug": "trio-tray",
+        "title": "3枚タイル・トレイ集め",
+        "category": "カード・数字",
+        "icon": "🃏",
+        "description": "場のタイルをトレイに集め、同種3枚で消していくパズル。トレイは7枠まで。",
+        "endpoint": "trio_tray",
+    },
+    {
+        "slug": "gravity-mahjong",
+        "title": "重力落下麻雀",
+        "category": "脳トレ",
+        "icon": "🀄",
+        "description": "列の一番下のタイルだけが取れる、重力落下式の麻雀ペア消し。",
+        "endpoint": "gravity_mahjong",
+    },
 ]
 
 
@@ -1644,6 +1884,7 @@ GAME_META = {
     "target-21": (2, 2), "sum10-cards": (1, 2), "card-battle": (2, 1),
     "locker-code": (3, 2), "dark-room": (3, 2), "cipher-door": (3, 2),
     "spot-diff5": (2, 2), "tantrum-calm": (2, 2), "onefloor-warrior": (3, 2), "eruption-dash": (2, 2), "okonomi-flip": (2, 2), "kokeshi-carve": (3, 1), "yaminabe-guess": (3, 2), "first-judge": (2, 2), "bigaxe-charge": (2, 2), "fish-bounce": (2, 2), "dot-nonsense": (2, 1), "fortune-rescue": (3, 1), "gear-runner": (2, 2), "tsukkomi-story": (2, 1), "memory-shards": (3, 2), "sengoku-recruit": (3, 2), "score100-escape": (3, 2), "week-loop": (3, 1), "buff-clicker": (2, 2), "lookalike-find": (2, 2), "rail-marble": (2, 2), "reverse-rail": (2, 2), "acorn-marble": (2, 2), "pearl-float": (2, 2), "spinner-bubble": (2, 2), "tasty-bubble": (2, 1), "cascade-gems": (3, 3), "wall-maze-td": (3, 2), "dots-territory": (3, 2), "balloon-expert": (2, 2),
+    "root-garden": (2, 2), "bow-target": (2, 2), "cyber-cat": (3, 2), "wind-feather": (2, 2), "hamster-cheeks": (2, 1), "afro-bonsai": (3, 1), "burger-stack": (2, 2), "hanko-rush": (1, 3), "rusuban-cat": (2, 2), "chikuwa-judge": (1, 2), "janken-chain": (3, 2), "duck-mix": (2, 1), "neko-sort": (2, 2), "testimony-clash": (3, 2), "urooboe-shopping": (3, 2), "square-rotate": (3, 2), "gravity-four": (3, 2), "choco-ship": (2, 2), "stack-guide": (2, 3), "hashi-bridge": (4, 3), "tile-merge": (3, 2), "pyramid-mahjong": (3, 2), "quad-word": (4, 3), "jigsaw-fit": (3, 1), "pop-flap": (2, 3), "light-up": (4, 3), "ball-roll": (2, 2), "nonogram": (4, 2), "trio-tray": (2, 2), "gravity-mahjong": (3, 3),
 }
 
 # 遊び方（目的／操作／コツ）。各ゲームページ下部の共通セクションで表示する。
@@ -1815,6 +2056,36 @@ GAME_HOWTO = {
     "wall-maze-td": ("壁配置の提案が良い配置かどうかを判定する。", "提案を読んで「良い配置」「悪い配置」のボタンを押す。全10回、1回10点。", "敵の道が長く曲がる配置が良い。道を塞ぎ切る配置と、塔の射程外ばかりは悪い。"),
     "dots-territory": ("囲みを完成させる最後の点をタップする。", "盤面の説明のあと、完成に必要な点（A〜I）をタップする。全10問、1問10点。", "3辺が引かれた四角の、残り1辺の両端になる点が答え。"),
     "balloon-expert": ("ダーツの狙いを命中ゾーンで止める。", "ゲージが進むので、ゾーンの中で「投げる」を押す。全5回。", "ゾーン中心がエキスパート命中。端では風船が揺れて外れる。"),
+    "root-garden": ("根っこを岩と虫から守る。", "落ちてくる物がいる列のボタンを押して取り除く。根のHPが0で終了、40秒守り切るとクリア。", "下の段に来た物から優先して消すと安全。"),
+    "bow-target": ("的の中心に矢を当てる。", "ゲージが左右に揺れるので、中心に近いところで「放つ」を押す。全5射。", "ゲージは端で速く、中心付近でじっくり狙える。"),
+    "cyber-cat": ("相手猫のHPを先に0にする。", "毎ターン技を1つ選ぶ。パンチは確実、チャージは次の攻撃2倍、大技はチャージ消費。", "大技を温存しすぎると先に倒される。2回チャージが目安。"),
+    "wind-feather": ("羽根を障害物に当てずに飛ばし続ける。", "「風を送る」を押すと上昇、離すとゆっくり落ちる。障害物の隙間を通る。", "小刻みに押すと高さが安定する。"),
+    "hamster-cheeks": ("ほっぺ容量10をぴったり狙って詰める。", "出てきたアイテム（大きさ1〜4）を「詰める」か「やめる」。容量を超えると失敗。", "残り容量より大きい物は無理に詰めない。"),
+    "afro-bonsai": ("お題の形に葉を刈り込む。", "5×5の葉セルをクリックすると切れる（もう一度で戻る）。お題と同じ形にして「完成」で判定。", "角から順に合わせるとズレにくい。"),
+    "burger-stack": ("注文票の順番どおりに具材を積む。", "具材が左右に動くので、取りたいタイミングで「受ける」。違う具材を取るとその注文は失敗。", "次の具材だけを見て、焦って早押ししない。"),
+    "hanko-rush": ("書類の条件に合うハンコを押す。", "ルール：10万円未満は「承認」、以上は「却下」。書類が出たら正しいボタンを押す。30秒。", "金額の桁をまず見る。9万円台と10万円台の境目に注意。"),
+    "rusuban-cat": ("猫をクッションの中心に落とす。", "台が左右に揺れるので、クッションの真上で「落とす」を押す。全5回。", "台は端で速く動く。中心を過ぎる少し手前が狙い目。"),
+    "chikuwa-judge": ("ちくわとちくわぶを正しく見分ける。", "出てきた物の名前を押す。穴があって筒状ならちくわ、渦巻きで平たいのがちくわぶ。30秒。", "「穴」と「渦」の一点だけを見る。"),
+    "janken-chain": ("勝ち関係でつながるコマを消す。", "コマをクリックすると、そのコマに勝てる相手が隣にいれば連鎖して消える。消した数だけ得点。", "パーは石とハサミ…ではなく、勝ち先が多いコマから狙う。"),
+    "duck-mix": ("お題と同じアヒルを作る。", "親Aと親Bの色と柄を選ぶ。子の色は混ざり、柄は両親のどちらかになる。全5問。", "混ざり方は色の表を覚えると簡単（赤＋青＝紫など）。"),
+    "neko-sort": ("同色の猫を横一列に3匹そろえる。", "猫が落ちてくるので、落とす列をボタンで選ぶ。横一列に同色3匹で帰宅+10点。", "真ん中の列に偏らせると両端がそろいやすい。"),
+    "testimony-clash": ("証拠と矛盾する証言を当てる。", "証拠品の説明を読み、3つの証言から矛盾する1つを選ぶ。全5問。", "時刻と場所の数字を照らすと見つけやすい。"),
+    "urooboe-shopping": ("覚えた買い物リストを再現する。", "最初に5品のリストが8秒出る。その後、店の12品からリストの物を全部選ぶ。", "語呂合わせや場所でグループ化すると覚えやすい。"),
+    "square-rotate": ("全タイルの矢印を上向きにそろえる。", "3×3タイルをクリックすると90度回る。全て↑になったら判定。手数が少ないほど高得点。", "端から順に決めていくと迷わない。"),
+    "gravity-four": ("自分のコマを4つ並べる。", "列ボタンを押すと一番下にコマが落ちる。縦・横・斜めのどれか4つで勝ち。CPUと交互。", "自分の3連を伸ばしつつ、相手の3連は必ず止める。"),
+    "choco-ship": ("チョコを消して12個以上出荷する。", "5×4盤面で、同種3つ以上つながったグループをクリックすると消えて上から落ちる。制限60秒。", "大きいグループから消すと連鎖しやすい。"),
+    "stack-guide": ("ブロックを消さずに高く積む。", "落ちてくるブロックの列を選ぶ。同色が縦横3つつながると消えてしまうので、色の並びをずらして積む。", "同じ色は斜めにずらすと安全。"),
+    "hashi-bridge": ("全部の島を橋でつなぐ。", "島と島のペアボタンを押すと橋が0→1→2本と変わる。島の数字は必要な橋の総数。橋は交差しない組み合わせだけ用意してある。", "数字1の島は橋1本で確定。まず端から決める。"),
+    "tile-merge": ("タイルを合体させて数を大きくする。", "上下左右ボタンで全タイルが滑り、同じ数がぶつかると合体。動けなくなったら終了。", "大きい数を角に寄せると崩れにくい。"),
+    "pyramid-mahjong": ("同絵柄のペアを全部消す。", "上に重なりがなく、左右どちらかが空いているタイルだけ取れる。2枚選んで消す。", "上の段から先に崩すと下が開く。"),
+    "quad-word": ("4つの言葉を9回以内に全部当てる。", "カタカナ4文字を入力して判定。4つの言葉すべてに同じ入力が使われ、色でヒントが出る。", "母音の多い言葉から入れると絞りやすい。"),
+    "jigsaw-fit": ("絵を完成させる。", "ピースを選んでから、置きたいマスを選ぶ。正しい位置だと固定される。", "角と端のピースから置くと早い。"),
+    "pop-flap": ("壁の隙間を抜け続ける。", "「羽ばたく」を押すと上昇し、何もしないと落ちる。壁の隙間を通ると+10点。", "壁が来る少し前に高さを合わせておく。"),
+    "light-up": ("全部のマスを電球で照らす。", "マスをクリックすると電球を置く／外す。電球は壁まで縦横を照らす。電球同士が照らし合うと失敗。", "まず長い一列が見えるマスから置く。"),
+    "ball-roll": ("玉をゴールまで転がす。", "上下左右ボタンで1マスずつ進む。壁には進めない。手数が少ないほど高得点。", "先にゴールから逆向きに道をたどると迷わない。"),
+    "nonogram": ("ヒントどおりにマスを塗って絵を出す。", "8×8のマスをクリックで塗る／戻す。行・列の数字は、その列で連続して塗る長さを表す。", "数字の合計が大きい列から決めていく。"),
+    "trio-tray": ("タイルを全部消す。", "場のタイルをクリックするとトレイ（7枠）に入る。同種3枚そろうと消える。トレイが満杯で詰むと終了。", "同じ種類を続けて取るのが安全。"),
+    "gravity-mahjong": ("同絵柄ペアを全部消す。", "各列の一番下のタイルを2枚選んで消す。消すと上のタイルが落ちてくる。", "下の顔ぶれを見て、そろっている列から崩す。"),
 }
 
 # プレイセット（テーマ別に数本を連続プレイする導線）
@@ -1838,6 +2109,7 @@ JS_SCORE_GAMES = {
     "target-21", "sum10-cards", "card-battle",
     "locker-code", "dark-room", "cipher-door",
     "spot-diff5", "tantrum-calm", "onefloor-warrior", "eruption-dash", "okonomi-flip", "kokeshi-carve", "yaminabe-guess", "first-judge", "bigaxe-charge", "fish-bounce", "dot-nonsense", "fortune-rescue", "gear-runner", "tsukkomi-story", "memory-shards", "sengoku-recruit", "score100-escape", "week-loop", "buff-clicker", "lookalike-find", "rail-marble", "reverse-rail", "acorn-marble", "pearl-float", "spinner-bubble", "tasty-bubble", "cascade-gems", "wall-maze-td", "dots-territory", "balloon-expert",
+    "root-garden", "bow-target", "cyber-cat", "wind-feather", "hamster-cheeks", "afro-bonsai", "burger-stack", "hanko-rush", "rusuban-cat", "chikuwa-judge", "janken-chain", "duck-mix", "neko-sort", "testimony-clash", "urooboe-shopping", "square-rotate", "gravity-four", "choco-ship", "stack-guide", "hashi-bridge", "tile-merge", "pyramid-mahjong", "quad-word", "jigsaw-fit", "pop-flap", "light-up", "ball-roll", "nonogram", "trio-tray", "gravity-mahjong",
 }
 # スコアは「小さいほど良い」JS ゲーム（ベスト＝最小）
 MIN_SCORE_GAMES = {"reaction", "stopwatch", "typing", "sort", "touch25"}
@@ -28515,6 +28787,3242 @@ def balloon_expert_score():
         return {"ok": False, "error": "invalid score"}, 400
     record_score("balloon-expert", int(raw))
     return {"ok": True, "best": best_score("balloon-expert", "max")}
+
+
+ROOT_GARDEN_TEMPLATE = r"""
+  <h1>🌱 根はり庭ガード</h1>
+  <p class="howto">落ちてくる岩🪨や虫🐛がいる列のボタンを押して取り除いてください。根🌱のHPは3。40秒守り切ればクリア、除去1つで+2点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">根はり庭ガード</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('root_garden_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var hp = 3, lanes = [], timer = null, left = 40;
+  function render(){
+    var rows = ["", "", "", ""];
+    lanes.forEach(function(it){ rows[it.row] += it.emoji; });
+    mainEl.textContent = "🌙 月夜の庭　HP " + "❤️".repeat(hp);
+    subEl.textContent = "あと " + left + " 秒｜地表：" + (rows[0]||"・") + "｜中：" + (rows[1]||"・") + "｜土中：" + (rows[2]||"・") + "｜根：" + (rows[3] ? rows[3] + "⚠️" : "🌱無事");
+  }
+  function tick(){
+    left--;
+    lanes.forEach(function(it){ it.row++; });
+    var hit = lanes.filter(function(it){ return it.row >= 3; });
+    if (hit.length){ hp -= hit.length; lanes = lanes.filter(function(it){ return it.row < 3; }); }
+    if (Math.random() < 0.75) lanes.push({lane: Math.floor(Math.random()*4), row: 0, emoji: Math.random() < 0.5 ? "🪨" : "🐛"});
+    render();
+    if (hp <= 0){ clearInterval(timer); endGame("根がやられてしまった… スコア " + Math.floor(score) + " 点"); return; }
+    if (left <= 0){ clearInterval(timer); addScore(20); endGame("守り切った！🌅 スコア " + Math.floor(score) + " 点"); }
+  }
+  function startGame(){
+    clearInterval(timer); hp = 3; lanes = []; left = 40; setScore(0); phase = "playing";
+    choicesEl.innerHTML = "";
+    for (var i = 0; i < 4; i++){ (function(lane){ btn("列" + (lane+1) + "を守る", function(){
+      if (phase !== "playing") return;
+      var idx = -1;
+      lanes.forEach(function(it, j){ if (it.lane === lane && (idx < 0 || it.row > lanes[idx].row)) idx = j; });
+      if (idx >= 0){ lanes.splice(idx, 1); addScore(2); }
+      render();
+    }); })(i); }
+    msg.textContent = "落ちてくる物が根に届く前に消してください";
+    render(); timer = setInterval(tick, 1000);
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/root-garden", methods=["GET"])
+def root_garden():
+    body = render_template_string(
+        ROOT_GARDEN_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("root-garden", "max"),
+        history=recent_scores("root-garden", 10),
+    )
+    return game_page("根はり庭ガード", body)
+
+
+@app.route("/games/root-garden/score", methods=["POST"])
+def root_garden_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("root-garden", int(raw))
+    return {"ok": True, "best": best_score("root-garden", "max")}
+
+BOW_TARGET_TEMPLATE = r"""
+  <h1>🏹 弓当て的あて</h1>
+  <p class="howto">狙いゲージが左右に揺れます。的の中心（50）に近いところで「放つ」を押してください。全5射、中心に近いほど高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">弓当て的あて</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('bow_target_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var round = 0, value = 0, dir = 1, raf = null;
+  function loop(){
+    value += dir * 1.8;
+    if (value >= 100){ value = 100; dir = -1; } if (value <= 0){ value = 0; dir = 1; }
+    mainEl.textContent = "🎯 的 ・・・ " + "―".repeat(Math.round(value/5)) + "🏹 " + Math.round(value);
+    if (phase === "playing") raf = requestAnimationFrame(loop);
+  }
+  function next(){
+    round++;
+    if (round > 5){ endGame(); return; }
+    roundEl.textContent = round + " / 5";
+    value = Math.floor(Math.random()*40); dir = 1; phase = "playing";
+    msg.textContent = "中心50を狙って「放つ」";
+    cancelAnimationFrame(raf); loop();
+  }
+  function startGame(){
+    round = 0; setScore(0); choicesEl.innerHTML = "";
+    btn("放つ", function(){
+      if (phase !== "playing") return;
+      phase = "wait"; cancelAnimationFrame(raf);
+      var d = Math.abs(value - 50);
+      var pts = d <= 2 ? 20 : d <= 6 ? 16 : d <= 12 ? 11 : d <= 20 ? 6 : d <= 30 ? 2 : 0;
+      addScore(pts);
+      msg.textContent = (d <= 2 ? "🎯 的中！" : "中心まであと " + Math.round(d)) + " +" + pts + "点";
+      setTimeout(next, 1000);
+    });
+    next();
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/bow-target", methods=["GET"])
+def bow_target():
+    body = render_template_string(
+        BOW_TARGET_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("bow-target", "max"),
+        history=recent_scores("bow-target", 10),
+    )
+    return game_page("弓当て的あて", body)
+
+
+@app.route("/games/bow-target/score", methods=["POST"])
+def bow_target_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("bow-target", int(raw))
+    return {"ok": True, "best": best_score("bow-target", "max")}
+
+CYBER_CAT_TEMPLATE = r"""
+  <h1>🐱 サイバー猫ターン対戦</h1>
+  <p class="howto">ターンごとに技を選んでください。「パンチ」は確実に10、「チャージ」で次の攻撃2倍、「大技」はチャージ1回分を使って35ダメージ。勝てば高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">サイバー猫ターン対戦</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('cyber_cat_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var myHp = 60, enHp = 60, charge = 0, turn = 0;
+  function render(){
+    mainEl.textContent = "🤖🐱 自分 HP " + myHp + "｜⚡" + charge;
+    subEl.textContent = "😾 相手 HP " + enHp + "｜ターン " + turn;
+  }
+  function enemyTurn(){
+    if (enHp <= 0 || myHp <= 0) return;
+    var dmg = [8, 10, 12, 18][Math.floor(Math.random()*4)];
+    myHp -= dmg; render();
+    msg.textContent += " 相手の反撃 -" + dmg + "。";
+    if (myHp <= 0){ addScore(Math.max(0, 30 - enHp/2)); endGame("負け… あと少しだった。スコア " + Math.floor(score) + " 点"); }
+  }
+  function act(kind){
+    if (phase !== "playing") return;
+    turn++; roundEl.textContent = turn + " ターン";
+    if (kind === 0){ enHp -= 10 * (charge > 0 ? 2 : 1); if (charge > 0) charge--; msg.textContent = "パンチ命中！"; }
+    if (kind === 1){ charge = Math.min(2, charge + 1); msg.textContent = "チャージした（⚡" + charge + "）"; render(); setTimeout(enemyTurn, 500); return; }
+    if (kind === 2){ if (charge < 1){ msg.textContent = "チャージが足りない"; turn--; return; } charge--; enHp -= 35; msg.textContent = "大技！ 35ダメージ"; }
+    render();
+    if (enHp <= 0){ addScore(70); endGame("勝利！🏆 スコア " + Math.floor(score) + " 点"); return; }
+    setTimeout(enemyTurn, 500);
+  }
+  function startGame(){
+    myHp = 60; enHp = 60; charge = 0; turn = 0; setScore(30); phase = "playing";
+    choicesEl.innerHTML = "";
+    btn("パンチ", function(){ act(0); });
+    btn("チャージ", function(){ act(1); });
+    btn("大技（⚡1）", function(){ act(2); });
+    msg.textContent = "技を選んでください";
+    render();
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/cyber-cat", methods=["GET"])
+def cyber_cat():
+    body = render_template_string(
+        CYBER_CAT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("cyber-cat", "max"),
+        history=recent_scores("cyber-cat", 10),
+    )
+    return game_page("サイバー猫ターン対戦", body)
+
+
+@app.route("/games/cyber-cat/score", methods=["POST"])
+def cyber_cat_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("cyber-cat", int(raw))
+    return {"ok": True, "best": best_score("cyber-cat", "max")}
+
+WIND_FEATHER_TEMPLATE = r"""
+  <h1>🪶 風ふき羽根ナビ</h1>
+  <p class="howto">「風を送る」を押している間、羽根🪶は上昇し、離すとゆっくり落ちます。流れてくる鳥🐦や雲☁️に当たらないよう、30秒飛び続けてください。通過1回+4点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">風ふき羽根ナビ</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('wind_feather_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var y = 5, vy = 0, obs = [], timer = null, left = 30, holding = false, passed = 0;
+  function render(){
+    var cells = ["　","　","　","　","　","　","　","　","　","　"];
+    cells[y] = "🪶";
+    var o = obs.map(function(o){ return o.emoji + "@" + o.y; }).join(" ");
+    mainEl.textContent = "空 " + cells.join("");
+    subEl.textContent = "あと " + left + " 秒｜接近中：" + (o || "なし");
+  }
+  function tick(){
+    vy += holding ? -1 : 1; vy = Math.max(-2, Math.min(2, vy)); y += vy;
+    if (y < 0) y = 0; if (y > 9) y = 9;
+    obs.forEach(function(o){ o.x--; });
+    var before = obs.length;
+    obs = obs.filter(function(o){ return o.x > 0; });
+    passed += before - obs.length;
+    if (obs.length < before) addScore(4 * (before - obs.length));
+    var hit = obs.some(function(o){ return o.x === 1 && Math.abs(o.y - y) <= 0; });
+    if (Math.random() < 0.4) obs.push({x: 6, y: Math.floor(Math.random()*10), emoji: Math.random() < 0.5 ? "🐦" : "☁️"});
+    render();
+    if (hit){ clearInterval(timer); endGame("ぶつかってしまった… スコア " + Math.floor(score) + " 点"); return; }
+    left -= 0.25;
+    if (left <= 0){ clearInterval(timer); endGame("飛び切った！🪶 スコア " + Math.floor(score) + " 点"); }
+  }
+  function startGame(){
+    clearInterval(timer); y = 5; vy = 0; obs = []; left = 30; passed = 0; setScore(0); phase = "playing";
+    choicesEl.innerHTML = "";
+    var b = btn("🌬 風を送る（押しっぱなし）", function(){});
+    b.addEventListener("mousedown", function(){ holding = true; });
+    b.addEventListener("mouseup", function(){ holding = false; });
+    b.addEventListener("touchstart", function(e){ e.preventDefault(); holding = true; });
+    b.addEventListener("touchend", function(){ holding = false; });
+    msg.textContent = "押しっぱなしで上昇、離すと下降します";
+    render(); timer = setInterval(tick, 250);
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/wind-feather", methods=["GET"])
+def wind_feather():
+    body = render_template_string(
+        WIND_FEATHER_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("wind-feather", "max"),
+        history=recent_scores("wind-feather", 10),
+    )
+    return game_page("風ふき羽根ナビ", body)
+
+
+@app.route("/games/wind-feather/score", methods=["POST"])
+def wind_feather_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("wind-feather", int(raw))
+    return {"ok": True, "best": best_score("wind-feather", "max")}
+
+HAMSTER_CHEEKS_TEMPLATE = r"""
+  <h1>🐹 ほっぺ詰めハムスター</h1>
+  <p class="howto">ハムスターのほっぺ容量は10。出てくるアイテムを「詰める」と合計が増えます。10に近いほど高得点、超えると失敗です。いつやめるかの判断ゲーム。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ほっぺ詰めハムスター</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('hamster_cheeks_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var total = 0, item = 0, tries = 0;
+  function next(){
+    tries++;
+    if (tries > 6){ finish(); return; }
+    item = 1 + Math.floor(Math.random()*4);
+    roundEl.textContent = tries + " 個目";
+    mainEl.textContent = "🐹 ほっぺ合計 " + total + " / 10";
+    subEl.textContent = "次のアイテムの大きさ：" + item + " " + "🟫".repeat(item);
+    msg.textContent = "詰めますか？";
+  }
+  function finish(){
+    var pts = total === 10 ? 100 : total * 9;
+    setScore(pts);
+    endGame("合計 " + total + " で帰宅！ スコア " + pts + " 点");
+  }
+  function startGame(){
+    total = 0; tries = 0; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    btn("詰める", function(){
+      if (phase !== "playing") return;
+      total += item;
+      if (total > 10){ setScore(Math.max(0, (total - item) * 5)); endGame("詰めすぎて入れない…🐹 スコア " + Math.floor(score) + " 点"); return; }
+      next();
+    });
+    btn("やめる（帰る）", function(){ if (phase === "playing") finish(); });
+    next();
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/hamster-cheeks", methods=["GET"])
+def hamster_cheeks():
+    body = render_template_string(
+        HAMSTER_CHEEKS_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("hamster-cheeks", "max"),
+        history=recent_scores("hamster-cheeks", 10),
+    )
+    return game_page("ほっぺ詰めハムスター", body)
+
+
+@app.route("/games/hamster-cheeks/score", methods=["POST"])
+def hamster_cheeks_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("hamster-cheeks", int(raw))
+    return {"ok": True, "best": best_score("hamster-cheeks", "max")}
+
+AFRO_BONSAI_TEMPLATE = r"""
+  <h1>🌳 アフロ盆栽カット</h1>
+  <p class="howto">5×5の葉っぱをクリックで切って、お題のシルエットと同じ形にしてください。一致率がそのままスコアになります。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">アフロ盆栽カット</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('afro_bonsai_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var target = [], cells = [], round = 0;
+  var SHAPES = [
+    [0,1,1,1,0, 1,1,1,1,1, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0],
+    [1,0,0,0,1, 1,1,0,1,1, 0,1,1,1,0, 0,0,1,0,0, 0,0,1,0,0],
+    [0,0,1,0,0, 0,1,1,1,0, 1,1,1,1,1, 0,1,1,1,0, 0,0,1,0,0],
+    [1,1,0,1,1, 1,1,1,1,1, 0,1,1,1,0, 0,1,0,1,0, 0,0,0,0,0]
+  ];
+  function draw(){
+    function fmt(arr){ var s = ""; for (var i = 0; i < 25; i++){ s += arr[i] ? "🌿" : "・"; if (i % 5 === 4) s += "　"; } return s; }
+    mainEl.textContent = "お題：" + fmt(target);
+    subEl.textContent = "自分：" + fmt(cells);
+  }
+  function next(){
+    round++;
+    if (round > 3){ endGame(); return; }
+    roundEl.textContent = round + " / 3";
+    target = SHAPES[Math.floor(Math.random()*SHAPES.length)].slice();
+    cells = []; for (var i = 0; i < 25; i++) cells.push(1);
+    choicesEl.innerHTML = "";
+    for (var j = 0; j < 25; j++){ (function(idx){ btn(idx % 5 + 1 + "-" + (Math.floor(idx/5)+1), function(){
+      if (phase !== "playing") return; cells[idx] = cells[idx] ? 0 : 1; draw();
+    }); })(j); }
+    btn("✂ 完成", function(){
+      if (phase !== "playing") return;
+      var ok = 0; for (var i = 0; i < 25; i++) if (cells[i] === target[i]) ok++;
+      var pts = Math.round(ok / 25 * 34);
+      addScore(pts); msg.textContent = "一致 " + ok + "/25 → +" + pts + "点";
+      phase = "wait"; setTimeout(function(){ phase = "playing"; next(); }, 1000);
+    });
+    draw(); msg.textContent = "葉をクリックで切ってお題に合わせてください";
+  }
+  function startGame(){ round = 0; setScore(0); phase = "playing"; next(); }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/afro-bonsai", methods=["GET"])
+def afro_bonsai():
+    body = render_template_string(
+        AFRO_BONSAI_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("afro-bonsai", "max"),
+        history=recent_scores("afro-bonsai", 10),
+    )
+    return game_page("アフロ盆栽カット", body)
+
+
+@app.route("/games/afro-bonsai/score", methods=["POST"])
+def afro_bonsai_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("afro-bonsai", int(raw))
+    return {"ok": True, "best": best_score("afro-bonsai", "max")}
+
+BURGER_STACK_TEMPLATE = r"""
+  <h1>🍔 ブッ刺しバーガー積み</h1>
+  <p class="howto">注文票の順番どおりに具材を受けてください。具材は左右に動くので、串の真上に来たタイミングで「受ける」を押します。1注文完成で+20点、全5注文です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ブッ刺しバーガー積み</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('burger_stack_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var ORDERS = [["🍞","🥬","🧀","🥩","🍞"],["🍞","🍅","🥩","🍞"],["🍞","🧀","🍅","🥬","🍞"],["🍞","🥩","🥩","🧀","🍞"],["🍞","🥬","🍅","🧀","🥩","🍞"]];
+  var order = [], oi = 0, stack = [], item = "", pos = 0, dir = 1, raf = null;
+  function loop(){
+    pos += dir * 3; if (pos >= 90){ pos = 90; dir = -1; } if (pos <= 0){ pos = 0; dir = 1; }
+    mainEl.textContent = "注文：" + order.join("") + "｜積んだ：" + stack.join("");
+    subEl.textContent = "落ちてくる：" + "　".repeat(Math.round(pos/10)) + item;
+    if (phase === "playing") raf = requestAnimationFrame(loop);
+  }
+  function nextOrder(){
+    oi++;
+    if (oi > 5){ endGame(); return; }
+    order = ORDERS[oi-1].slice(); stack = [];
+    roundEl.textContent = oi + " / 5 注文";
+    item = order[0]; phase = "playing"; pos = 0;
+    msg.textContent = "「" + item + "」を受けるタイミングで押してください";
+    cancelAnimationFrame(raf); loop();
+  }
+  function startGame(){
+    oi = 0; setScore(0); choicesEl.innerHTML = "";
+    btn("受ける", function(){
+      if (phase !== "playing") return;
+      if (pos < 35 || pos > 65){ msg.textContent = "ズレて落ちた… その具材は失敗"; stack.push("❌"); }
+      else stack.push(item);
+      var need = order[stack.length - 1];
+      if (stack[stack.length-1] !== need){ phase = "wait"; cancelAnimationFrame(raf); msg.textContent = "順番ちがいで注文失敗…"; setTimeout(nextOrder, 1100); return; }
+      if (stack.length >= order.length){ phase = "wait"; cancelAnimationFrame(raf); addScore(20); msg.textContent = "🍔 注文完成！ +20点"; setTimeout(nextOrder, 1100); return; }
+      item = order[stack.length];
+      msg.textContent = "次は「" + item + "」";
+    });
+    nextOrder();
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/burger-stack", methods=["GET"])
+def burger_stack():
+    body = render_template_string(
+        BURGER_STACK_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("burger-stack", "max"),
+        history=recent_scores("burger-stack", 10),
+    )
+    return game_page("ブッ刺しバーガー積み", body)
+
+
+@app.route("/games/burger-stack/score", methods=["POST"])
+def burger_stack_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("burger-stack", int(raw))
+    return {"ok": True, "best": best_score("burger-stack", "max")}
+
+HANKO_RUSH_TEMPLATE = r"""
+  <h1>🔴 ハンコラッシュ</h1>
+  <p class="howto">書類の金額を見て、10万円未満なら「承認」、10万円以上なら「却下」のハンコを押してください。制限時間30秒、正解+4点・間違い-2点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ハンコラッシュ</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('hanko_rush_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var left = 30, timer = null, amount = 0;
+  function next(){
+    amount = [30000, 50000, 80000, 90000, 99000, 100000, 120000, 150000, 200000, 45000][Math.floor(Math.random()*10)];
+    mainEl.textContent = "📄 申請書｜金額 " + amount.toLocaleString() + " 円";
+    subEl.textContent = "あと " + left + " 秒｜ルール：10万円未満→承認／以上→却下";
+  }
+  function judge(ok){
+    if (phase !== "playing") return;
+    var correct = amount < 100000;
+    if (ok === correct){ addScore(4); msg.textContent = "⭕ 正しいハンコ！ +4点"; }
+    else { addScore(-2); msg.textContent = "❌ ハンコちがい -2点"; }
+    next();
+  }
+  function startGame(){
+    setScore(0); left = 30; phase = "playing"; choicesEl.innerHTML = "";
+    btn("🔴 承認", function(){ judge(true); });
+    btn("🔵 却下", function(){ judge(false); });
+    next();
+    clearInterval(timer);
+    timer = setInterval(function(){ left--; if (left <= 0){ clearInterval(timer); endGame(); } else next0(); function next0(){ subEl.textContent = "あと " + left + " 秒｜ルール：10万円未満→承認／以上→却下"; } }, 1000);
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/hanko-rush", methods=["GET"])
+def hanko_rush():
+    body = render_template_string(
+        HANKO_RUSH_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("hanko-rush", "max"),
+        history=recent_scores("hanko-rush", 10),
+    )
+    return game_page("ハンコラッシュ", body)
+
+
+@app.route("/games/hanko-rush/score", methods=["POST"])
+def hanko_rush_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("hanko-rush", int(raw))
+    return {"ok": True, "best": best_score("hanko-rush", "max")}
+
+RUSUBAN_CAT_TEMPLATE = r"""
+  <h1>🐈 ルスバン猫落とし</h1>
+  <p class="howto">台が左右に揺れます。猫🐈がクッションの真上に来たところで「落とす」を押してください。全5回、中心に近いほど高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ルスバン猫落とし</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('rusuban_cat_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var round = 0, pos = 0, dir = 1, raf = null, cushion = 50;
+  function loop(){
+    pos += dir * 2.2; if (pos >= 100){ pos = 100; dir = -1; } if (pos <= 0){ pos = 0; dir = 1; }
+    mainEl.textContent = "台：" + "　".repeat(Math.round(pos/5)) + "🐈";
+    subEl.textContent = "クッション：" + "　".repeat(Math.round(cushion/5)) + "🛋";
+    if (phase === "playing") raf = requestAnimationFrame(loop);
+  }
+  function next(){
+    round++;
+    if (round > 5){ endGame(); return; }
+    roundEl.textContent = round + " / 5";
+    cushion = 20 + Math.floor(Math.random()*61); pos = 0; dir = 1; phase = "playing";
+    msg.textContent = "クッションの真上で「落とす」";
+    cancelAnimationFrame(raf); loop();
+  }
+  function startGame(){
+    round = 0; setScore(0); choicesEl.innerHTML = "";
+    btn("落とす", function(){
+      if (phase !== "playing") return;
+      phase = "wait"; cancelAnimationFrame(raf);
+      var d = Math.abs(pos - cushion);
+      var pts = d <= 3 ? 20 : d <= 8 ? 15 : d <= 15 ? 9 : d <= 25 ? 4 : 0;
+      addScore(pts);
+      msg.textContent = (pts >= 15 ? "🐈 ふわり着地！" : "中心まであと " + Math.round(d)) + " +" + pts + "点";
+      setTimeout(next, 1000);
+    });
+    next();
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/rusuban-cat", methods=["GET"])
+def rusuban_cat():
+    body = render_template_string(
+        RUSUBAN_CAT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("rusuban-cat", "max"),
+        history=recent_scores("rusuban-cat", 10),
+    )
+    return game_page("ルスバン猫落とし", body)
+
+
+@app.route("/games/rusuban-cat/score", methods=["POST"])
+def rusuban_cat_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("rusuban-cat", int(raw))
+    return {"ok": True, "best": best_score("rusuban-cat", "max")}
+
+CHIKUWA_JUDGE_TEMPLATE = r"""
+  <h1>🍢 ちくわ見分けデス</h1>
+  <p class="howto">出てきた物が「ちくわ（穴のある筒）」か「ちくわぶ（渦巻き）」かを押してください。制限時間30秒、正解+4点・間違い-2点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ちくわ見分けデス</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('chikuwa_judge_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var left = 30, timer = null, isChikuwa = true;
+  var ITEMS = [["🍢 穴のあいた筒のおでん種", true], ["🌀 渦巻き模様の平たい練り物", false], ["🍢 真ん中に穴、きゅうりが入るやつ", true], ["🌀 ぐるぐる巻き、すき焼きに入るやつ", false], ["🍢 焼き目つきの筒、穴から覗ける", true], ["🌀 渦巻きがトレードマーク", false]];
+  function next(){
+    var it = ITEMS[Math.floor(Math.random()*ITEMS.length)];
+    isChikuwa = it[1];
+    mainEl.textContent = it[0];
+    subEl.textContent = "あと " + left + " 秒";
+  }
+  function judge(ans){
+    if (phase !== "playing") return;
+    if (ans === isChikuwa){ addScore(4); msg.textContent = "⭕ 正解！ +4点"; }
+    else { addScore(-2); msg.textContent = "❌ ちがう -2点"; }
+    next();
+  }
+  function startGame(){
+    setScore(0); left = 30; phase = "playing"; choicesEl.innerHTML = "";
+    btn("ちくわ", function(){ judge(true); });
+    btn("ちくわぶ", function(){ judge(false); });
+    next();
+    clearInterval(timer);
+    timer = setInterval(function(){ left--; subEl.textContent = "あと " + left + " 秒"; if (left <= 0){ clearInterval(timer); endGame(); } }, 1000);
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/chikuwa-judge", methods=["GET"])
+def chikuwa_judge():
+    body = render_template_string(
+        CHIKUWA_JUDGE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("chikuwa-judge", "max"),
+        history=recent_scores("chikuwa-judge", 10),
+    )
+    return game_page("ちくわ見分けデス", body)
+
+
+@app.route("/games/chikuwa-judge/score", methods=["POST"])
+def chikuwa_judge_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("chikuwa-judge", int(raw))
+    return {"ok": True, "best": best_score("chikuwa-judge", "max")}
+
+JANKEN_CHAIN_TEMPLATE = r"""
+  <h1>✊ じゃんけん連鎖消し</h1>
+  <p class="howto">グー✊はチョキ✌に、チョキはパー🖐に、パーはグーに勝ちます。コマをクリックすると「そのコマが勝てる相手」が隣接していれば連鎖で消えます。消したコマ1つ+3点、全3面です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">じゃんけん連鎖消し</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('janken_chain_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var HANDS = ["✊", "✌", "🖐"]; // 0グー 1チョキ 2パー: i は (i+1)%3 に勝つ
+  var grid = [], round = 0;
+  function draw(){
+    var s = "";
+    for (var i = 0; i < 16; i++){ s += grid[i] === null ? "・" : HANDS[grid[i]]; if (i % 4 === 3) s += "　"; }
+    mainEl.textContent = s;
+    subEl.textContent = "残り " + grid.filter(function(v){ return v !== null; }).length + " コマ";
+  }
+  function next(){
+    round++;
+    if (round > 3){ endGame(); return; }
+    roundEl.textContent = round + " / 3 面";
+    grid = []; for (var i = 0; i < 16; i++) grid.push(Math.floor(Math.random()*3));
+    choicesEl.innerHTML = "";
+    for (var j = 0; j < 16; j++){ (function(idx){ btn((idx%4+1) + "-" + (Math.floor(idx/4)+1), function(){
+      if (phase !== "playing" || grid[idx] === null) return;
+      var prey = (grid[idx] + 1) % 3, removed = 0, queue = [idx], seen = {};
+      while (queue.length){
+        var cur = queue.shift();
+        var x = cur % 4, y = Math.floor(cur / 4);
+        [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){
+          var nx = x + d[0], ny = y + d[1];
+          if (nx < 0 || nx > 3 || ny < 0 || ny > 3) return;
+          var ni = ny * 4 + nx;
+          if (!seen[ni] && grid[ni] === prey){ seen[ni] = 1; grid[ni] = null; removed++; queue.push(ni); }
+        });
+      }
+      if (removed > 0){ addScore(removed * 3); msg.textContent = removed + " コマ連鎖消し！ +" + (removed*3) + "点"; }
+      else msg.textContent = "隣に勝てる相手がいない…";
+      draw();
+    }); })(j); }
+    draw(); msg.textContent = "コマを選んでください";
+  }
+  function startGame(){ round = 0; setScore(0); phase = "playing"; next(); }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/janken-chain", methods=["GET"])
+def janken_chain():
+    body = render_template_string(
+        JANKEN_CHAIN_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("janken-chain", "max"),
+        history=recent_scores("janken-chain", 10),
+    )
+    return game_page("じゃんけん連鎖消し", body)
+
+
+@app.route("/games/janken-chain/score", methods=["POST"])
+def janken_chain_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("janken-chain", int(raw))
+    return {"ok": True, "best": best_score("janken-chain", "max")}
+
+DUCK_MIX_TEMPLATE = r"""
+  <h1>🦆 アヒルまぜまぜ図鑑</h1>
+  <p class="howto">親アヒル2匹の色と柄を選ぶと、子アヒルが生まれます。色は混ざります（赤＋黄＝オレンジ、赤＋青＝紫、青＋黄＝緑、同色はそのまま）。お題と同じ子を作ってください。全5問、各20点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">アヒルまぜまぜ図鑑</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('duck_mix_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var COLORS = ["赤", "青", "黄"];
+  var MIX = {"赤赤":"赤","青青":"青","黄黄":"黄","赤青":"紫","赤黄":"オレンジ","青黄":"緑"};
+  var PATTERNS = ["無地", "水玉", "縞"];
+  var round = 0, targetColor = "", targetPattern = "";
+  var selA = {c: 0, p: 0}, selB = {c: 0, p: 0};
+  function mixColor(a, b){ var k = [a, b].sort().join(""); return MIX[k] || MIX[[b, a].sort().join("")]; }
+  function next(){
+    round++;
+    if (round > 5){ endGame(); return; }
+    roundEl.textContent = round + " / 5";
+    targetColor = ["赤","青","黄","紫","オレンジ","緑"][Math.floor(Math.random()*6)];
+    targetPattern = PATTERNS[Math.floor(Math.random()*3)];
+    selA = {c: 0, p: 0}; selB = {c: 1, p: 1};
+    mainEl.textContent = "お題：🦆 " + targetColor + "・" + targetPattern;
+    subEl.textContent = "親A・親Bの色と柄を選んで「合わせる」";
+    msg.textContent = "組み合わせを選んでください";
+  }
+  function cycler(label, obj, key, list){
+    btn(label, function(){ obj[key] = (obj[key] + 1) % list.length; subEl.textContent = "親A：" + COLORS[selA.c] + "・" + PATTERNS[selA.p] + "｜親B：" + COLORS[selB.c] + "・" + PATTERNS[selB.p]; });
+  }
+  function startGame(){
+    round = 0; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    cycler("Aの色", selA, "c", COLORS); cycler("Aの柄", selA, "p", PATTERNS);
+    cycler("Bの色", selB, "c", COLORS); cycler("Bの柄", selB, "p", PATTERNS);
+    btn("🦆 合わせる", function(){
+      if (phase !== "playing") return;
+      var childColor = mixColor(COLORS[selA.c], COLORS[selB.c]);
+      var childPattern = Math.random() < 0.5 ? PATTERNS[selA.p] : PATTERNS[selB.p];
+      // 柄は選んだ両親のどちらかになるため、片方がお題柄なら当たり扱いにする
+      var patOk = PATTERNS[selA.p] === targetPattern || PATTERNS[selB.p] === targetPattern;
+      if (childColor === targetColor && patOk){ addScore(20); msg.textContent = "🎉 お題どおりの子が生まれた！ +20点"; }
+      else msg.textContent = "生まれた子：" + childColor + "・" + childPattern + " …お題とちがう";
+      phase = "wait"; setTimeout(function(){ phase = "playing"; next(); }, 1200);
+    });
+    next();
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/duck-mix", methods=["GET"])
+def duck_mix():
+    body = render_template_string(
+        DUCK_MIX_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("duck-mix", "max"),
+        history=recent_scores("duck-mix", 10),
+    )
+    return game_page("アヒルまぜまぜ図鑑", body)
+
+
+@app.route("/games/duck-mix/score", methods=["POST"])
+def duck_mix_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("duck-mix", int(raw))
+    return {"ok": True, "best": best_score("duck-mix", "max")}
+
+NEKO_SORT_TEMPLATE = r"""
+  <h1>🐈 ねこ列そろえ帰宅</h1>
+  <p class="howto">猫🐈が1匹ずつ落ちてきます。落とす列（3列）を選んでください。横一列に同じ色が3匹そろうと帰宅して+10点。制限時間45秒です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ねこ列そろえ帰宅</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('neko_sort_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var cols = [[], [], []], cur = 0, left = 45, timer = null, dropTimer = null;
+  var CATS = ["🟧", "⬜", "⬛"];
+  function draw(){
+    var rows = [];
+    for (var r = 4; r >= 0; r--){ rows.push(cols.map(function(c){ return c[r] || "・"; }).join("")); }
+    mainEl.textContent = "次の猫：" + CATS[cur];
+    subEl.textContent = rows.join("　") + "｜あと " + left + " 秒";
+  }
+  function drop(col){
+    if (phase !== "playing" || cols[col].length >= 5) return;
+    cols[col].push(cur);
+    // 横一列チェック（各段）
+    for (var r = 0; r < 5; r++){
+      if (cols[0][r] !== undefined && cols[0][r] === cols[1][r] && cols[1][r] === cols[2][r]){
+        var v = cols[0][r];
+        [0,1,2].forEach(function(c){ cols[c].splice(r, 1); });
+        addScore(10); msg.textContent = "🐈 3匹そろって帰宅！ +10点";
+        break;
+      }
+    }
+    cur = Math.floor(Math.random()*3);
+    draw();
+  }
+  function startGame(){
+    cols = [[], [], []]; cur = Math.floor(Math.random()*3); left = 45; setScore(0); phase = "playing";
+    choicesEl.innerHTML = "";
+    btn("◀ 左の列", function(){ drop(0); });
+    btn("中央の列", function(){ drop(1); });
+    btn("右の列 ▶", function(){ drop(2); });
+    msg.textContent = "列を選んで猫を落としてください";
+    draw();
+    clearInterval(timer);
+    timer = setInterval(function(){ left--; draw(); if (left <= 0){ clearInterval(timer); endGame(); } }, 1000);
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/neko-sort", methods=["GET"])
+def neko_sort():
+    body = render_template_string(
+        NEKO_SORT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("neko-sort", "max"),
+        history=recent_scores("neko-sort", 10),
+    )
+    return game_page("ねこ列そろえ帰宅", body)
+
+
+@app.route("/games/neko-sort/score", methods=["POST"])
+def neko_sort_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("neko-sort", int(raw))
+    return {"ok": True, "best": best_score("neko-sort", "max")}
+
+TESTIMONY_CLASH_TEMPLATE = r"""
+  <h1>☕ 証言矛盾つきつけ</h1>
+  <p class="howto">証拠品の説明と3人の証言を読み、証拠と矛盾している証言を1つ選んでください。全5問、1問20点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">証言矛盾つきつけ</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('testimony_clash_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var QS = [
+    {e: "証拠：店の防犯カメラには、21時ちょうどに店を出る青いコートの人物が映っている。", s: ["私は21時に店を出ました。青いコートでした。", "私は22時まで店にいました。青いコートです。", "私は21時に店を出て、まっすぐ帰りました。"], a: 1},
+    {e: "証拠：レシートの日時は『11月3日 15:00』、購入品は牛乳1本のみ。", s: ["11月3日の15時に牛乳を買いました。", "11月3日に牛乳とパンを買いました。", "その日の買い物は15時ごろです。"], a: 1},
+    {e: "証拠：電車の運行記録では、その駅の最終電車は23時40分発だった。", s: ["最終電車で帰りました。23時40分発でした。", "0時過ぎの電車で帰りました。", "駅まで歩いて10分かかります。"], a: 1},
+    {e: "証拠：傘立てには濡れた傘が1本もなかった（その日は一日中晴れ）。", s: ["雨に濡れたので傘をさして来ました。", "晴れていたので帽子で来ました。", "日差しが強かったです。"], a: 0},
+    {e: "証拠：図書館の貸出記録では、その本は先週返却されている。", s: ["その本は今も借りています。", "その本は先週返しました。", "その本は面白かったです。"], a: 0},
+    {e: "証拠：スマートフォンの歩数計は、その日の歩数が320歩だった。", s: ["その日は家でゆっくりしていました。", "その日は2万歩も歩きました。", "歩数計はつけっぱなしです。"], a: 1}
+  ];
+  var order = [], qi = 0;
+  function next(){
+    qi++;
+    if (qi > 5){ endGame(); return; }
+    var q = QS[order[qi-1]];
+    roundEl.textContent = qi + " / 5";
+    mainEl.textContent = "🔍 " + q.e;
+    subEl.textContent = "証言：" + q.s.map(function(s, i){ return (i+1) + "．" + s; }).join("／");
+    choicesEl.innerHTML = "";
+    q.s.forEach(function(s, i){ btn("証言" + (i+1), function(){
+      if (phase !== "playing") return;
+      if (i === q.a){ addScore(20); msg.textContent = "☕ そのとおり、矛盾している！ +20点"; }
+      else msg.textContent = "それは証拠と矛盾していない…";
+      phase = "wait"; setTimeout(function(){ phase = "playing"; next(); }, 1100);
+    }); });
+    msg.textContent = "矛盾する証言はどれ？";
+  }
+  function startGame(){
+    order = [0,1,2,3,4,5].sort(function(){ return Math.random() - 0.5; });
+    qi = 0; setScore(0); phase = "playing"; next();
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/testimony-clash", methods=["GET"])
+def testimony_clash():
+    body = render_template_string(
+        TESTIMONY_CLASH_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("testimony-clash", "max"),
+        history=recent_scores("testimony-clash", 10),
+    )
+    return game_page("証言矛盾つきつけ", body)
+
+
+@app.route("/games/testimony-clash/score", methods=["POST"])
+def testimony_clash_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("testimony-clash", int(raw))
+    return {"ok": True, "best": best_score("testimony-clash", "max")}
+
+UROOBOE_SHOPPING_TEMPLATE = r"""
+  <h1>🛒 うろ覚え買い物リスト</h1>
+  <p class="howto">買い物リスト5品が8秒だけ表示されます。消えたら、店の棚12品の中からリストにあった物を全部選んでください。1品正解+15点、間違い-10点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">うろ覚え買い物リスト</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('urooboe_shopping_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var ITEMS = ["牛乳","卵","パン","りんご","バナナ","チーズ","ヨーグルト","じゃがいも","にんじん","玉ねぎ","豆腐","納豆"];
+  var list = [], picked = [], phase2 = false;
+  function startGame(){
+    setScore(0); phase = "playing"; phase2 = false; picked = [];
+    list = ITEMS.slice().sort(function(){ return Math.random() - 0.5; }).slice(0, 5);
+    choicesEl.innerHTML = "";
+    mainEl.textContent = "🧾 買い物リスト：" + list.join("、");
+    subEl.textContent = "8秒で覚えてください…";
+    msg.textContent = "覚える時間です";
+    setTimeout(function(){
+      if (phase !== "playing") return;
+      phase2 = true;
+      mainEl.textContent = "🛒 店の棚から、リストの物を選んでください";
+      subEl.textContent = "選んだ物：" + "なし";
+      choicesEl.innerHTML = "";
+      ITEMS.forEach(function(it){ btn(it, function(b){
+        if (phase !== "playing" || picked.indexOf(it) >= 0) return;
+        picked.push(it);
+        if (list.indexOf(it) >= 0){ addScore(15); msg.textContent = "⭕ " + it + " はリストにあった +15点"; }
+        else { addScore(-10); msg.textContent = "❌ " + it + " はリストにない -10点"; }
+        subEl.textContent = "選んだ物：" + picked.join("、");
+        var got = list.filter(function(x){ return picked.indexOf(x) >= 0; }).length;
+        if (got >= 5){ addScore(25); endGame("🛒 全品そろった！ ボーナス+25点 スコア " + Math.floor(score) + " 点"); }
+        else if (picked.length >= 8){ endGame("お買い物終了。スコア " + Math.floor(score) + " 点"); }
+      }); });
+    }, 8000);
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/urooboe-shopping", methods=["GET"])
+def urooboe_shopping():
+    body = render_template_string(
+        UROOBOE_SHOPPING_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("urooboe-shopping", "max"),
+        history=recent_scores("urooboe-shopping", 10),
+    )
+    return game_page("うろ覚え買い物リスト", body)
+
+
+@app.route("/games/urooboe-shopping/score", methods=["POST"])
+def urooboe_shopping_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("urooboe-shopping", int(raw))
+    return {"ok": True, "best": best_score("urooboe-shopping", "max")}
+
+SQUARE_ROTATE_TEMPLATE = r"""
+  <h1>🔲 回転スクエア絵あわせ</h1>
+  <p class="howto">3×3の矢印タイルをクリックで回転させ、全て上向き（↑）にそろえて「判定」を押してください。手数が少ないほど高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">回転スクエア絵あわせ</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('square_rotate_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var ARROWS = ["↑", "→", "↓", "←"];
+  var tiles = [], moves = 0, round = 0;
+  function draw(){
+    var s = "";
+    for (var i = 0; i < 9; i++){ s += ARROWS[tiles[i]]; if (i % 3 === 2) s += "　"; }
+    mainEl.textContent = s;
+    subEl.textContent = "手数 " + moves;
+  }
+  function next(){
+    round++;
+    if (round > 3){ endGame(); return; }
+    roundEl.textContent = round + " / 3";
+    tiles = []; moves = 0;
+    for (var i = 0; i < 9; i++) tiles.push(Math.floor(Math.random()*4));
+    if (tiles.every(function(v){ return v === 0; })) tiles[0] = 1;
+    choicesEl.innerHTML = "";
+    for (var j = 0; j < 9; j++){ (function(idx){ btn((idx%3+1) + "-" + (Math.floor(idx/3)+1), function(){
+      if (phase !== "playing") return; tiles[idx] = (tiles[idx] + 1) % 4; moves++; draw();
+    }); })(j); }
+    btn("判定", function(){
+      if (phase !== "playing") return;
+      if (tiles.every(function(v){ return v === 0; })){
+        var pts = Math.max(10, 34 - moves);
+        addScore(pts); msg.textContent = "🎉 そろった！ " + moves + " 手 → +" + pts + "点";
+        phase = "wait"; setTimeout(function(){ phase = "playing"; next(); }, 1100);
+      } else msg.textContent = "まだそろっていない…";
+    });
+    draw(); msg.textContent = "全て↑にそろえてください";
+  }
+  function startGame(){ round = 0; setScore(0); phase = "playing"; next(); }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/square-rotate", methods=["GET"])
+def square_rotate():
+    body = render_template_string(
+        SQUARE_ROTATE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("square-rotate", "max"),
+        history=recent_scores("square-rotate", 10),
+    )
+    return game_page("回転スクエア絵あわせ", body)
+
+
+@app.route("/games/square-rotate/score", methods=["POST"])
+def square_rotate_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("square-rotate", int(raw))
+    return {"ok": True, "best": best_score("square-rotate", "max")}
+
+GRAVITY_FOUR_TEMPLATE = r"""
+  <h1>🔴 重力落とし4目ならべ</h1>
+  <p class="howto">列を選ぶとコマ🔴が一番下まで落ちます。縦・横・斜めのどれかに4つ並べれば勝ち。CPU（🟡）は勝ち筋を1手だけ読んできます。勝利100点・引き分け50点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">重力落とし4目ならべ</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('gravity_four_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var board = [], over = false;
+  function win(b, p){
+    for (var y = 0; y < 6; y++) for (var x = 0; x < 7; x++){
+      if (b[y][x] !== p) continue;
+      var dirs = [[1,0],[0,1],[1,1],[1,-1]];
+      for (var d = 0; d < 4; d++){
+        var ok = true;
+        for (var k = 1; k < 4; k++){ var nx = x + dirs[d][0]*k, ny = y + dirs[d][1]*k; if (nx < 0 || nx > 6 || ny < 0 || ny > 5 || b[ny][nx] !== p){ ok = false; break; } }
+        if (ok) return true;
+      }
+    }
+    return false;
+  }
+  function dropCol(b, col, p){
+    for (var y = 5; y >= 0; y--) if (!b[y][col]){ b[y][col] = p; return y; }
+    return -1;
+  }
+  function draw(){
+    mainEl.textContent = board.map(function(row){ return row.map(function(v){ return v === 1 ? "🔴" : v === 2 ? "🟡" : "・"; }).join(""); }).join("　");
+    subEl.textContent = "列 1〜7 から選んでください";
+  }
+  function cpuMove(){
+    if (over) return;
+    // 勝ち手→止め手→ランダム
+    var col = -1, c;
+    for (c = 0; c < 7 && col < 0; c++){ var b2 = board.map(function(r){ return r.slice(); }); if (dropCol(b2, c, 2) >= 0 && win(b2, 2)) col = c; }
+    for (c = 0; c < 7 && col < 0; c++){ var b3 = board.map(function(r){ return r.slice(); }); if (dropCol(b3, c, 1) >= 0 && win(b3, 1)) col = c; }
+    if (col < 0){ var open = [0,1,2,3,4,5,6].filter(function(cc){ return !board[0][cc]; }); if (!open.length){ finish(50, "引き分け"); return; } col = open[Math.floor(Math.random()*open.length)]; }
+    dropCol(board, col, 2); draw();
+    if (win(board, 2)) finish(10, "CPUの勝ち…");
+    else if (!board[0].some(function(v){ return !v; })) finish(50, "引き分け");
+  }
+  function finish(pts, text){
+    over = true; setScore(pts);
+    endGame(text + " スコア " + pts + " 点");
+  }
+  function startGame(){
+    board = []; for (var y = 0; y < 6; y++){ board.push([0,0,0,0,0,0,0]); }
+    over = false; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    for (var c = 0; c < 7; c++){ (function(col){ btn("列" + (col+1), function(){
+      if (phase !== "playing" || over) return;
+      if (dropCol(board, col, 1) < 0){ msg.textContent = "その列はいっぱい"; return; }
+      draw();
+      if (win(board, 1)){ finish(100, "🎉 4つ並べて勝利！"); return; }
+      setTimeout(cpuMove, 400);
+    }); })(c); }
+    draw(); msg.textContent = "あなたの先手です";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/gravity-four", methods=["GET"])
+def gravity_four():
+    body = render_template_string(
+        GRAVITY_FOUR_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("gravity-four", "max"),
+        history=recent_scores("gravity-four", 10),
+    )
+    return game_page("重力落とし4目ならべ", body)
+
+
+@app.route("/games/gravity-four/score", methods=["POST"])
+def gravity_four_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("gravity-four", int(raw))
+    return {"ok": True, "best": best_score("gravity-four", "max")}
+
+CHOCO_SHIP_TEMPLATE = r"""
+  <h1>🍫 チョコ12そろえ出荷</h1>
+  <p class="howto">同じチョコが3つ以上つながった場所をクリックすると消えます。消したチョコは出荷数に数え、60秒で12個以上消せばボーナス。全消しペースで高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">チョコ12そろえ出荷</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('choco_ship_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var KINDS = ["🍫", "🍬", "🧁"];
+  var grid = [], shipped = 0, left = 60, timer = null;
+  function draw(){
+    var s = "";
+    for (var i = 0; i < 20; i++){ s += grid[i] || "・"; if (i % 5 === 4) s += "　"; }
+    mainEl.textContent = s;
+    subEl.textContent = "出荷 " + shipped + " 個｜あと " + left + " 秒";
+  }
+  function group(idx){
+    var v = grid[idx]; if (!v) return [];
+    var seen = {}, queue = [idx], out = [];
+    while (queue.length){
+      var cur = queue.shift(); if (seen[cur]) continue; seen[cur] = 1; out.push(cur);
+      var x = cur % 5, y = Math.floor(cur / 5);
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){ var nx = x + d[0], ny = y + d[1]; if (nx < 0 || nx > 4 || ny < 0 || ny > 3) return; var ni = ny * 5 + nx; if (grid[ni] === v && !seen[ni]) queue.push(ni); });
+    }
+    return out;
+  }
+  function gravity(){
+    for (var x = 0; x < 5; x++){
+      var stack = [];
+      for (var y = 3; y >= 0; y--) if (grid[y*5+x]) stack.push(grid[y*5+x]);
+      for (var y2 = 3; y2 >= 0; y2--) grid[y2*5+x] = stack[3-y2] || KINDS[Math.floor(Math.random()*3)];
+    }
+  }
+  function startGame(){
+    grid = []; for (var i = 0; i < 20; i++) grid.push(KINDS[Math.floor(Math.random()*3)]);
+    shipped = 0; left = 60; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    for (var j = 0; j < 20; j++){ (function(idx){ btn((idx%5+1) + "-" + (Math.floor(idx/5)+1), function(){
+      if (phase !== "playing") return;
+      var g = group(idx);
+      if (g.length < 3){ msg.textContent = "3つ以上つながっていない…"; return; }
+      g.forEach(function(i){ grid[i] = null; });
+      shipped += g.length; addScore(g.length * 2); gravity(); draw();
+      msg.textContent = g.length + " 個出荷！";
+    }); })(j); }
+    draw(); msg.textContent = "3つ以上のグループをクリック";
+    clearInterval(timer);
+    timer = setInterval(function(){ left--; draw(); if (left <= 0){ clearInterval(timer); if (shipped >= 12) addScore(20); endGame("出荷 " + shipped + " 個" + (shipped >= 12 ? "（目標達成ボーナス+20）" : "") + " スコア " + Math.floor(score) + " 点"); } }, 1000);
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/choco-ship", methods=["GET"])
+def choco_ship():
+    body = render_template_string(
+        CHOCO_SHIP_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("choco-ship", "max"),
+        history=recent_scores("choco-ship", 10),
+    )
+    return game_page("チョコ12そろえ出荷", body)
+
+
+@app.route("/games/choco-ship/score", methods=["POST"])
+def choco_ship_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("choco-ship", int(raw))
+    return {"ok": True, "best": best_score("choco-ship", "max")}
+
+STACK_GUIDE_TEMPLATE = r"""
+  <h1>🧱 消さない積み上げガイド</h1>
+  <p class="howto">ブロックが落ちてきます。落とす列を選んでください。ただし同色が縦・横に3つつながると消えてしまいます。消さずに積んだ段数がスコア（1段+8点）です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">消さない積み上げガイド</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('stack_guide_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var cols = [[], [], [], []], cur = 0, timer = null, stackCount = 0;
+  var BLOCKS = ["🟥", "🟦", "🟨"];
+  function draw(){
+    var rows = [];
+    for (var r = 7; r >= 0; r--) rows.push(cols.map(function(c){ return c[r] || "・"; }).join(""));
+    mainEl.textContent = "次のブロック：" + BLOCKS[cur] + " 🧍（上に乗りたい）";
+    subEl.textContent = rows.join("　");
+  }
+  function hasTriple(){
+    for (var x = 0; x < 4; x++) for (var y = 0; y < cols[x].length; y++){
+      var v = cols[x][y]; if (!v) continue;
+      if (x + 2 < 4 && cols[x+1][y] === v && cols[x+2][y] === v) return true;
+      if (cols[x][y+1] === v && cols[x][y+2] === v) return true;
+    }
+    return false;
+  }
+  function drop(col){
+    if (phase !== "playing" || cols[col].length >= 8) return;
+    cols[col].push(BLOCKS[cur]); stackCount++;
+    if (hasTriple()){ endGame("3つつながって消えてしまった… 積んだ " + stackCount + " 個 スコア " + Math.floor(score) + " 点"); return; }
+    addScore(8);
+    cur = Math.floor(Math.random()*3);
+    draw();
+    if (stackCount >= 13){ endGame("🧍 てっぺんまで案内できた！ スコア " + Math.floor(score) + " 点"); }
+  }
+  function startGame(){
+    cols = [[], [], [], []]; cur = Math.floor(Math.random()*3); stackCount = 0; setScore(0); phase = "playing";
+    choicesEl.innerHTML = "";
+    for (var c = 0; c < 4; c++){ (function(col){ btn("列" + (col+1), function(){ drop(col); }); })(c); }
+    msg.textContent = "同色3つを並べないように積んでください";
+    draw();
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/stack-guide", methods=["GET"])
+def stack_guide():
+    body = render_template_string(
+        STACK_GUIDE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("stack-guide", "max"),
+        history=recent_scores("stack-guide", 10),
+    )
+    return game_page("消さない積み上げガイド", body)
+
+
+@app.route("/games/stack-guide/score", methods=["POST"])
+def stack_guide_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("stack-guide", int(raw))
+    return {"ok": True, "best": best_score("stack-guide", "max")}
+
+HASHI_BRIDGE_TEMPLATE = r"""
+  <h1>🌉 橋かけ大陸パズル</h1>
+  <p class="howto">島の数字は、その島から出る橋の合計本数です。ペアのボタンを押すと橋が0→1→2本に変わります。全島の数字が合って、全部つながれば完成です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">橋かけ大陸パズル</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('hashi_bridge_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var ISLANDS = [[0,0,2],[2,0,3],[4,0,1],[0,2,1],[2,2,4],[4,2,2],[2,4,2],[4,4,1]];
+  var NAMES = ["A","B","C","D","E","F","G","H"];
+  var PAIRS = [[0,1],[1,2],[0,3],[1,4],[3,4],[4,5],[2,5],[4,6],[6,7]];
+  var bridges = [];
+  function totals(){
+    var t = [0,0,0,0,0,0,0,0];
+    PAIRS.forEach(function(p, i){ t[p[0]] += bridges[i]; t[p[1]] += bridges[i]; });
+    return t;
+  }
+  function draw(){
+    var t = totals();
+    mainEl.textContent = "島：" + ISLANDS.map(function(s, i){ return NAMES[i] + "(" + s[0] + "," + s[1] + ") 必要" + s[2] + " 現在" + t[i]; }).join("／");
+    subEl.textContent = "橋：" + PAIRS.map(function(p, i){ return NAMES[p[0]] + "-" + NAMES[p[1]] + "：" + bridges[i] + "本"; }).join("／");
+  }
+  function connected(){
+    var adj = {}; PAIRS.forEach(function(p, i){ if (bridges[i] > 0){ (adj[p[0]] = adj[p[0]] || []).push(p[1]); (adj[p[1]] = adj[p[1]] || []).push(p[0]); } });
+    var seen = {}, stack = [0];
+    while (stack.length){ var cur = stack.pop(); if (seen[cur]) continue; seen[cur] = 1; (adj[cur] || []).forEach(function(n){ stack.push(n); }); }
+    return Object.keys(seen).length === 8;
+  }
+  function startGame(){
+    bridges = PAIRS.map(function(){ return 0; });
+    setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    PAIRS.forEach(function(p, i){ btn(NAMES[p[0]] + "-" + NAMES[p[1]], function(){
+      if (phase !== "playing") return; bridges[i] = (bridges[i] + 1) % 3; draw();
+    }); });
+    btn("🌉 完成（判定）", function(){
+      if (phase !== "playing") return;
+      var t = totals(), ok = 0;
+      ISLANDS.forEach(function(s, i){ if (t[i] === s[2]) ok++; });
+      var conn = connected();
+      var pts = Math.round(ok / 8 * 80) + (conn && ok === 8 ? 20 : 0);
+      setScore(pts);
+      endGame("数字が合った島 " + ok + "/8" + (conn && ok === 8 ? "・全部つながった！🏆" : "・つながりは未完成") + " スコア " + pts + " 点");
+    });
+    draw(); msg.textContent = "ペアボタンで橋の本数を変えてください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/hashi-bridge", methods=["GET"])
+def hashi_bridge():
+    body = render_template_string(
+        HASHI_BRIDGE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("hashi-bridge", "max"),
+        history=recent_scores("hashi-bridge", 10),
+    )
+    return game_page("橋かけ大陸パズル", body)
+
+
+@app.route("/games/hashi-bridge/score", methods=["POST"])
+def hashi_bridge_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("hashi-bridge", int(raw))
+    return {"ok": True, "best": best_score("hashi-bridge", "max")}
+
+TILE_MERGE_TEMPLATE = r"""
+  <h1>🔢 スライド合体タイル</h1>
+  <p class="howto">上下左右のボタンで全タイルが滑ります。同じ数字がぶつかると合体して2倍になります。合体した数字の合計でスコアが増え、動けなくなったら終了です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">スライド合体タイル</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('tile_merge_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var grid = [], mergedTotal = 0;
+  function spawn(){ var empty = []; for (var i = 0; i < 16; i++) if (!grid[i]) empty.push(i); if (empty.length) grid[empty[Math.floor(Math.random()*empty.length)]] = Math.random() < 0.9 ? 2 : 4; }
+  function draw(){
+    var s = "";
+    for (var i = 0; i < 16; i++){ s += grid[i] ? String(grid[i]) : "・"; if (i % 4 === 3) s += "　"; else s += " "; }
+    mainEl.textContent = s;
+    subEl.textContent = "合体合計 " + mergedTotal;
+  }
+  function slide(dir){
+    var moved = false;
+    function line(idx){
+      var vals = idx.map(function(i){ return grid[i]; }).filter(function(v){ return v; });
+      var out = [];
+      for (var k = 0; k < vals.length; k++){
+        if (k + 1 < vals.length && vals[k] === vals[k+1]){ out.push(vals[k]*2); mergedTotal += vals[k]*2; k++; }
+        else out.push(vals[k]);
+      }
+      while (out.length < 4) out.push(0);
+      idx.forEach(function(i, j){ if (grid[i] !== out[j]) moved = true; grid[i] = out[j]; });
+    }
+    var r, c, idx;
+    if (dir === 0 || dir === 1){ for (r = 0; r < 4; r++){ idx = [r*4, r*4+1, r*4+2, r*4+3]; if (dir === 1) idx.reverse(); line(idx); } }
+    else { for (c = 0; c < 4; c++){ idx = [c, c+4, c+8, c+12]; if (dir === 3) idx.reverse(); line(idx); } }
+    return moved;
+  }
+  function canMove(){
+    for (var i = 0; i < 16; i++) if (!grid[i]) return true;
+    for (var y = 0; y < 4; y++) for (var x = 0; x < 4; x++){
+      var v = grid[y*4+x];
+      if (x < 3 && grid[y*4+x+1] === v) return true;
+      if (y < 3 && grid[(y+1)*4+x] === v) return true;
+    }
+    return false;
+  }
+  function startGame(){
+    grid = []; for (var i = 0; i < 16; i++) grid.push(0);
+    mergedTotal = 0; setScore(0); phase = "playing"; spawn(); spawn();
+    choicesEl.innerHTML = "";
+    [["◀ 左", 0], ["右 ▶", 1], ["▲ 上", 2], ["下 ▼", 3]].forEach(function(d){ btn(d[0], function(){
+      if (phase !== "playing") return;
+      if (slide(d[1])){ spawn(); setScore(Math.min(100, Math.floor(mergedTotal / 8))); }
+      draw();
+      if (!canMove()) endGame("もう動けない… スコア " + Math.floor(score) + " 点");
+    }); });
+    btn("終了して記録", function(){ if (phase === "playing") endGame(); });
+    draw(); msg.textContent = "方向ボタンでタイルを滑らせてください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/tile-merge", methods=["GET"])
+def tile_merge():
+    body = render_template_string(
+        TILE_MERGE_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("tile-merge", "max"),
+        history=recent_scores("tile-merge", 10),
+    )
+    return game_page("スライド合体タイル", body)
+
+
+@app.route("/games/tile-merge/score", methods=["POST"])
+def tile_merge_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("tile-merge", int(raw))
+    return {"ok": True, "best": best_score("tile-merge", "max")}
+
+PYRAMID_MAHJONG_TEMPLATE = r"""
+  <h1>🀄 ピラミッド麻雀ペア消し</h1>
+  <p class="howto">タイルを2枚選んで消します。取れるのは「上にタイルが重なっていない」かつ「左右どちらかが空いている」タイルだけです。全8ペアを消せば満点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ピラミッド麻雀ペア消し</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('pyramid_mahjong_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var tiles = [], selected = -1;
+  // x, y, layer, face
+  var LAYOUT = [];
+  (function(){
+    var faces0 = ["🍋","🍓","🍑","🍉","🍒","🥝","🍓","🍑","🍉","🍒","🥝","🍋"];
+    var k = 0;
+    for (var y = 0; y < 3; y++) for (var x = 0; x < 4; x++) LAYOUT.push([x, y, 0, faces0[k++]]);
+    LAYOUT.push([1, 0, 1, "🍎"]); LAYOUT.push([2, 0, 1, "🍎"]);
+    LAYOUT.push([1, 1, 1, "🍇"]); LAYOUT.push([2, 1, 1, "🍇"]);
+  })();
+  function isFree(t){
+    if (!t.alive) return false;
+    var above = tiles.some(function(o){ return o.alive && o.layer === t.layer + 1 && o.x === t.x && o.y === t.y; });
+    if (above) return false;
+    var left = tiles.some(function(o){ return o.alive && o.layer === t.layer && o.y === t.y && o.x === t.x - 1; });
+    var right = tiles.some(function(o){ return o.alive && o.layer === t.layer && o.y === t.y && o.x === t.x + 1; });
+    return !left || !right;
+  }
+  function draw(){
+    mainEl.textContent = "残り " + tiles.filter(function(t){ return t.alive; }).length + " 枚";
+    subEl.textContent = tiles.map(function(t, i){ return t.alive ? (i+1) + ":" + t.face + (isFree(t) ? "" : "🔒") : ""; }).filter(Boolean).join(" ");
+  }
+  function startGame(){
+    tiles = LAYOUT.map(function(a){ return {x: a[0], y: a[1], layer: a[2], face: a[3], alive: true}; });
+    selected = -1; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    tiles.forEach(function(t, i){ btn((i+1) + t.face, function(){
+      if (phase !== "playing" || !t.alive) return;
+      if (!isFree(t)){ msg.textContent = "そのタイルはまだ取れない"; return; }
+      if (selected < 0){ selected = i; msg.textContent = t.face + " を選択。もう1枚選んでください"; return; }
+      if (selected === i){ selected = -1; msg.textContent = "選択を解除"; return; }
+      var a = tiles[selected];
+      if (a.face === t.face){ a.alive = false; t.alive = false; addScore(10); msg.textContent = "ペア消し！ +10点"; if (!tiles.some(function(o){ return o.alive; })){ addScore(20); endGame("🎉 全消し！ スコア " + Math.floor(score) + " 点"); return; } }
+      else msg.textContent = "絵柄がちがう…";
+      selected = -1; draw();
+    }); });
+    draw(); msg.textContent = "取れるタイルから2枚選んでください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/pyramid-mahjong", methods=["GET"])
+def pyramid_mahjong():
+    body = render_template_string(
+        PYRAMID_MAHJONG_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("pyramid-mahjong", "max"),
+        history=recent_scores("pyramid-mahjong", 10),
+    )
+    return game_page("ピラミッド麻雀ペア消し", body)
+
+
+@app.route("/games/pyramid-mahjong/score", methods=["POST"])
+def pyramid_mahjong_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("pyramid-mahjong", int(raw))
+    return {"ok": True, "best": best_score("pyramid-mahjong", "max")}
+
+QUAD_WORD_TEMPLATE = r"""
+  <h1>🔤 4語同時当てクォードル</h1>
+  <p class="howto">お題はカタカナ4文字の言葉が4つ。カナボタンで4文字入力して「判定」を押すと、4つ全てに判定が返ります（🟩位置も一致／🟨含まれる／⬛なし）。9回以内に全部当ててください。1語25点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">4語同時当てクォードル</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('quad_word_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var WORDS = ["ペンギン", "ライオン", "カラオケ", "ヒマワリ", "アサガオ", "モモンガ", "サッポロ", "オオサカ", "ナガサキ", "フクオカ"];
+  var KANA = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンッャュョー";
+  var targets = [], solved = [], input = "", tries = 0;
+  function judgeWord(word, guess){
+    var out = [];
+    for (var i = 0; i < 4; i++){
+      if (guess[i] === word[i]) out.push("🟩");
+      else if (word.indexOf(guess[i]) >= 0) out.push("🟨");
+      else out.push("⬛");
+    }
+    return out.join("");
+  }
+  function draw(){
+    mainEl.textContent = targets.map(function(w, i){ return solved[i] ? w : "？？？？"; }).join("｜");
+    subEl.textContent = "入力：" + (input || "―") + "｜あと " + (9 - tries) + " 回";
+  }
+  function startGame(){
+    targets = WORDS.slice().sort(function(){ return Math.random() - 0.5; }).slice(0, 4);
+    solved = [false, false, false, false]; input = ""; tries = 0; setScore(0); phase = "playing";
+    choicesEl.innerHTML = "";
+    KANA.split("").forEach(function(ch){ btn(ch, function(){
+      if (phase !== "playing" || input.length >= 4) return;
+      input += ch; draw();
+    }); });
+    btn("⌫ 消す", function(){ input = input.slice(0, -1); draw(); });
+    btn("判定", function(){
+      if (phase !== "playing" || input.length !== 4){ msg.textContent = "4文字入れてください"; return; }
+      tries++;
+      var lines = [];
+      targets.forEach(function(w, i){
+        if (!solved[i] && input === w){ solved[i] = true; addScore(25); }
+        lines.push((i+1) + "：" + judgeWord(w, input));
+      });
+      msg.textContent = lines.join("／");
+      input = ""; draw();
+      if (solved.every(Boolean)){ endGame("🎉 4語全部当てた！ スコア " + Math.floor(score) + " 点"); return; }
+      if (tries >= 9) endGame("回数切れ… 答え：" + targets.join("、") + " スコア " + Math.floor(score) + " 点");
+    });
+    draw(); msg.textContent = "カナを4文字入れて判定してください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/quad-word", methods=["GET"])
+def quad_word():
+    body = render_template_string(
+        QUAD_WORD_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("quad-word", "max"),
+        history=recent_scores("quad-word", 10),
+    )
+    return game_page("4語同時当てクォードル", body)
+
+
+@app.route("/games/quad-word/score", methods=["POST"])
+def quad_word_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("quad-word", int(raw))
+    return {"ok": True, "best": best_score("quad-word", "max")}
+
+JIGSAW_FIT_TEMPLATE = r"""
+  <h1>🧩 ジグソーはめこみ</h1>
+  <p class="howto">ピース（絵文字）を選んで、置きたいマスを選んでください。正しい位置なら固定されます。全9ピースで完成、1ピース+11点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ジグソーはめこみ</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('jigsaw_fit_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var PICTURE = ["🌳", "🌞", "🌳", "🌷", "🏠", "🌷", "🐶", "🌼", "🐱"];
+  var placed = [], selPiece = -1, pieces = [];
+  function draw(){
+    var s = "";
+    for (var i = 0; i < 9; i++){ s += placed[i] || "・"; if (i % 3 === 2) s += "　"; }
+    mainEl.textContent = s;
+    subEl.textContent = "未配置：" + pieces.map(function(p, i){ return p.used ? "" : (i+1) + p.face; }).filter(Boolean).join(" ");
+  }
+  function startGame(){
+    placed = [null,null,null,null,null,null,null,null,null];
+    pieces = PICTURE.map(function(f){ return {face: f, used: false}; }).sort(function(){ return Math.random() - 0.5; });
+    selPiece = -1; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    pieces.forEach(function(p, i){ btn("ピース" + (i+1) + p.face, function(){
+      if (phase !== "playing" || p.used) return; selPiece = i; msg.textContent = p.face + " を選んだ。置くマスを選んでください";
+    }); });
+    for (var j = 0; j < 9; j++){ (function(idx){ btn("マス" + (idx+1), function(){
+      if (phase !== "playing" || selPiece < 0 || placed[idx]) return;
+      if (pieces[selPiece].face === PICTURE[idx]){ placed[idx] = pieces[selPiece].face; pieces[selPiece].used = true; addScore(11); msg.textContent = "🧩 はまった！ +11点"; if (placed.every(Boolean)){ setScore(100); endGame("🎉 絵が完成！ スコア 100 点"); return; } }
+      else { addScore(-2); msg.textContent = "そこじゃないみたい -2点"; }
+      selPiece = -1; draw();
+    }); })(j); }
+    draw(); msg.textContent = "ピース→マスの順に選んでください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/jigsaw-fit", methods=["GET"])
+def jigsaw_fit():
+    body = render_template_string(
+        JIGSAW_FIT_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("jigsaw-fit", "max"),
+        history=recent_scores("jigsaw-fit", 10),
+    )
+    return game_page("ジグソーはめこみ", body)
+
+
+@app.route("/games/jigsaw-fit/score", methods=["POST"])
+def jigsaw_fit_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("jigsaw-fit", int(raw))
+    return {"ok": True, "best": best_score("jigsaw-fit", "max")}
+
+POP_FLAP_TEMPLATE = r"""
+  <h1>🎈 ポップ羽ばたき抜け</h1>
+  <p class="howto">風船🎈は放っておくと落ちます。「羽ばたく」で上昇。右から流れてくる壁の隙間を抜けるたび+10点、10回抜ければ満点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ポップ羽ばたき抜け</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('pop_flap_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var y = 4, wall = null, timer = null, wx = 99;
+  function render(){
+    var cells = [];
+    for (var i = 0; i < 10; i++) cells.push(i === y ? "🎈" : "・");
+    mainEl.textContent = "高さ " + cells.join("");
+    subEl.textContent = wall ? ("壁まであと " + wx + "｜隙間は高さ " + wall.gap + "〜" + (wall.gap + 1)) : "壁はまだ遠い";
+  }
+  function tick(){
+    y = Math.min(9, y + 1);
+    if (wall){ wx--; if (wx === 0){
+      if (y === wall.gap || y === wall.gap + 1){ addScore(10); msg.textContent = "🎈 抜けた！ +10点"; wall = null; wx = 99; }
+      else { clearInterval(timer); endGame("壁にぶつかった… スコア " + Math.floor(score) + " 点"); return; }
+    } }
+    if (!wall && Math.random() < 0.3){ wall = {gap: 1 + Math.floor(Math.random()*7)}; wx = 5; }
+    render();
+    if (score >= 100){ clearInterval(timer); endGame("🎉 満点クリア！ スコア 100 点"); }
+  }
+  function startGame(){
+    clearInterval(timer); y = 4; wall = null; wx = 99; setScore(0); phase = "playing";
+    choicesEl.innerHTML = "";
+    btn("🪽 羽ばたく", function(){ if (phase === "playing"){ y = Math.max(0, y - 2); render(); } });
+    msg.textContent = "羽ばたいて高さを調整してください";
+    render(); timer = setInterval(tick, 450);
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/pop-flap", methods=["GET"])
+def pop_flap():
+    body = render_template_string(
+        POP_FLAP_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("pop-flap", "max"),
+        history=recent_scores("pop-flap", 10),
+    )
+    return game_page("ポップ羽ばたき抜け", body)
+
+
+@app.route("/games/pop-flap/score", methods=["POST"])
+def pop_flap_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("pop-flap", int(raw))
+    return {"ok": True, "best": best_score("pop-flap", "max")}
+
+LIGHT_UP_TEMPLATE = r"""
+  <h1>💡 電球ライトアップ配置</h1>
+  <p class="howto">5×5の部屋に電球💡を置いてください。電球は壁（⬛）にぶつかるまで縦横を照らします。全部のマスが照って、電球同士が照らし合っていなければ完成です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">電球ライトアップ配置</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('light_up_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var WALLS = {"1,0": 1, "3,2": 1, "0,4": 1, "4,4": 1};
+  var bulbs = {};
+  function key(x, y){ return x + "," + y; }
+  function litMap(){
+    var lit = {};
+    Object.keys(bulbs).forEach(function(k){
+      var p = k.split(","), x = +p[0], y = +p[1];
+      lit[k] = 1;
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){
+        var nx = x, ny = y;
+        while (true){ nx += d[0]; ny += d[1]; if (nx < 0 || nx > 4 || ny < 0 || ny > 4 || WALLS[key(nx, ny)]) break; lit[key(nx, ny)] = 1; }
+      });
+    });
+    return lit;
+  }
+  function conflicts(){
+    var n = 0, ks = Object.keys(bulbs);
+    ks.forEach(function(k){
+      var p = k.split(","), x = +p[0], y = +p[1];
+      [[1,0],[0,1]].forEach(function(d){
+        var nx = x, ny = y;
+        while (true){ nx += d[0]; ny += d[1]; if (nx < 0 || nx > 4 || ny < 0 || ny > 4 || WALLS[key(nx, ny)]) break; if (bulbs[key(nx, ny)]){ n++; break; } }
+      });
+    });
+    return n;
+  }
+  function draw(){
+    var lit = litMap(), s = "";
+    for (var y = 0; y < 5; y++){ for (var x = 0; x < 5; x++){
+      var k = key(x, y);
+      s += WALLS[k] ? "⬛" : bulbs[k] ? "💡" : lit[k] ? "🟨" : "・";
+    } s += "　"; }
+    mainEl.textContent = s;
+    var litCount = Object.keys(lit).length;
+    subEl.textContent = "照らされているマス " + litCount + " / 21｜照らし合い " + conflicts() + " 件";
+  }
+  function startGame(){
+    bulbs = {}; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    for (var yy = 0; yy < 5; yy++) for (var xx = 0; xx < 5; xx++){ (function(x, y){
+      if (WALLS[key(x, y)]) return;
+      btn((x+1) + "-" + (y+1), function(){
+        if (phase !== "playing") return;
+        var k = key(x, y);
+        if (bulbs[k]) delete bulbs[k]; else bulbs[k] = 1;
+        draw();
+      });
+    })(xx, yy); }
+    btn("💡 判定", function(){
+      if (phase !== "playing") return;
+      var lit = litMap(), c = conflicts();
+      var pts = Math.max(0, Math.round(Object.keys(lit).length / 21 * 100) - c * 15);
+      setScore(pts);
+      endGame("照らしたマス " + Object.keys(lit).length + "/21・照らし合い " + c + " 件 スコア " + pts + " 点");
+    });
+    draw(); msg.textContent = "マスボタンで電球を置いてください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/light-up", methods=["GET"])
+def light_up():
+    body = render_template_string(
+        LIGHT_UP_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("light-up", "max"),
+        history=recent_scores("light-up", 10),
+    )
+    return game_page("電球ライトアップ配置", body)
+
+
+@app.route("/games/light-up/score", methods=["POST"])
+def light_up_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("light-up", int(raw))
+    return {"ok": True, "best": best_score("light-up", "max")}
+
+BALL_ROLL_TEMPLATE = r"""
+  <h1>🔵 玉ころがしアブストラクト</h1>
+  <p class="howto">玉🔵を上下左右に転がして、ゴール🏁まで運んでください。全3面、手数が少ないほど高得点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">玉ころがしアブストラクト</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('ball_roll_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var STAGES = [
+    {w: ["S..#..", "##.#.#", ".....#", ".###..", "...##.", "#...G."], s: [0,0], g: [4,5]},
+    {w: ["S.#...", "..#.#.", "#.#.#.", "#...#.", "###.#.", ".....G"], s: [0,0], g: [5,5]},
+    {w: ["..#S..", ".##.#.", "....#.", "##.#.#", "......", ".##G.."], s: [3,0], g: [3,5]}
+  ];
+  var stage = 0, px = 0, py = 0, moves = 0;
+  function draw(){
+    var st = STAGES[stage], s = "";
+    for (var y = 0; y < 6; y++){ for (var x = 0; x < 6; x++){
+      s += (x === px && y === py) ? "🔵" : st.w[y][x] === "#" ? "⬛" : (x === st.g[0] && y === st.g[1]) ? "🏁" : "・";
+    } s += "　"; }
+    mainEl.textContent = s;
+    subEl.textContent = "ステージ " + (stage+1) + " / 3｜手数 " + moves;
+  }
+  function move(dx, dy){
+    if (phase !== "playing") return;
+    var st = STAGES[stage], nx = px + dx, ny = py + dy;
+    if (nx < 0 || nx > 5 || ny < 0 || ny > 5 || st.w[ny][nx] === "#") return;
+    px = nx; py = ny; moves++; draw();
+    if (px === st.g[0] && py === st.g[1]){
+      var pts = Math.max(10, 40 - moves);
+      addScore(pts); msg.textContent = "🏁 ゴール！ +" + pts + "点";
+      stage++; moves = 0;
+      if (stage >= 3){ endGame("🎉 全ステージ制覇！ スコア " + Math.floor(score) + " 点"); return; }
+      px = STAGES[stage].s[0]; py = STAGES[stage].s[1];
+      phase = "wait"; setTimeout(function(){ phase = "playing"; draw(); }, 800);
+    }
+  }
+  function startGame(){
+    stage = 0; moves = 0; px = STAGES[0].s[0]; py = STAGES[0].s[1]; setScore(0); phase = "playing";
+    choicesEl.innerHTML = "";
+    btn("▲ 上", function(){ move(0, -1); });
+    btn("◀ 左", function(){ move(-1, 0); });
+    btn("右 ▶", function(){ move(1, 0); });
+    btn("下 ▼", function(){ move(0, 1); });
+    draw(); msg.textContent = "方向ボタンで玉を転がしてください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/ball-roll", methods=["GET"])
+def ball_roll():
+    body = render_template_string(
+        BALL_ROLL_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("ball-roll", "max"),
+        history=recent_scores("ball-roll", 10),
+    )
+    return game_page("玉ころがしアブストラクト", body)
+
+
+@app.route("/games/ball-roll/score", methods=["POST"])
+def ball_roll_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("ball-roll", int(raw))
+    return {"ok": True, "best": best_score("ball-roll", "max")}
+
+NONOGRAM_TEMPLATE = r"""
+  <h1>🖼 ノノグラム絵あぶり</h1>
+  <p class="howto">行と列の数字は「連続して塗るマスの長さ」です。8×8のマスをクリックで塗り、絵を完成させて「判定」を押してください。一致率がスコアになります。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">ノノグラム絵あぶり</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('nonogram_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var PATTERN = [
+    [0,1,1,0,0,1,1,0],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [0,1,1,1,1,1,1,0],
+    [0,0,1,1,1,1,0,0],
+    [0,0,0,1,1,0,0,0],
+    [0,0,0,0,0,0,0,0]
+  ];
+  function hints(line){
+    var out = [], run = 0;
+    line.forEach(function(v){ if (v) run++; else if (run){ out.push(run); run = 0; } });
+    if (run) out.push(run);
+    return out.length ? out.join(".") : "0";
+  }
+  var cells = [];
+  function draw(){
+    var colHints = [];
+    for (var x = 0; x < 8; x++) colHints.push(hints(PATTERN.map(function(r){ return r[x]; })));
+    mainEl.textContent = "列ヒント：" + colHints.join(" ");
+    var s = "";
+    for (var y = 0; y < 8; y++){ s += hints(PATTERN[y]) + "｜" + cells.slice(y*8, y*8+8).map(function(v){ return v ? "⬛" : "・"; }).join("") + "　"; }
+    subEl.textContent = s;
+  }
+  function startGame(){
+    cells = []; for (var i = 0; i < 64; i++) cells.push(0);
+    setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    for (var j = 0; j < 64; j++){ (function(idx){ btn((idx%8+1) + "-" + (Math.floor(idx/8)+1), function(){
+      if (phase !== "playing") return; cells[idx] = cells[idx] ? 0 : 1; draw();
+    }); })(j); }
+    btn("🖼 判定", function(){
+      if (phase !== "playing") return;
+      var ok = 0;
+      for (var i = 0; i < 64; i++) if (cells[i] === PATTERN[Math.floor(i/8)][i%8]) ok++;
+      var pts = Math.round(ok / 64 * 100);
+      setScore(pts);
+      endGame("一致 " + ok + "/64 スコア " + pts + " 点" + (pts === 100 ? " 🎉 ハート完成！" : ""));
+    });
+    draw(); msg.textContent = "ヒントを読んでマスを塗ってください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/nonogram", methods=["GET"])
+def nonogram():
+    body = render_template_string(
+        NONOGRAM_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("nonogram", "max"),
+        history=recent_scores("nonogram", 10),
+    )
+    return game_page("ノノグラム絵あぶり", body)
+
+
+@app.route("/games/nonogram/score", methods=["POST"])
+def nonogram_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("nonogram", int(raw))
+    return {"ok": True, "best": best_score("nonogram", "max")}
+
+TRIO_TRAY_TEMPLATE = r"""
+  <h1>🃏 3枚タイル・トレイ集め</h1>
+  <p class="howto">場のタイルをクリックするとトレイに入ります。同じ絵柄が3枚そろうと消えます。トレイは7枠までで、満杯になると終了。全8組を消せば満点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">3枚タイル・トレイ集め</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('trio_tray_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var FACES = ["🍎", "🍇", "🍋", "🍓", "🍑", "🍒", "🥝", "🍉"];
+  var field = [], tray = [], trios = 0;
+  function draw(){
+    mainEl.textContent = "場：" + field.map(function(f, i){ return f ? (i+1) + f : ""; }).filter(Boolean).join(" ");
+    subEl.textContent = "トレイ（" + tray.length + "/7）：" + (tray.join("") || "空");
+  }
+  function startGame(){
+    field = [];
+    FACES.forEach(function(f){ field.push(f, f, f); });
+    field.sort(function(){ return Math.random() - 0.5; });
+    tray = []; trios = 0; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    field.forEach(function(f, i){ btn((i+1) + f, function(){
+      if (phase !== "playing" || !field[i]) return;
+      field[i] = null; tray.push(f);
+      var count = tray.filter(function(x){ return x === f; }).length;
+      if (count >= 3){ tray = tray.filter(function(x){ return x !== f; }); trios++; addScore(10); msg.textContent = f + " が3枚そろって消えた！ +10点"; }
+      draw();
+      if (trios >= 8){ addScore(20); endGame("🎉 全消し！ スコア " + Math.floor(score) + " 点"); return; }
+      if (tray.length >= 7) endGame("トレイが満杯… スコア " + Math.floor(score) + " 点");
+    }); });
+    draw(); msg.textContent = "タイルをクリックしてトレイへ";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/trio-tray", methods=["GET"])
+def trio_tray():
+    body = render_template_string(
+        TRIO_TRAY_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("trio-tray", "max"),
+        history=recent_scores("trio-tray", 10),
+    )
+    return game_page("3枚タイル・トレイ集め", body)
+
+
+@app.route("/games/trio-tray/score", methods=["POST"])
+def trio_tray_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("trio-tray", int(raw))
+    return {"ok": True, "best": best_score("trio-tray", "max")}
+
+GRAVITY_MAHJONG_TEMPLATE = r"""
+  <h1>🀄 重力落下麻雀</h1>
+  <p class="howto">取れるのは各列の「一番下」のタイルだけです。同絵柄を2枚選ぶと消え、上のタイルが落ちてきます。全10ペアを消せば満点です。</p>
+  __FLASH__
+  <div class="card">
+    <p class="result" id="bestline">ベスト: {{ best if best is not none else '—' }}{% if best is not none %} 点{% endif %}</p>
+    <p class="mid"><span id="gRound">-</span> ／ スコア <span id="gScore">0</span> 点</p>
+    <p class="big" id="gMain" style="min-height:34px;">重力落下麻雀</p>
+    <p class="mid" id="gSub">-</p>
+    <div class="row" id="gChoices"></div>
+    <p class="result" id="message">「スタート」で開始</p>
+    <div class="row">
+      <button type="button" id="gStart">スタート</button>
+    </div>
+    {% if history %}
+      <h3 style="font-size:14px; margin:16px 0 8px;">最近の記録（点）</h3>
+      <table>
+        {% for s in history %}
+          <tr><td>{{ s.score }} 点</td><td class="muted">{{ s.created_at }}</td></tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+  </div>
+
+<script>
+(function(){
+  var mainEl = document.getElementById("gMain"), subEl = document.getElementById("gSub");
+  var roundEl = document.getElementById("gRound"), scoreEl = document.getElementById("gScore");
+  var choicesEl = document.getElementById("gChoices"), msg = document.getElementById("message");
+  function submit(v){
+    var form = new FormData();
+    form.append("score", String(Math.max(0, Math.min(100, Math.floor(v)))));
+    fetch("{{ url_for('gravity_mahjong_score') }}", {method: "POST", body: form})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (d.ok) { document.getElementById("bestline").textContent = "ベスト: " + d.best + " 点"; } })
+      .catch(function(){});
+  }
+  var phase = "idle", score = 0;
+  function setScore(v){ score = v; scoreEl.textContent = String(Math.max(0, Math.min(100, Math.floor(score)))); }
+  function addScore(v){ setScore(score + v); }
+  function btn(label, fn){
+    var b = document.createElement("button"); b.type = "button"; b.textContent = label;
+    b.addEventListener("click", fn); choicesEl.appendChild(b); return b;
+  }
+  function endGame(text){ phase = "done"; msg.textContent = text || ("終了！ スコア " + Math.floor(score) + " 点"); submit(score); }
+
+  var cols = [], selected = -1;
+  var LAYOUT = [
+    ["🍎", "🍇", "🍓", "🍋"],
+    ["🍎", "🍇", "🍋", "🍓"],
+    ["🍇", "🍎", "🍑", "🍋"],
+    ["🍇", "🍎", "🍑", "🍋"],
+    ["🍓", "🍑", "🍑", "🍓"]
+  ];
+  function draw(){
+    mainEl.textContent = cols.map(function(c, i){ return "列" + (i+1) + "：" + (c.slice().reverse().join("") || "空"); }).join("｜");
+    subEl.textContent = "一番下：" + cols.map(function(c){ return c.length ? c[0] : "―"; }).join(" ");
+  }
+  function startGame(){
+    cols = LAYOUT.map(function(c){ return c.slice(); });
+    selected = -1; setScore(0); phase = "playing"; choicesEl.innerHTML = "";
+    for (var c = 0; c < 5; c++){ (function(col){ btn("列" + (col+1), function(){
+      if (phase !== "playing" || !cols[col].length) return;
+      if (selected < 0){ selected = col; msg.textContent = "列" + (col+1) + " の " + cols[col][0] + " を選択。もう1列選んでください"; return; }
+      if (selected === col){ selected = -1; msg.textContent = "選択を解除"; return; }
+      if (cols[selected][0] === cols[col][0]){
+        cols[selected].shift(); cols[col].shift(); addScore(10);
+        msg.textContent = "ペア消し！上のタイルが落ちた +10点";
+        if (cols.every(function(cc){ return !cc.length; })){ endGame("🎉 全消し！ スコア " + Math.floor(score) + " 点"); return; }
+      } else msg.textContent = "絵柄がちがう…";
+      selected = -1; draw();
+    }); })(c); }
+    draw(); msg.textContent = "列を選んで一番下のペアを消してください";
+  }
+
+  document.getElementById("gStart").addEventListener("click", function(){
+    if (typeof startGame === "function") startGame();
+  });
+})();
+</script>
+
+"""
+
+
+
+@app.route("/games/gravity-mahjong", methods=["GET"])
+def gravity_mahjong():
+    body = render_template_string(
+        GRAVITY_MAHJONG_TEMPLATE.replace("__FLASH__", _FLASH_BLOCK),
+        best=best_score("gravity-mahjong", "max"),
+        history=recent_scores("gravity-mahjong", 10),
+    )
+    return game_page("重力落下麻雀", body)
+
+
+@app.route("/games/gravity-mahjong/score", methods=["POST"])
+def gravity_mahjong_score():
+    raw = request.form.get("score", "").strip()
+    if not raw.isdigit() or not (0 <= int(raw) <= 100):
+        return {"ok": False, "error": "invalid score"}, 400
+    record_score("gravity-mahjong", int(raw))
+    return {"ok": True, "best": best_score("gravity-mahjong", "max")}
 
 
 # gunicorn 等で起動した場合にも DB を用意する（作成済みなら何もしない）
