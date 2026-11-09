@@ -2623,7 +2623,7 @@ PORTAL_TEMPLATE = r"""
   if (!saveBtn) return;
   var clearBtn = document.getElementById('mgOfflineClear');
   var status = document.getElementById('mgOfflineStatus');
-  var CACHE_NAME = 'minigame-v3';
+  var CACHE_NAME = 'minigame-v4';
   var URLS = [{% for g in games %}'{{ url_for(g.endpoint) }}'{% if not loop.last %}, {% endif %}{% endfor %}];
   saveBtn.addEventListener('click', function () {
     if (!('caches' in window)) { status.textContent = 'このブラウザはオフライン保存に対応していません。'; return; }
@@ -2913,7 +2913,7 @@ def roulette():
     spins = list_spins(selected_id, limit=20) if selected_table else []
 
     rendered = render_template_string(
-        TEMPLATE.replace("__MG_THEME_INIT__", '  <script src="/static/mg-head.js?boot=1"></script>'),
+        TEMPLATE.replace("__MG_THEME_INIT__", '  <script src="/static/mg-head.js?boot=1&v=' + _STATIC_V + '"></script>'),
         tables=tables,
         selected_table=selected_table,
         entries=entries,
@@ -2967,7 +2967,7 @@ def roulette():
             ensure_ascii=False,
         )
         + ";</script>\n"
-        + '<script src="/static/mg-cfg.js"></script>'
+        + '<script src="/static/mg-cfg.js?v=' + _STATIC_V + '"></script>'
     )
     return rendered.replace("</body>", extra + "\n</body>", 1)
 
@@ -3642,13 +3642,16 @@ def mg_head_js():
     return res
 
 
+_STATIC_V = "20261109-4"  # 静的ファイルURLの版。CSS/JS を変えたら上げる
+
+
 # Service Worker: トップ・静的ファイル・/offline を先に保存し、
 # ゲームページは開くたびに保存する。スコア送信（POST）は対象外。
 # キャッシュ名はトップページの保存ボタン処理と一致させること。
 _SW_JS = r"""
-var CACHE = 'minigame-v3';
-var CORE = ['/', '/offline', '/static/mg-head.js', '/static/mg-head.js?boot=1',
-            '/static/mg-cfg.js', '/static/mg-game.css'];
+var CACHE = 'minigame-v4';
+var CORE = ['/', '/offline', '/static/mg-head.js?v=20261109-4', '/static/mg-head.js?boot=1&v=20261109-4',
+            '/static/mg-cfg.js?v=20261109-4', '/static/mg-game.css?v=20261109-4'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); })
     .then(function () { return self.skipWaiting(); }));
@@ -3848,10 +3851,10 @@ def game_page(title: str, body: str) -> str:
             '  <meta property="og:type" content="website" />\n'
         )
     if is_js:
-        parts.append('  <script src="/static/mg-head.js"></script>\n')
+        parts.append('  <script src="/static/mg-head.js?v=' + _STATIC_V + '"></script>\n')
     else:
-        parts.append('  <script src="/static/mg-head.js?boot=1"></script>\n')
-    parts.append('  <link rel="stylesheet" href="/static/mg-game.css" />\n</head>\n<body>\n<div class="wrap">\n')
+        parts.append('  <script src="/static/mg-head.js?boot=1&v=' + _STATIC_V + '"></script>\n')
+    parts.append('  <link rel="stylesheet" href="/static/mg-game.css?v=' + _STATIC_V + '" />\n</head>\n<body>\n<div class="wrap">\n')
     parts.append(_mg_header_html())
     parts.append(_MG_THEME_BTN_SCRIPT)
     parts.append(_inject_howto(body, _mg_howto_html(game)))
@@ -3862,7 +3865,7 @@ def game_page(title: str, body: str) -> str:
     if is_js:
         parts.append(_MG_PAUSE_HTML)
     parts.append("<script>var CFG = " + json.dumps(cfg, ensure_ascii=False) + ";</script>\n")
-    parts.append('<script src="/static/mg-cfg.js"></script>')
+    parts.append('<script src="/static/mg-cfg.js?v=' + _STATIC_V + '"></script>')
     parts.append("\n</body>\n</html>")
     return "".join(parts)
 
@@ -13469,7 +13472,7 @@ MACHIGAI_TEMPLATE = r"""
         <button type="submit">もう一度挑戦</button>
       </form>
     {% else %}
-      <p class="big" style="color: {{ 'red' if is_red else '#222' }};">{{ mark }} {{ rank_label }}</p>
+      <p class="big" style="color: {{ 'red' if is_red else '#222' }}; background:#fff; border:1px solid #ccc; border-radius:12px; padding:16px 0;">{{ mark }} {{ rank_label }}</p>
       <p class="mid">説明：「これは {{ claim_suit }} の {{ claim_rank }} です」</p>
       <div class="row">
         <form method="post" action="{{ url_for('machigai_card_answer') }}">
@@ -14172,8 +14175,8 @@ DRAWPOKER_TEMPLATE = r"""
       </form>
       <p class="muted">CPU の手札は交換が終わるまで伏せられています。</p>
     {% else %}
-      <p class="mid">あなた：{% for card in player %}<span style="font-size:22px; color: {{ 'red' if card[0] in red_suits else '#222' }};">{{ card_text(card) }} </span>{% endfor %}→ {{ player_hand }}</p>
-      <p class="mid">CPU：{% for card in cpu %}<span style="font-size:22px; color: {{ 'red' if card[0] in red_suits else '#222' }};">{{ card_text(card) }} </span>{% endfor %}→ {{ cpu_hand }}</p>
+      <p class="mid">あなた：{% for card in player %}<span style="font-size:22px; color: {{ 'red' if card[0] in red_suits else '#222' }}; background:#fff; border:1px solid #ddd; border-radius:6px; padding:1px 5px;">{{ card_text(card) }} </span>{% endfor %}→ {{ player_hand }}</p>
+      <p class="mid">CPU：{% for card in cpu %}<span style="font-size:22px; color: {{ 'red' if card[0] in red_suits else '#222' }}; background:#fff; border:1px solid #ddd; border-radius:6px; padding:1px 5px;">{{ card_text(card) }} </span>{% endfor %}→ {{ cpu_hand }}</p>
       <p class="big">{{ result }}</p>
       <form method="post" action="{{ url_for('draw_poker_next') }}" class="row">
         <button type="submit">{% if round_no >= 5 %}結果を見る{% else %}次のラウンドへ{% endif %}</button>

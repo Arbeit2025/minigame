@@ -2646,20 +2646,20 @@ class PortalImprovementsTest(MinigameTest):
         self.assertIn('[data-theme="dark"]', self.get("/"))
         self.assertIn('[data-theme="dark"]', self.get("/games/roulette"))
         # ゲームページ共通CSSは /static/mg-game.css へ外部化された（2026-11-07）
-        self.assertIn('href="/static/mg-game.css"', self.get("/games/janken"))
+        self.assertIn('href="/static/mg-game.css?v=', self.get("/games/janken"))
         self.assertIn('[data-theme="dark"]', self.get("/static/mg-game.css"))
 
     def test_pause_ui_only_on_js_score_games(self):
         body = self.get("/games/reaction")
         self.assertIn('id="mg-pause-btn"', body)
         # ゲート本体は /static/mg-head.js へ外部化され、ページからは参照だけが残る
-        self.assertIn('src="/static/mg-head.js"', body)
+        self.assertIn('src="/static/mg-head.js?v=', body)
         self.assertNotIn("__mgGate", body)
         body = self.get("/games/janken")
         self.assertNotIn('id="mg-pause-btn"', body)
         # ゲートなしのページはブート専用（?boot=1）だけを読み、ゲート付きは読まない
-        self.assertIn('src="/static/mg-head.js?boot=1"', body)
-        self.assertNotIn('src="/static/mg-head.js">', body)
+        self.assertIn('src="/static/mg-head.js?boot=1&v=', body)
+        self.assertNotIn('src="/static/mg-head.js?v=>', body)
 
     def test_share_flag_only_on_shindan_games(self):
         self.assertIn('"share": true', self.get("/games/omikuji"))
@@ -2798,12 +2798,12 @@ class StaticJsTest(MinigameTest):
 
     def test_game_pages_reference_static_js(self):
         body = self.get("/games/paper-shoot").get_data(as_text=True)
-        self.assertIn('src="/static/mg-head.js"', body)
-        self.assertIn('src="/static/mg-cfg.js"', body)
+        self.assertIn('src="/static/mg-head.js?v=', body)
+        self.assertIn('src="/static/mg-cfg.js?v=', body)
         self.assertIn('var CFG = {"slug": "paper-shoot"', body)
         body = self.get("/games/quiz").get_data(as_text=True)
-        self.assertIn('src="/static/mg-head.js?boot=1"', body)
-        self.assertIn('src="/static/mg-cfg.js"', body)
+        self.assertIn('src="/static/mg-head.js?boot=1&v=', body)
+        self.assertIn('src="/static/mg-cfg.js?v=', body)
         self.assertIn('var CFG = {"slug": "quiz"', body)
 
     def test_game_pages_shrank(self):
@@ -2823,7 +2823,7 @@ class StaticJsTest(MinigameTest):
 
     def test_game_pages_reference_static_css(self):
         body = self.get("/games/boomerang").get_data(as_text=True)
-        self.assertIn('href="/static/mg-game.css"', body)
+        self.assertIn('href="/static/mg-game.css?v=', body)
         self.assertNotIn('[data-theme="dark"]', body)
         # CSS埋め込み時の実測（2026-11-07）: boomerang 18,257 bytes → 外部化で大幅減
         self.assertLess(len(body.encode("utf-8")), 13000)
@@ -3025,7 +3025,7 @@ class ImprovementsNov06Test(MinigameTest):
         res = self.client.get("/sw.js")
         self.assertEqual(res.status_code, 200)
         body = res.get_data(as_text=True)
-        self.assertIn("minigame-v3", body)
+        self.assertIn("minigame-v4", body)
         self.assertIn("addEventListener('fetch'", body)
         self.assertIn("addEventListener('install'", body)
 
@@ -3394,10 +3394,24 @@ class ScrollThemeTest(MinigameTest):
         self.assertIn("mg-theme-btn", js)
         self.assertIn("syncThemeBtn", js)
 
-    def test_sw_cache_v3(self):
+    def test_sw_cache_v4(self):
         sw = self.get("/sw.js")
-        self.assertIn("minigame-v3", sw)
-        self.assertNotIn("minigame-v2", sw)
+        self.assertIn("minigame-v4", sw)
+        self.assertNotIn("minigame-v3", sw)
+
+    def test_static_urls_are_versioned(self):
+        # 古い HTTP キャッシュ（max-age=86400）を即時無効化するための ?v= 付きURL
+        html = self.get("/games/gravity-four")
+        self.assertIn("/static/mg-game.css?v=", html)
+        self.assertIn("/static/mg-cfg.js?v=", html)
+        sw = self.get("/sw.js")
+        self.assertIn("/static/mg-game.css?v=", sw)
+
+    def test_card_displays_have_white_plate(self):
+        # 黒スートのカード表示は白台つきで、ダーク時も読める（2026-11-09 本人報告）
+        self.assertIn("padding:16px 0", self.get("/games/machigai-card"))
+        # ドローポーカーの手札表示は対決フェーズの分岐内なのでテンプレートで確認
+        self.assertIn("padding:1px 5px", self.mod.DRAWPOKER_TEMPLATE)
 
     def test_theme_button_inline_binding(self):
         # 古い SW キャッシュ環境でもボタンが効くよう、HTML 内に binding を持つ
