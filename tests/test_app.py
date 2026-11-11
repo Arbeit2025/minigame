@@ -7,6 +7,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from markupsafe import escape as html_escape
+
 APP_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "gameapp.py"
 )
@@ -765,11 +767,12 @@ class EnGachaTest(MinigameTest):
             idx = sess["en_last"]
         word = self.mod.EN_WORDS[idx]
         # 引いた単語カード（英単語・カタカナ読み・日本語訳・例文）がページに出る
+        # ページ側は Jinja の自動エスケープで ' が &#39; になるため、表示される形で比べる
         body = self.client.get("/games/engacha").get_data(as_text=True)
-        self.assertIn(word["word"], body)
-        self.assertIn(word["kana"], body)
-        self.assertIn(word["meaning"], body)
-        self.assertIn(word["example"], body)
+        self.assertIn(str(html_escape(word["word"])), body)
+        self.assertIn(str(html_escape(word["kana"])), body)
+        self.assertIn(str(html_escape(word["meaning"])), body)
+        self.assertIn(str(html_escape(word["example"])), body)
         self.assertIn('<span id="kindCount">1</span>', body)
         # 種類数（1）がスコアとして記録される
         rows = self.query("SELECT score FROM scores WHERE game='engacha'")
