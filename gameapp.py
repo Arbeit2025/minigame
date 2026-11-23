@@ -3816,7 +3816,6 @@ setBar.appendChild(setLink);
 var mgFooter = document.querySelector('.mg-footer');
 if (mgFooter && mgFooter.parentNode) mgFooter.parentNode.insertBefore(setBar, mgFooter);
 else document.body.appendChild(setBar);
-}
   /* --- 一時停止 UI --- */
   var pauseBtn = document.getElementById('mg-pause-btn');
   if (pauseBtn && window.__mgSetPaused) {
